@@ -21,7 +21,9 @@ class DrugSearchResponse(BaseModel):
     yan_etkiler: list[str]
     uyarilar: list[str]
     kimler_kullanmamali: list[str]
-    disclaimer: str = "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
+    disclaimer: str = (
+        "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
+    )
 
 
 @router.post("/search", response_model=DrugSearchResponse)

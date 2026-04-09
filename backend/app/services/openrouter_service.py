@@ -28,7 +28,9 @@ async def query_drug_info(drug_name: str) -> dict:
     settings = get_settings()
 
     if not settings.openrouter_api_key:
-        raise HTTPException(status_code=500, detail="OpenRouter API key yapılandırılmamış.")
+        raise HTTPException(
+            status_code=500, detail="OpenRouter API key yapılandırılmamış."
+        )
 
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
