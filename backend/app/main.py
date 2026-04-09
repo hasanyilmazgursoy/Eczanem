@@ -1,0 +1,37 @@
+"""Eczanem Backend — Ana uygulama."""
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.core.config import get_settings
+from app.routers import health, drug
+
+
+def create_app() -> FastAPI:
+    settings = get_settings()
+
+    app = FastAPI(
+        title="Eczanem API",
+        description="Kişisel İlaç Asistanı Backend API",
+        version="0.1.0",
+        docs_url="/docs" if settings.debug else None,
+        redoc_url="/redoc" if settings.debug else None,
+    )
+
+    # Flutter'dan gelen isteklere izin ver
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # Prod'da kısıtlanacak
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    # Router'ları bağla
+    app.include_router(health.router, tags=["Health"])
+    app.include_router(drug.router, prefix="/api/drug", tags=["Drug"])
+
+    return app
+
+
+app = create_app()
