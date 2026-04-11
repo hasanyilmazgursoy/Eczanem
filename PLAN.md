@@ -119,7 +119,8 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 
 ### Flutter Ekranları
 - [ ] Kamera Ekranı: `camera` paketi, çerçeve overlay, çekim butonu
-- [ ] Fotoğraf Önizleme: "Analiz Et" / "Tekrar Çek" butonları
+- [x] Mevcut arama ekranına kamera / galeri tabanlı görsel seçme akışı eklendi
+- [x] Fotoğraf Önizleme: "Analiz Et" / "Görseli Kaldır" butonları
 - [ ] Çoklu Sonuç: Reçetede birden fazla ilaç → liste + detay
 - [ ] Prospektüs Özet: Kategorize edilmiş, okunabilir özet
 

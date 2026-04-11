@@ -2,7 +2,7 @@
 
 Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
 
-`Eczanem`, Flutter ile geliştirilen mobil istemci ve FastAPI ile geliştirilen backend servisinden oluşur. Uygulama; ilaç arama, ilaç detaylarını görüntüleme, kullanıcı oturumu, gerçek cihazda çalışma ve FAZ 1 kapsamındaki temel UX akışlarını şu anda aktif olarak desteklemektedir.
+`Eczanem`, Flutter ile geliştirilen mobil istemci ve FastAPI ile geliştirilen backend servisinden oluşur. Uygulama; ilaç arama, ilaç detaylarını görüntüleme, kullanıcı oturumu, gerçek cihazda çalışma ve FAZ 2 kapsamında başlayan görsel analiz akışını şu anda aktif olarak desteklemektedir.
 
 ## Mevcut durum
 
@@ -11,6 +11,7 @@ Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
 - **Backend:** FastAPI + Gemini entegrasyonu + JWT tabanlı auth
 - **Gerçek cihaz desteği:** Android telefonda doğrulandı
 - **Arama korumaları:** 24 saat Redis cache + bellek içi fallback + IP bazlı rate limit
+- **Görsel analiz:** Kamera / galeri seçimi + önizleme + backend analiz endpoint'i hazır
 
 ## Özellikler
 
@@ -27,10 +28,11 @@ Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
 - Daha anlamlı boş / hata / tekrar dene durumları
 - Hive tabanlı yerel depolama
 - Gerçek cihazda backend’e LAN üzerinden bağlanma
+- Kamera veya galeriden görsel seçip ilaç analizi başlatma
 
 ### Planlananlar
 
-- Görselle ilaç tanıma
+- Çoklu ilaç tespiti ve gelişmiş görselle ilaç tanıma
 - Prospektüs özetleme
 - Aile profili yönetimi
 - Hatırlatıcı ve stok takibi

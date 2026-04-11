@@ -17,6 +17,7 @@ dependencies:
   # Networking
   internet_connection_checker_plus: ^2.9.1+2
   dio: ^5.9.2
+  http_parser: ^4.1.2
 
   # State Management
   fpdart: ^1.2.0
