@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../utils/utils.dart';
@@ -35,7 +37,11 @@ class MediaService {
         imageQuality: imageQuality,
       );
 
-      return file != null ? File(file.path) : null;
+      if (file == null) {
+        return null;
+      }
+
+      return _optimizeImage(File(file.path));
     });
   }
 
@@ -56,7 +62,11 @@ class MediaService {
         imageQuality: imageQuality,
       );
 
-      return files.map((file) => File(file.path)).toList();
+      final optimizedFiles = <File>[];
+      for (final file in files) {
+        optimizedFiles.add(await _optimizeImage(File(file.path)));
+      }
+      return optimizedFiles;
     });
   }
 
@@ -153,5 +163,52 @@ class MediaService {
 
     final status = await Permission.photos.request();
     return status.isGranted || status.isLimited;
+  }
+
+  /// Yükleme öncesi görselleri küçültür; böylece ağ maliyeti ve backend yükü azalır.
+  Future<File> _optimizeImage(
+    File file, {
+    int maxDimension = 1600,
+    int quality = 82,
+  }) async {
+    final originalBytes = await file.readAsBytes();
+    final decodedImage = img.decodeImage(originalBytes);
+
+    if (decodedImage == null) {
+      return file;
+    }
+
+    final shouldResize =
+        decodedImage.width > maxDimension || decodedImage.height > maxDimension;
+
+    final processedImage = shouldResize
+        ? img.copyResize(
+            decodedImage,
+            width:
+                decodedImage.width >= decodedImage.height ? maxDimension : null,
+            height:
+                decodedImage.height > decodedImage.width ? maxDimension : null,
+            interpolation: img.Interpolation.average,
+          )
+        : decodedImage;
+
+    final tempDirectory = await getTemporaryDirectory();
+    final optimizedDirectory = Directory(
+      '${tempDirectory.path}${Platform.pathSeparator}eczanem_uploads',
+    );
+    if (!await optimizedDirectory.exists()) {
+      await optimizedDirectory.create(recursive: true);
+    }
+
+    final optimizedFile = File(
+      '${optimizedDirectory.path}${Platform.pathSeparator}${DateTime.now().microsecondsSinceEpoch}.jpg',
+    );
+
+    await optimizedFile.writeAsBytes(
+      img.encodeJpg(processedImage, quality: quality),
+      flush: true,
+    );
+
+    return optimizedFile;
   }
 }

@@ -115,7 +115,8 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 ### Backend
 - [x] `POST /api/drug/analyze-image` — multipart image → Gemini multimodal
 - [ ] `POST /api/drug/prospectus` — Prospektüs fotoğrafı → Gemini ile özetleme
-- [ ] Görsel optimizasyon: boyut & maliyet optimizasyonu
+- [x] Mobil istemcide yükleme öncesi görsel yeniden boyutlandırma ve sıkıştırma eklendi
+- [ ] Backend tarafında ek maliyet optimizasyonları ve çoklu görsel stratejisi
 
 ### Flutter Ekranları
 - [ ] Kamera Ekranı: `camera` paketi, çerçeve overlay, çekim butonu

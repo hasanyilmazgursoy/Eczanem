@@ -32,6 +32,7 @@ dependencies:
   # Images & SVG
   cached_network_image: ^3.4.1
   flutter_svg: ^2.2.4
+  image: ^4.5.4
 
   # Shimmer / Skeleton
   skeletonizer: ^2.1.3
