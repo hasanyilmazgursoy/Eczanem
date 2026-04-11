@@ -3,7 +3,7 @@
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
 **Başlangıç Tarihi:** 9 Nisan 2026  
 **Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
-**Durum:** 🟡 FAZ 2 Hazırlığı
+**Durum:** 🟡 FAZ 2 Başladı
 
 ---
 
@@ -110,10 +110,10 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 
 ## FAZ 2 — Kamera ile Tanıma + Prospektüs Tarama (1-2 hafta)
 
-**Durum:** ⬜ Başlanmadı
+**Durum:** 🟡 Başladı
 
 ### Backend
-- [ ] `POST /api/drug/analyze-image` — Base64/multipart image → Gemini multimodal
+- [x] `POST /api/drug/analyze-image` — multipart image → Gemini multimodal
 - [ ] `POST /api/drug/prospectus` — Prospektüs fotoğrafı → Gemini ile özetleme
 - [ ] Görsel optimizasyon: boyut & maliyet optimizasyonu
 

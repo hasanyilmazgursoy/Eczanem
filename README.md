@@ -6,7 +6,7 @@ Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
 
 ## Mevcut durum
 
-- **Aktif faz:** FAZ 2 hazırlığı
+- **Aktif faz:** FAZ 2 — Kamera ile tanıma başlangıcı
 - **Mobil:** Flutter + Riverpod + Dio + GoRouter
 - **Backend:** FastAPI + Gemini entegrasyonu + JWT tabanlı auth
 - **Gerçek cihaz desteği:** Android telefonda doğrulandı

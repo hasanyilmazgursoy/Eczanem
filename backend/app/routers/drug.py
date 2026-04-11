@@ -1,9 +1,10 @@
 """İlaç sorgulama endpoint'leri."""
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from pydantic import BaseModel
 
 from app.services.drug_search_guard import query_drug_info_with_guard
+from app.services.gemini_service import query_drug_info_from_image
 
 router = APIRouter()
 
@@ -43,5 +44,25 @@ async def search_drug(request: DrugSearchRequest, http_request: Request):
     result = await query_drug_info_with_guard(
         request.query.strip(),
         client_key=_resolve_client_key(http_request),
+    )
+    return result
+
+
+@router.post("/analyze-image", response_model=DrugSearchResponse)
+async def analyze_drug_image(file: UploadFile = File(...)):
+    """İlaç fotoğrafını Gemini ile analiz ederek muhtemel ilaç bilgisini döndürür."""
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=400,
+            detail="Yalnızca görsel dosyaları analiz edilebilir.",
+        )
+
+    image_bytes = await file.read()
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Yüklenen görsel boş olamaz.")
+
+    result = await query_drug_info_from_image(
+        image_bytes=image_bytes,
+        mime_type=file.content_type,
     )
     return result
