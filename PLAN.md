@@ -110,20 +110,20 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 
 ## FAZ 2 — Kamera ile Tanıma + Prospektüs Tarama (1-2 hafta)
 
-**Durum:** 🟡 Başladı
+**Durum:** 🟢 Tamamlandı
 
 ### Backend
 - [x] `POST /api/drug/analyze-image` — multipart image → Gemini multimodal
-- [ ] `POST /api/drug/prospectus` — Prospektüs fotoğrafı → Gemini ile özetleme
+- [x] `POST /api/drug/prospectus` — Prospektüs fotoğrafı → Gemini ile özetleme
 - [x] Mobil istemcide yükleme öncesi görsel yeniden boyutlandırma ve sıkıştırma eklendi
-- [ ] Backend tarafında ek maliyet optimizasyonları ve çoklu görsel stratejisi
+- [x] Backend tarafında ek maliyet optimizasyonları ve çoklu görsel stratejisi
 
 ### Flutter Ekranları
-- [ ] Kamera Ekranı: `camera` paketi, çerçeve overlay, çekim butonu
+- [x] Kamera Ekranı: `camera` paketi, çerçeve overlay, çekim butonu
 - [x] Mevcut arama ekranına kamera / galeri tabanlı görsel seçme akışı eklendi
 - [x] Fotoğraf Önizleme: "Analiz Et" / "Görseli Kaldır" butonları
-- [ ] Çoklu Sonuç: Reçetede birden fazla ilaç → liste + detay
-- [ ] Prospektüs Özet: Kategorize edilmiş, okunabilir özet
+- [x] Çoklu Sonuç: Reçetede birden fazla ilaç → liste + detay
+- [x] Prospektüs Özet: Kategorize edilmiş, okunabilir özet
 
 ### Flutter Paketleri
 - `camera` — kamera kontrolü
@@ -131,7 +131,7 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 - `image` — fotoğraf sıkıştırma
 
 ### Çıktı
-Fotoğraf çekip ilaç tanıma, prospektüs özetleme çalışıyor.
+Fotoğraf çekip ilaç tanıma, çoklu aday seçimi ve prospektüs özetleme çalışıyor.
 
 ---
 
