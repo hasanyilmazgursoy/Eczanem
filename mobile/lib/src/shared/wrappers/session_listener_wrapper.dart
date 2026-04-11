@@ -3,7 +3,6 @@ import 'package:eczanem/src/imports/packages_imports.dart';
 
 import 'package:eczanem/src/features/auth/presentation/providers/session_provider.dart';
 
-
 class SessionListenerWrapper extends ConsumerWidget {
   final Widget child;
   const SessionListenerWrapper({super.key, required this.child});
@@ -13,10 +12,12 @@ class SessionListenerWrapper extends ConsumerWidget {
     ref.listen<SessionState>(sessionProvider, (prev, next) {
       if (next.status != SessionStatus.unknown) {
         FlutterNativeSplash.remove();
+        // MaterialApp.router builder context'i GoRouter'ın üzerinde olduğundan
+        // context.go() çalışmaz; global appRouter instance doğrudan kullanılır
         if (next.status == SessionStatus.authenticated) {
-          context.go(AppRoutes.home);
+          appRouter.go(AppRoutes.home);
         } else if (next.status == SessionStatus.unauthenticated) {
-          context.go(AppRoutes.onboarding);
+          appRouter.go(AppRoutes.onboarding);
         }
       }
     });

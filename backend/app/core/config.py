@@ -11,7 +11,12 @@ BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
 class Settings(BaseSettings):
     # Google AI Studio (Gemini)
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model: str = "gemini-2.5-flash"
+
+    # JWT (geliştirme varsayılanı; prod'da env ile override edilmeli)
+    jwt_secret_key: str = "eczanem-dev-secret-key-change-in-production"
+    jwt_algorithm: str = "HS256"
+    jwt_expire_minutes: int = 60 * 24 * 7
 
     # PostgreSQL
     postgres_host: str = "localhost"

@@ -13,7 +13,14 @@
     "home": {
         "home_title": "Ana Sayfa",
         "welcome_home": "Hoş Geldiniz!",
-        "home_subtitle": "Eczanem - Kişisel İlaç Asistanınız"
+        "home_subtitle": "Eczanem - Kişisel İlaç Asistanınız",
+        "search_tab": "Arama",
+        "profile_tab": "Profil",
+        "profile_title": "Profil",
+        "phase1_title": "FAZ 1 ilerleme durumu",
+        "phase1_subtitle": "İlaç arama MVP akışını adım adım tamamlıyoruz. Bu ekran arama ve profil işlemlerini tek yerde toplar.",
+        "start_search": "İlaç aramaya dön",
+        "logout": "Çıkış Yap"
     },
     "auth": {
         "log_in": "Giriş Yap",
@@ -51,7 +58,8 @@
         "searching": "Aranıyor...",
         "error": "İlaç bilgisi alınamadı. Lütfen tekrar deneyin.",
         "empty_hint": "İlaç adı yazarak bilgi alabilirsiniz",
-        "take_photo": "Fotoğraf Çek"
+        "take_photo": "Fotoğraf Çek",
+        "recent_title": "Son aramalar"
     },
     "drug_detail": {
         "title": "İlaç Bilgisi",

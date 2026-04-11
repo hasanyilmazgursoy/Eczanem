@@ -12,8 +12,15 @@
   },
   "home": {
     "home_title": "Home",
-    "welcome_home": "Welcome Home!",
-    "home_subtitle": "You have successfully completed the onboarding process."
+    "welcome_home": "Welcome!",
+    "home_subtitle": "Eczanem - Your personal medicine assistant",
+    "search_tab": "Search",
+    "profile_tab": "Profile",
+    "profile_title": "Profile",
+    "phase1_title": "Phase 1 progress",
+    "phase1_subtitle": "We are completing the medicine search MVP step by step. This screen brings search and profile actions together.",
+    "start_search": "Back to search",
+    "logout": "Log out"
   },
   "auth": {
     "log_in": "Log in",
@@ -43,5 +50,26 @@
     "forgot_password_title": "Forgot Password",
     "forgot_password_subtitle": "Enter your email address to receive a reset link\nand regain access to your account.",
     "reset_link_sent": "Password reset link sent to your email."
+  },
+  "drug_search": {
+    "title": "Search Medicine",
+    "search_hint": "Type a medicine name... (e.g. Aspirin)",
+    "search_button": "Search Medicine",
+    "searching": "Searching...",
+    "error": "Could not fetch medicine information. Please try again.",
+    "empty_hint": "Type a medicine name to get information",
+    "take_photo": "Take Photo",
+    "recent_title": "Recent searches"
+  },
+  "drug_detail": {
+    "title": "Medicine Details",
+    "active_ingredient": "Active Ingredient",
+    "usage": "What It Is Used For",
+    "dosage": "Dosage Info",
+    "how_to_use": "How To Use",
+    "side_effects": "Side Effects",
+    "warnings": "Warnings",
+    "contraindications": "Who Should Not Use It",
+    "disclaimer": "This information is for general informational purposes only and does not constitute medical advice."
   }
 }

@@ -1,7 +1,6 @@
 import 'package:eczanem/src/imports/core_imports.dart';
 import 'package:eczanem/src/imports/packages_imports.dart';
 
-
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
@@ -22,20 +21,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _onboardingData = [
       {
         'title': 'onboarding.onboarding_title_1'.tr(),
-        'subtitle':
-            'onboarding.onboarding_subtitle_1'.tr(),
+        'subtitle': 'onboarding.onboarding_subtitle_1'.tr(),
         'pageWidget': const FlutterLogo(size: 200),
       },
       {
         'title': 'onboarding.onboarding_title_2'.tr(),
-        'subtitle':
-            'onboarding.onboarding_subtitle_2'.tr(),
+        'subtitle': 'onboarding.onboarding_subtitle_2'.tr(),
         'pageWidget': const FlutterLogo(size: 200),
       },
       {
         'title': 'onboarding.onboarding_title_3'.tr(),
-        'subtitle':
-            'onboarding.onboarding_subtitle_3'.tr(),
+        'subtitle': 'onboarding.onboarding_subtitle_3'.tr(),
         'pageWidget': const FlutterLogo(size: 200),
       },
     ];
@@ -122,52 +118,60 @@ class _OnboardingView extends StatelessWidget {
                 itemCount: onboardingData.length,
                 onPageChanged: onPageChanged,
                 itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      // Dynamic Illustration Section
-                      Expanded(
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppSpacing.lg.w,
+                  // SingleChildScrollView: masaüstünde ScreenUtil scale farklılığından
+                  // kaynaklanan overflow'u önler
+                  return SingleChildScrollView(
+                    child: SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.65,
+                      child: Column(
+                        children: [
+                          // Dynamic Illustration Section
+                          Expanded(
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.lg,
+                                ),
+                                child: onboardingData[index]['pageWidget']
+                                    as Widget,
+                              ),
                             ),
-                            child: onboardingData[index]['pageWidget'] as Widget,
                           ),
-                        ),
-                      ),
-                      
-                      // Text Section
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl.w,
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              onboardingData[index]['title'] as String,
-                              textAlign: TextAlign.center,
-                              style: textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: colorScheme.onSurface,
-                                height: 1.2,
-                                fontSize: 24.sp,
-                              ),
+
+                          // Text Section
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppSpacing.xl,
                             ),
-                            SizedBox(height: AppSpacing.md.h),
-                            Text(
-                              onboardingData[index]['subtitle'] as String,
-                              textAlign: TextAlign.center,
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                                height: 1.5,
-                                fontSize: 14.sp,
-                              ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  onboardingData[index]['title'] as String,
+                                  textAlign: TextAlign.center,
+                                  style: textTheme.headlineMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                    height: 1.2,
+                                    fontSize: 24.sp,
+                                  ),
+                                ),
+                                SizedBox(height: AppSpacing.md),
+                                Text(
+                                  onboardingData[index]['subtitle'] as String,
+                                  textAlign: TextAlign.center,
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                    height: 1.5,
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
                       ),
-                      SizedBox(height: 40.h),
-                    ],
+                    ),
                   );
                 },
               ),
@@ -175,10 +179,13 @@ class _OnboardingView extends StatelessWidget {
 
             // Bottom Section: Dots and Button
             Padding(
-              padding: EdgeInsets.all(AppSpacing.xl.w),
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+                vertical: AppSpacing.lg,
+              ),
               child: Column(
                 children: [
-                   SizedBox(height: AppSpacing.xl.h),
+                  SizedBox(height: AppSpacing.sm),
                   // Get Started Button
                   AppButton(
                     label: 'shared.get_started'.tr(),

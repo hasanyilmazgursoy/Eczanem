@@ -22,9 +22,10 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    
+
     // Check if we can pop
     final bool canPop = context.canPop();
+    final bool shouldShowLeading = onPressed != null || canPop;
 
     void handleBack() {
       if (onPressed != null) {
@@ -46,22 +47,25 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
             title,
             style: theme.appBarTheme.titleTextStyle?.copyWith(
               fontWeight: FontWeight.w600,
-            ) ?? theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            ) ??
+                theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
           ),
-      leadingWidth: 40.w,
-      leading: GestureDetector(
-        onTap: handleBack,
-        child: ColoredBox(
-          color: Colors.transparent,
-          child:               Icon(
-                Icons.arrow_back,
-                color: theme.appBarTheme.iconTheme?.color ?? theme.colorScheme.onSurface,
-              )
-            ,
-        ),
-      ),
+      leadingWidth: shouldShowLeading ? 40.w : 0,
+      leading: shouldShowLeading
+          ? GestureDetector(
+              onTap: handleBack,
+              child: ColoredBox(
+                color: Colors.transparent,
+                child: Icon(
+                  Icons.arrow_back,
+                  color: theme.appBarTheme.iconTheme?.color ??
+                      theme.colorScheme.onSurface,
+                ),
+              ),
+            )
+          : null,
       iconTheme: theme.appBarTheme.iconTheme,
       actions: actions ?? [],
     );
