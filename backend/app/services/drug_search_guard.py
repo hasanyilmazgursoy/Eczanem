@@ -1,7 +1,7 @@
-"""İlaç arama için bellek içi cache ve rate limit yardımcıları.
+"""İlaç arama için cache ve rate limit yardımcıları.
 
-FAZ 1 için Redis zorunluluğu getirmeden hızlı yanıt ve temel koruma sağlar.
-İleride Redis eklenirse aynı arayüz kalıp kalıcı katmana taşınabilir.
+Öncelik Redis cache'tir. Redis erişilemezse geliştirme akışını kırmamak için
+bellek içi cache'e otomatik düşülür.
 """
 
 from __future__ import annotations
@@ -9,10 +9,13 @@ from __future__ import annotations
 from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
+import json
 from threading import Lock
 from time import time
 
 from fastapi import HTTPException, status
+from redis import asyncio as redis_async
+from redis.exceptions import RedisError
 
 from app.core.config import get_settings
 from app.services.gemini_service import query_drug_info
@@ -28,6 +31,8 @@ _cache_lock = Lock()
 _rate_limit_lock = Lock()
 _query_cache: dict[str, _CacheEntry] = {}
 _rate_limit_buckets: dict[str, deque[float]] = {}
+_redis_client: redis_async.Redis | None = None
+_redis_lock = Lock()
 
 
 def _normalize_query(query: str) -> str:
@@ -37,6 +42,64 @@ def _normalize_query(query: str) -> str:
 def _clone_payload(payload: dict) -> dict:
     # Cache içeriğinin çağıran kod tarafından yanlışlıkla mutate edilmesini önler.
     return deepcopy(payload)
+
+
+def _build_cache_key(query: str) -> str:
+    return f"drug-search:{_normalize_query(query)}"
+
+
+def _get_redis_client() -> redis_async.Redis | None:
+    settings = get_settings()
+    if not settings.drug_search_redis_enabled:
+        return None
+
+    global _redis_client
+
+    if _redis_client is not None:
+        return _redis_client
+
+    with _redis_lock:
+        if _redis_client is None:
+            _redis_client = redis_async.from_url(
+                settings.redis_url,
+                encoding="utf-8",
+                decode_responses=True,
+            )
+
+    return _redis_client
+
+
+async def _get_cached_response_from_redis(query: str) -> dict | None:
+    redis_client = _get_redis_client()
+    if redis_client is None:
+        return None
+
+    try:
+        cached_payload = await redis_client.get(_build_cache_key(query))
+        if not cached_payload:
+            return None
+
+        return json.loads(cached_payload)
+    except (RedisError, json.JSONDecodeError):
+        return None
+
+
+async def _cache_response_in_redis(query: str, payload: dict) -> bool:
+    redis_client = _get_redis_client()
+    if redis_client is None:
+        return False
+
+    settings = get_settings()
+
+    try:
+        await redis_client.set(
+            _build_cache_key(query),
+            json.dumps(payload, ensure_ascii=False),
+            ex=settings.drug_search_cache_ttl_seconds,
+        )
+        return True
+    except RedisError:
+        return False
 
 
 def _get_cached_response(query: str) -> dict | None:
@@ -88,13 +151,17 @@ def _enforce_rate_limit(client_key: str) -> None:
 
 async def query_drug_info_with_guard(drug_name: str, client_key: str) -> dict:
     """Cache hit varsa onu döndürür, yoksa rate limit sonrası Gemini'ye gider."""
-    cached_response = _get_cached_response(drug_name)
+    cached_response = await _get_cached_response_from_redis(drug_name)
+    if cached_response is None:
+        cached_response = _get_cached_response(drug_name)
+
     if cached_response is not None:
-        return cached_response
+        return _clone_payload(cached_response)
 
     # Cache hit'lerini limite saymıyoruz; Gemini maliyetini korumak istediğimiz yer miss akışı.
     _enforce_rate_limit(client_key)
 
     response = await query_drug_info(drug_name)
+    await _cache_response_in_redis(drug_name, response)
     _cache_response(drug_name, response)
     return _clone_payload(response)

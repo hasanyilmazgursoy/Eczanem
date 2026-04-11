@@ -16,9 +16,10 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-2.5-flash"
 
     # İlaç arama performans / koruma ayarları
-    drug_search_cache_ttl_seconds: int = 60 * 30
+    drug_search_cache_ttl_seconds: int = 60 * 60 * 24
     drug_search_rate_limit_window_seconds: int = 60
     drug_search_rate_limit_max_requests: int = 10
+    drug_search_redis_enabled: bool = True
 
     # JWT (geliştirme varsayılanı; prod'da env ile override edilmeli)
     jwt_secret_key: str = "eczanem-dev-secret-key-change-in-production"
@@ -35,6 +36,7 @@ class Settings(BaseSettings):
     # Redis
     redis_host: str = "localhost"
     redis_port: int = 6379
+    redis_db: int = 0
 
     # API
     api_host: str = "0.0.0.0"
@@ -62,7 +64,7 @@ class Settings(BaseSettings):
 
     @property
     def redis_url(self) -> str:
-        return f"redis://{self.redis_host}:{self.redis_port}"
+        return f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
 
     model_config = {
         "env_file": str(BACKEND_DIR / ".env"),
