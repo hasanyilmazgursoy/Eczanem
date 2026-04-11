@@ -13,7 +13,7 @@ import 'package:eczanem/src/features/drug/presentation/screens/drug_detail_scree
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
-  initialLocation: AppRoutes.drugSearch,
+  initialLocation: AppRoutes.onboarding,
   routes: <RouteBase>[
     GoRoute(
       path: AppRoutes.onboarding,
