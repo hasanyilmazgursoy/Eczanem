@@ -1,10 +1,12 @@
 """Google AI Studio (Gemini API) üzerinden ilaç bilgisi sorgulama."""
 
 import base64
+from io import BytesIO
 import json
 
 import httpx
 from fastapi import HTTPException
+from PIL import Image, ImageOps
 
 from app.core.config import get_settings
 
@@ -66,6 +68,9 @@ formatında döndür. Bilgi net değilse uydurma; ilgili alana kısa ve dürüst
 
 ÖNEMLİ: Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."""
 
+MAX_IMAGE_DIMENSION = 1400
+OPTIMIZED_IMAGE_QUALITY = 82
+
 
 def _build_gemini_url() -> str:
     settings = get_settings()
@@ -126,8 +131,36 @@ async def query_drug_info(drug_name: str) -> dict:
     return _extract_json_payload(response)
 
 
+def _optimize_image_for_gemini(image_bytes: bytes, mime_type: str) -> tuple[bytes, str]:
+    """Büyük görselleri backend tarafında da küçülterek maliyeti dengeler."""
+    try:
+        with Image.open(BytesIO(image_bytes)) as raw_image:
+            normalized_image = ImageOps.exif_transpose(raw_image)
+            resized_image = normalized_image.copy()
+            resized_image.thumbnail((MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION))
+
+            if resized_image.mode not in ("RGB", "L"):
+                resized_image = resized_image.convert("RGB")
+
+            if resized_image.mode == "L":
+                resized_image = resized_image.convert("RGB")
+
+            output = BytesIO()
+            resized_image.save(
+                output,
+                format="JPEG",
+                quality=OPTIMIZED_IMAGE_QUALITY,
+                optimize=True,
+            )
+            return output.getvalue(), "image/jpeg"
+    except Exception:
+        # Optimizasyon başarısız olursa orijinal akış bozulmasın.
+        return image_bytes, mime_type
+
+
 async def query_drug_info_from_image(image_bytes: bytes, mime_type: str) -> dict:
     """Gemini multimodal ile görselden ilaç bilgisi çıkarmaya çalışır."""
+    image_bytes, mime_type = _optimize_image_for_gemini(image_bytes, mime_type)
     encoded_image = base64.b64encode(image_bytes).decode("utf-8")
 
     response = await _post_gemini_request(
@@ -154,8 +187,11 @@ async def query_drug_info_from_image(image_bytes: bytes, mime_type: str) -> dict
     return _extract_json_payload(response)
 
 
-async def query_prospectus_summary_from_image(image_bytes: bytes, mime_type: str) -> dict:
+async def query_prospectus_summary_from_image(
+    image_bytes: bytes, mime_type: str
+) -> dict:
     """Prospektüs veya kutu görselinden kısa kullanım özeti çıkarmaya çalışır."""
+    image_bytes, mime_type = _optimize_image_for_gemini(image_bytes, mime_type)
     encoded_image = base64.b64encode(image_bytes).decode("utf-8")
 
     response = await _post_gemini_request(
