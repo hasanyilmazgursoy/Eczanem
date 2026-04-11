@@ -3,7 +3,7 @@
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
 **Başlangıç Tarihi:** 9 Nisan 2026  
 **Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
-**Durum:** 🟡 FAZ 1 Son Kapatma Adımları
+**Durum:** 🟡 FAZ 2 Hazırlığı
 
 ---
 
@@ -74,7 +74,7 @@ asistanı uygulaması.
 
 ## FAZ 1 — Temel İlaç Sorgulama / MVP (1-2 hafta)
 
-**Durum:** 🟡 Devam Ediyor (~92%)
+**Durum:** 🟢 Tamamlandı
 
 ### Backend
 - [x] `POST /api/drug/search` — İlaç adını alır, Gemini'ye gönderir
@@ -100,11 +100,11 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 
 ### Teknik Detaylar
 - [x] Arama debounce (500ms)
-- [ ] Arama geçmişi local'de (plan Hive diyordu; şu an SharedPreferences ile çalışıyor)
+- [x] Arama geçmişi local'de (Hive tabanlı saklama + SharedPreferences migration)
 - [x] Hata yönetimi: internet yok, API hatası, boş sonuç durumları
 
 ### Çıktı
-Çalışan bir ilaç arama uygulaması. Gerçek cihazda çalıştırma, auth, temel dashboard akışı ve Redis cache desteği hazır.
+Çalışan bir ilaç arama uygulaması. Gerçek cihazda çalıştırma, auth, temel dashboard akışı, Redis cache ve Hive tabanlı yerel depolama hazır.
 
 ---
 

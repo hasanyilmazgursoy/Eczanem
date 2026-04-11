@@ -6,7 +6,7 @@ Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
 
 ## Mevcut durum
 
-- **Aktif faz:** FAZ 1 — Temel İlaç Sorgulama / MVP
+- **Aktif faz:** FAZ 2 hazırlığı
 - **Mobil:** Flutter + Riverpod + Dio + GoRouter
 - **Backend:** FastAPI + Gemini entegrasyonu + JWT tabanlı auth
 - **Gerçek cihaz desteği:** Android telefonda doğrulandı
@@ -25,6 +25,7 @@ Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
 - Arama debounce
 - Skeleton loading
 - Daha anlamlı boş / hata / tekrar dene durumları
+- Hive tabanlı yerel depolama
 - Gerçek cihazda backend’e LAN üzerinden bağlanma
 
 ### Planlananlar
@@ -46,7 +47,8 @@ Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
 - Dio
 - GoRouter
 - Easy Localization
-- SharedPreferences
+- Hive
+- SharedPreferences (yalnızca eski verileri migrate etmek için)
 - Flutter Secure Storage
 - Skeletonizer
 
