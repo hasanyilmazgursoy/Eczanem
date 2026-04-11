@@ -8,6 +8,7 @@ import 'package:eczanem/src/features/auth/presentation/screens/forgot_password_s
 
 import 'package:eczanem/src/features/home/presentation/screens/home_page.dart';
 import 'package:eczanem/src/features/onboarding/presentation/screens/onboarding_page.dart';
+import 'package:eczanem/src/features/drug/presentation/screens/drug_photo_scan_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_search_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_detail_screen.dart';
 
@@ -44,6 +45,11 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.drugSearch,
       name: 'drugSearch',
       builder: (context, state) => const DrugSearchScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.drugPhotoScan,
+      name: 'drugPhotoScan',
+      builder: (context, state) => const DrugPhotoScanScreen(),
     ),
     GoRoute(
       path: AppRoutes.drugDetail,

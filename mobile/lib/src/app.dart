@@ -16,8 +16,8 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       title: 'Eczanem',
       debugShowCheckedModeBanner: false,
-      theme: buildLightTheme(primaryColorHex: '#2E7D5B'),
-      darkTheme: buildDarkTheme(primaryColorHex: '#2E7D5B'),
+      theme: buildLightTheme(primaryColorHex: '#C62828'),
+      darkTheme: buildDarkTheme(primaryColorHex: '#C62828'),
       themeMode: ThemeMode.system,
       routerConfig: appRouter,
       localizationsDelegates: context.localizationDelegates,

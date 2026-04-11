@@ -46,56 +46,112 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  AppSpacing.xl,
-                  AppSpacing.lg,
-                  AppSpacing.xl,
-                  AppSpacing.sm,
-                ),
-                child: AppCard(
-                  child: Row(
+          SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.xl,
+              AppSpacing.lg,
+              AppSpacing.xl,
+              AppSpacing.xl,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(AppSpacing.xl),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        colorScheme.primary,
+                        colorScheme.primaryContainer,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: AppBorders.card,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CircleAvatar(
-                        radius: 24,
-                        backgroundColor: colorScheme.primaryContainer,
+                        radius: 26,
+                        backgroundColor: colorScheme.onPrimary,
                         child: Icon(
-                          Icons.medication_liquid_rounded,
-                          color: colorScheme.onPrimaryContainer,
+                          Icons.local_pharmacy_rounded,
+                          color: colorScheme.primary,
                         ),
                       ),
-                      SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user?.name ?? 'home.welcome_home'.tr(),
-                              style: textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            SizedBox(height: AppSpacing.xs),
-                            Text(
-                              user?.email ?? 'home.home_subtitle'.tr(),
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
+                      SizedBox(height: AppSpacing.md),
+                      Text(
+                        'home.quick_actions_title'.tr(),
+                        style: textTheme.headlineSmall?.copyWith(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      SizedBox(height: AppSpacing.xs),
+                      Text(
+                        'home.quick_actions_subtitle'.tr(),
+                        style: textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onPrimary.withValues(alpha: 0.88),
+                        ),
+                      ),
+                      SizedBox(height: AppSpacing.lg),
+                      Text(
+                        user?.name ?? 'home.welcome_home'.tr(),
+                        style: textTheme.titleLarge?.copyWith(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: AppSpacing.xs),
+                      Text(
+                        user?.email ?? 'home.home_subtitle'.tr(),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onPrimary.withValues(alpha: 0.84),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              const Expanded(
-                child: DrugSearchContent(showHeader: false),
-              ),
-            ],
+                SizedBox(height: AppSpacing.xl),
+                _QuickActionCard(
+                  icon: Icons.search_rounded,
+                  title: 'home.search_action_title'.tr(),
+                  subtitle: 'home.search_action_subtitle'.tr(),
+                  accentColor: colorScheme.primary,
+                  onTap: () => context.push(AppRoutes.drugSearch),
+                ),
+                SizedBox(height: AppSpacing.md),
+                _QuickActionCard(
+                  icon: Icons.document_scanner_outlined,
+                  title: 'home.scan_action_title'.tr(),
+                  subtitle: 'home.scan_action_subtitle'.tr(),
+                  accentColor: colorScheme.tertiary,
+                  onTap: () => context.push(AppRoutes.drugPhotoScan),
+                ),
+                SizedBox(height: AppSpacing.xl),
+                AppCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'home.phase1_title'.tr(),
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: AppSpacing.sm),
+                      Text(
+                        'home.phase1_subtitle'.tr(),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           SingleChildScrollView(
             padding: EdgeInsets.all(AppSpacing.xl),
@@ -175,6 +231,65 @@ class _HomePageState extends ConsumerState<HomePage> {
             icon: const Icon(Icons.person_rounded),
             label: 'home.profile_tab'.tr(),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickActionCard extends StatelessWidget {
+  const _QuickActionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.accentColor,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color accentColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: accentColor),
+          ),
+          SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: AppSpacing.xs),
+                Text(
+                  subtitle,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: AppSpacing.sm),
+          Icon(Icons.chevron_right_rounded, color: accentColor),
         ],
       ),
     );

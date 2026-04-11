@@ -107,20 +107,26 @@ class AppButton extends StatelessWidget {
             )
           : Row(
               key: const ValueKey('content'),
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (prefixIcon != null) ...[
                   prefixIcon!,
                   const SizedBox(width: 8),
                 ],
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w600,
-                    color: isDisabled
-                        ? fg.withValues(alpha: 0.5)
-                        : textColor ?? fg,
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.w600,
+                      color: isDisabled
+                          ? fg.withValues(alpha: 0.5)
+                          : textColor ?? fg,
+                    ),
                   ),
                 ),
                 if (suffixIcon != null) ...[
