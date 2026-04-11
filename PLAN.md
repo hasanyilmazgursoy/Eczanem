@@ -3,7 +3,7 @@
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
 **Başlangıç Tarihi:** 9 Nisan 2026  
 **Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
-**Durum:** 🟡 Planlama Aşaması
+**Durum:** 🟡 FAZ 1 Devam Ediyor
 
 ---
 
@@ -49,23 +49,23 @@ asistanı uygulaması.
 
 ## FAZ 0 — Proje Altyapısı & Kurulum (3-4 gün)
 
-**Durum:** ⬜ Başlanmadı
+**Durum:** 🟢 Büyük ölçüde tamamlandı
 
 ### Backend (FastAPI)
-- [ ] Proje yapısı: FastAPI + modüler klasör yapısı (routers, services, models, schemas)
-- [ ] OpenRouter entegrasyonu: Gemini modeline istek atan servis katmanı
-- [ ] Environment yönetimi: `.env` ile API key, DB bağlantı bilgileri
+- [x] Proje yapısı: FastAPI + modüler klasör yapısı (routers, services, models, schemas)
+- [x] Gemini modeline istek atan servis katmanı
+- [x] Environment yönetimi: `.env` ile API key, DB bağlantı bilgileri
 - [ ] Docker Compose: FastAPI + PostgreSQL + Redis tek komutla ayağa kalkmalı
-- [ ] CORS ayarları: Flutter'dan gelen isteklere izin
-- [ ] Health check endpoint: `GET /health`
+- [x] CORS ayarları: Flutter'dan gelen isteklere izin
+- [x] Health check endpoint: `GET /health`
 
 ### Flutter (Mobil)
-- [ ] Flutter proje oluşturma: `lib/core`, `lib/features`, `lib/shared`
-- [ ] State management: Riverpod kurulumu
-- [ ] Tema & tasarım sistemi: Renk paleti, tipografi, karanlık/aydınlık mod altyapısı
-- [ ] HTTP client: `dio` paketi ile backend bağlantı katmanı
-- [ ] Local storage: `hive` kurulumu
-- [ ] Navigasyon: `go_router` ile sayfa yönetimi
+- [x] Flutter proje oluşturma: `lib/core`, `lib/features`, `lib/shared`
+- [x] State management: Riverpod kurulumu
+- [x] Tema & tasarım sistemi: Renk paleti, tipografi, karanlık/aydınlık mod altyapısı
+- [x] HTTP client: `dio` paketi ile backend bağlantı katmanı
+- [ ] Local storage: Hive yerine şu an SharedPreferences/SecureStorage kullanılıyor
+- [x] Navigasyon: `go_router` ile sayfa yönetimi
 
 ### Çıktı
 İki taraf da çalışır durumda, birbirine istek atabiliyor.
@@ -74,13 +74,13 @@ asistanı uygulaması.
 
 ## FAZ 1 — Temel İlaç Sorgulama / MVP (1-2 hafta)
 
-**Durum:** ⬜ Başlanmadı
+**Durum:** 🟡 Devam Ediyor (~85%)
 
 ### Backend
-- [ ] `POST /api/drug/search` — İlaç adını alır, OpenRouter/Gemini'ye gönderir
-- [ ] Response yapısı: `{ ilaç_adı, etken_madde, dozaj, kullanım_şekli, yan_etkiler, uyarılar }`
-- [ ] Rate limiting: IP bazlı istek sınırlama
-- [ ] Response cache: Aynı ilaç sorgusu 24 saat Redis cache
+- [x] `POST /api/drug/search` — İlaç adını alır, Gemini'ye gönderir
+- [x] Response yapısı: `{ ilaç_adı, etken_madde, dozaj, kullanım_şekli, yan_etkiler, uyarılar }`
+- [x] Rate limiting: IP bazlı istek sınırlama
+- [ ] Response cache: Şu an bellek içi TTL cache var, 24 saat Redis cache'e henüz geçilmedi
 
 ### Gemini Prompt Tasarımı
 ```
@@ -93,18 +93,18 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 ```
 
 ### Flutter Ekranları
-- [ ] Ana Sayfa: Arama çubuğu + son sorgulanan ilaçlar + alt navigasyon
-- [ ] İlaç Detay: Kartlar halinde bilgiler
-- [ ] Yükleniyor: Skeleton/shimmer efekti
-- [ ] Disclaimer banner: Her ilaç detay ekranında uyarı
+- [x] Ana Sayfa: Arama çubuğu + son sorgulanan ilaçlar + alt navigasyon
+- [x] İlaç Detay: Kartlar halinde bilgiler
+- [x] Yükleniyor: Skeleton/shimmer efekti
+- [x] Disclaimer banner: Her ilaç detay ekranında uyarı
 
 ### Teknik Detaylar
-- Arama debounce (500ms)
-- Arama geçmişi local'de (Hive)
-- Hata yönetimi: internet yok, API hatası, boş sonuç durumları
+- [x] Arama debounce (500ms)
+- [ ] Arama geçmişi local'de (plan Hive diyordu; şu an SharedPreferences ile çalışıyor)
+- [x] Hata yönetimi: internet yok, API hatası, boş sonuç durumları
 
 ### Çıktı
-Çalışan bir ilaç arama uygulaması.
+Çalışan bir ilaç arama uygulaması. Gerçek cihazda çalıştırma, auth ve temel dashboard akışı hazır.
 
 ---
 

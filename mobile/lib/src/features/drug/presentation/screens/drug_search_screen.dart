@@ -27,6 +27,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   final _searchController = TextEditingController();
   final _debouncer = Debouncer();
   bool _isLoading = false;
+  bool _hasSearched = false;
   String? _error;
   List<String> _recentSearches = const [];
 
@@ -64,9 +65,16 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
 
   Future<void> _searchDrug() async {
     final query = _searchController.text.trim();
-    if (query.isEmpty) return;
+    if (query.isEmpty) {
+      setState(() {
+        _hasSearched = false;
+        _error = null;
+      });
+      return;
+    }
 
     setState(() {
+      _hasSearched = true;
       _isLoading = true;
       _error = null;
     });
@@ -77,7 +85,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
 
     result.fold(
       (failure) => setState(() {
-        _error = 'drug_search.error'.tr();
+        _error = _mapFailureToMessage(failure);
         _isLoading = false;
       }),
       (data) {
@@ -86,6 +94,37 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
         context.push(AppRoutes.drugDetail, extra: data);
       },
     );
+  }
+
+  String _mapFailureToMessage(Failure failure) {
+    if (failure is NetworkFailure) {
+      return 'drug_search.network_error'.tr();
+    }
+
+    final message = failure.message.toLowerCase();
+
+    if (message.contains('429') ||
+        message.contains('çok fazla') ||
+        message.contains('too many')) {
+      return 'drug_search.rate_limit_error'.tr();
+    }
+
+    if (message.contains('timed out') || message.contains('timeout')) {
+      return 'drug_search.timeout_error'.tr();
+    }
+
+    if (message.contains('unable to reach the server') ||
+        message.contains('connection') ||
+        message.contains('socketexception')) {
+      return 'drug_search.network_error'.tr();
+    }
+
+    return 'drug_search.error'.tr();
+  }
+
+  void _searchRecent(String query) {
+    _searchController.text = query;
+    _searchDrug();
   }
 
   @override
@@ -109,9 +148,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
             ],
             _buildSearchButton(),
             SizedBox(height: AppSpacing.md),
-            if (_error != null) _buildError(),
-            if (_isLoading) _buildLoadingSkeleton(),
-            if (!_isLoading && _error == null) _buildEmptyState(),
+            Expanded(child: _buildBodyState()),
           ],
         ),
       ),
@@ -184,10 +221,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
                 (query) => ActionChip(
                   label: Text(query),
                   avatar: const Icon(Icons.history, size: 18),
-                  onPressed: () {
-                    _searchController.text = query;
-                    _searchDrug();
-                  },
+                  onPressed: () => _searchRecent(query),
                 ),
               )
               .toList(),
@@ -210,21 +244,21 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
 
   Widget _buildError() {
     return AppErrorWidget(
+      title: 'drug_search.error_title'.tr(),
       message: _error!,
       onRetry: _searchDrug,
+      retryLabel: 'shared.try_again'.tr(),
     );
   }
 
   Widget _buildLoadingSkeleton() {
-    return Expanded(
-      child: Skeletonizer(
-        child: ListView.builder(
-          itemCount: 4,
-          itemBuilder: (_, __) => Padding(
-            padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
-            child: AppCard(
-              child: SizedBox(height: 80.h),
-            ),
+    return Skeletonizer(
+      child: ListView.builder(
+        itemCount: 4,
+        itemBuilder: (_, __) => Padding(
+          padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+          child: AppCard(
+            child: SizedBox(height: 80.h),
           ),
         ),
       ),
@@ -232,11 +266,37 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   }
 
   Widget _buildEmptyState() {
-    return Expanded(
-      child: AppEmptyState(
-        icon: Icons.local_pharmacy_outlined,
-        title: 'drug_search.empty_hint'.tr(),
-      ),
+    final currentQuery = _searchController.text.trim();
+    final hasTypedQuery = currentQuery.isNotEmpty;
+    final shouldSuggestRecent =
+        !_hasSearched && !hasTypedQuery && _recentSearches.isNotEmpty;
+
+    return AppEmptyState(
+      icon: Icons.local_pharmacy_outlined,
+      title: hasTypedQuery && currentQuery.length < 3
+          ? 'drug_search.min_length_title'.tr()
+          : 'drug_search.empty_hint'.tr(),
+      subtitle: shouldSuggestRecent
+          ? 'drug_search.empty_with_recent_subtitle'.tr()
+          : hasTypedQuery && currentQuery.length < 3
+              ? 'drug_search.min_length_subtitle'.tr()
+              : 'drug_search.empty_subtitle'.tr(),
+      actionLabel: shouldSuggestRecent ? 'drug_search.search_last'.tr() : null,
+      onAction: shouldSuggestRecent
+          ? () => _searchRecent(_recentSearches.first)
+          : null,
     );
+  }
+
+  Widget _buildBodyState() {
+    if (_isLoading) {
+      return _buildLoadingSkeleton();
+    }
+
+    if (_error != null) {
+      return _buildError();
+    }
+
+    return _buildEmptyState();
   }
 }

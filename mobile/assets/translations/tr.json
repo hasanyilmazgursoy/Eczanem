@@ -1,6 +1,7 @@
 {
     "shared": {
-        "get_started": "Başla"
+        "get_started": "Başla",
+        "try_again": "Tekrar Dene"
     },
     "onboarding": {
         "onboarding_title_1": "İlaçlarınız,\nKontrolünüz Altında",
@@ -57,7 +58,16 @@
         "search_button": "İlaç Ara",
         "searching": "Aranıyor...",
         "error": "İlaç bilgisi alınamadı. Lütfen tekrar deneyin.",
+        "error_title": "Arama tamamlanamadı",
+        "network_error": "Sunucuya ulaşılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.",
+        "rate_limit_error": "Çok sık arama yaptınız. Kısa bir süre bekleyip yeniden deneyin.",
+        "timeout_error": "İstek zaman aşımına uğradı. Lütfen tekrar deneyin.",
         "empty_hint": "İlaç adı yazarak bilgi alabilirsiniz",
+        "empty_subtitle": "Arama kutusuna en az 3 karakter yazarak ilaç bilgisine hızlıca ulaşın.",
+        "empty_with_recent_subtitle": "İsterseniz son aramalarınızdan biriyle kaldığınız yerden devam edebilirsiniz.",
+        "min_length_title": "Biraz daha yazın",
+        "min_length_subtitle": "Otomatik arama için en az 3 karakter girin ya da arama düğmesine basın.",
+        "search_last": "Son aramayı kullan",
         "take_photo": "Fotoğraf Çek",
         "recent_title": "Son aramalar"
     },

@@ -1,6 +1,7 @@
 {
   "shared": {
-    "get_started": "Get Started"
+    "get_started": "Get Started",
+    "try_again": "Try Again"
   },
   "onboarding": {
     "onboarding_title_1": "Your Journey,\nPerfectly Planned",
@@ -57,7 +58,16 @@
     "search_button": "Search Medicine",
     "searching": "Searching...",
     "error": "Could not fetch medicine information. Please try again.",
+    "error_title": "Search could not be completed",
+    "network_error": "Unable to reach the server. Check your internet connection and try again.",
+    "rate_limit_error": "You searched too frequently. Please wait a moment and try again.",
+    "timeout_error": "The request timed out. Please try again.",
     "empty_hint": "Type a medicine name to get information",
+    "empty_subtitle": "Type at least 3 characters in the search box to quickly reach medicine details.",
+    "empty_with_recent_subtitle": "You can continue from one of your recent searches if you like.",
+    "min_length_title": "Type a little more",
+    "min_length_subtitle": "Enter at least 3 characters for automatic search or tap the search button.",
+    "search_last": "Use last search",
     "take_photo": "Take Photo",
     "recent_title": "Recent searches"
   },

@@ -16,12 +16,14 @@ class AppErrorWidget extends StatelessWidget {
     this.title = 'Something went wrong',
     this.message,
     this.onRetry,
+    this.retryLabel = 'Try Again',
     this.icon = Icons.error_outline_rounded,
   });
 
   final String title;
   final String? message;
   final VoidCallback? onRetry;
+  final String retryLabel;
   final IconData icon;
 
   @override
@@ -56,7 +58,7 @@ class AppErrorWidget extends StatelessWidget {
             if (onRetry != null) ...[
               const SizedBox(height: 24),
               AppButton(
-                label: 'Try Again',
+                label: retryLabel,
                 onPressed: onRetry,
                 variant: ButtonVariant.outline,
               ),
