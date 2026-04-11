@@ -1,6 +1,10 @@
 # =====================
 # Python / FastAPI
 # =====================
+
+# Referans mimari klasörü (arkadaştan gelen scaffold, repo'ya alınmaz)
+eczanem/
+
 __pycache__/
 *.py[cod]
 *$py.class

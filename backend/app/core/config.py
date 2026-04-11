@@ -1,13 +1,17 @@
 """Eczanem Backend — Uygulama yapılandırması."""
 
+from pathlib import Path
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 
+# backend klasörünün yolu (.env dosyası burada)
+BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
+
 
 class Settings(BaseSettings):
-    # OpenRouter
-    openrouter_api_key: str = ""
-    openrouter_model: str = "google/gemini-2.0-flash-001"
+    # Google AI Studio (Gemini)
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.0-flash"
 
     # PostgreSQL
     postgres_host: str = "localhost"
@@ -36,7 +40,10 @@ class Settings(BaseSettings):
     def redis_url(self) -> str:
         return f"redis://{self.redis_host}:{self.redis_port}"
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {
+        "env_file": str(BACKEND_DIR / ".env"),
+        "env_file_encoding": "utf-8",
+    }
 
 
 @lru_cache

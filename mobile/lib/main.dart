@@ -1,29 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'src/imports/core_imports.dart';
+import 'src/imports/packages_imports.dart';
+import 'src/app.dart';
 
-import 'core/router.dart';
-import 'core/theme.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
+Future<void> main() async {
+  final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  
+  await EasyLocalization.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+  
+  await AppConfig.init();
 
-  runApp(const ProviderScope(child: EczanemApp()));
-}
-
-class EczanemApp extends StatelessWidget {
-  const EczanemApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Eczanem',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      routerConfig: appRouter,
-    );
-  }
+  runApp(
+    const LocalizationWrapper(
+      child: StateWrapper(
+        child: App(),
+      ),
+    ),
+  );
 }

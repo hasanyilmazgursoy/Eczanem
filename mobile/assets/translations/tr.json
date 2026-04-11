@@ -1,0 +1,67 @@
+{
+    "shared": {
+        "get_started": "Başla"
+    },
+    "onboarding": {
+        "onboarding_title_1": "İlaçlarınız,\nKontrolünüz Altında",
+        "onboarding_subtitle_1": "İlaçlarınızı kolayca arayın,\nbilgi edinin ve takip edin.",
+        "onboarding_title_2": "Aile İçin\nSağlık Asistanı",
+        "onboarding_subtitle_2": "Aile bireylerinin ilaçlarını tek\nuygulamadan yönetin.",
+        "onboarding_title_3": "Güvenli ve\nGüncel Bilgi",
+        "onboarding_subtitle_3": "Yapay zeka destekli ilaç bilgisi ile\nher zaman güvenilir sonuçlar alın."
+    },
+    "home": {
+        "home_title": "Ana Sayfa",
+        "welcome_home": "Hoş Geldiniz!",
+        "home_subtitle": "Eczanem - Kişisel İlaç Asistanınız"
+    },
+    "auth": {
+        "log_in": "Giriş Yap",
+        "log_in_subtitle": "E-posta ve şifrenizi girin",
+        "email": "E-posta",
+        "email_required": "E-posta gerekli",
+        "email_invalid": "Geçerli bir e-posta girin",
+        "password": "Şifre",
+        "password_required": "Şifre gerekli",
+        "password_too_short": "Şifre en az 6 karakter olmalı",
+        "remember_me": "Beni Hatırla",
+        "forgot_password": "Şifremi Unuttum",
+        "login_button": "Giriş Yap",
+        "dont_have_account": "Hesabınız yok mu? ",
+        "sign_up": "Kayıt Ol",
+        "create_account": "Hesap Oluştur",
+        "create_account_subtitle": "Başlamak için yeni bir hesap oluşturun.",
+        "name": "Ad Soyad",
+        "name_required": "Ad Soyad gerekli",
+        "confirm_password": "Şifre Tekrar",
+        "confirm_password_required": "Şifre tekrarı gerekli",
+        "passwords_do_not_match": "Şifreler uyuşmuyor",
+        "create_account_button": "Hesap Oluştur",
+        "already_have_account": "Zaten hesabınız var mı? ",
+        "sign_in": "Giriş Yap",
+        "or_continue_with": "Veya Şununla Devam Et",
+        "forgot_password_title": "Şifremi Unuttum",
+        "forgot_password_subtitle": "Şifre sıfırlama bağlantısı almak için\ne-posta adresinizi girin.",
+        "reset_link_sent": "Şifre sıfırlama bağlantısı e-postanıza gönderildi."
+    },
+    "drug_search": {
+        "title": "İlaç Ara",
+        "search_hint": "İlaç adı yazın... (örn: Aspirin)",
+        "search_button": "İlaç Ara",
+        "searching": "Aranıyor...",
+        "error": "İlaç bilgisi alınamadı. Lütfen tekrar deneyin.",
+        "empty_hint": "İlaç adı yazarak bilgi alabilirsiniz",
+        "take_photo": "Fotoğraf Çek"
+    },
+    "drug_detail": {
+        "title": "İlaç Bilgisi",
+        "active_ingredient": "Etken Madde",
+        "usage": "Ne İçin Kullanılır",
+        "dosage": "Dozaj Bilgisi",
+        "how_to_use": "Kullanım Şekli",
+        "side_effects": "Yan Etkiler",
+        "warnings": "Uyarılar",
+        "contraindications": "Kimler Kullanmamalı",
+        "disclaimer": "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
+    }
+}

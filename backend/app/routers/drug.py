@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from app.services.openrouter_service import query_drug_info
+from app.services.gemini_service import query_drug_info
 
 router = APIRouter()
 
