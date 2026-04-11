@@ -8,16 +8,25 @@ class DrugDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final drugName =
+        (drugData['ilac_adi'] ?? 'drug_detail.title'.tr()).toString();
+    final activeIngredient = (drugData['etken_madde'] ?? '-').toString();
+
     return Scaffold(
-      appBar:
-          AppTopBar(title: drugData['ilac_adi'] ?? 'drug_detail.title'.tr()),
+      appBar: AppTopBar(title: drugName),
       body: ListView(
         padding: EdgeInsets.all(AppSpacing.md),
         children: [
+          _DrugHeroCard(
+            drugName: drugName,
+            activeIngredient: activeIngredient,
+          ),
+          SizedBox(height: AppSpacing.md),
           // Sorumluluk reddi
           AppCard(
             color: context.colors.tertiaryContainer,
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(Icons.info_outline,
                     size: 20, color: context.colors.onTertiaryContainer),
@@ -39,7 +48,7 @@ class DrugDetailScreen extends StatelessWidget {
           _InfoCard(
             icon: Icons.science_outlined,
             title: 'drug_detail.active_ingredient'.tr(),
-            content: drugData['etken_madde'] ?? '-',
+            content: activeIngredient,
             color: context.colors.primary,
           ),
 
@@ -122,20 +131,34 @@ class _InfoCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: AppSpacing.sm),
       child: AppCard(
+        showShadow: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Icon(icon, color: color, size: 22),
-              SizedBox(width: AppSpacing.sm),
-              Text(
-                title,
-                style: context.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
                 ),
-              ),
-            ]),
+                SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: AppSpacing.sm),
             Text(content, style: context.textTheme.bodyMedium),
           ],
@@ -166,20 +189,34 @@ class _ListCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: AppSpacing.sm),
       child: AppCard(
+        showShadow: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Icon(icon, color: color, size: 22),
-              SizedBox(width: AppSpacing.sm),
-              Text(
-                title,
-                style: context.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
                 ),
-              ),
-            ]),
+                SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: AppSpacing.sm),
             ...items.map((item) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2),
@@ -193,6 +230,77 @@ class _ListCard extends StatelessWidget {
                 )),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _DrugHeroCard extends StatelessWidget {
+  const _DrugHeroCard({
+    required this.drugName,
+    required this.activeIngredient,
+  });
+
+  final String drugName;
+  final String activeIngredient;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = context.colors;
+
+    return Container(
+      padding: EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            colorScheme.primary,
+            colorScheme.primaryContainer,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: AppBorders.card,
+        boxShadow: AppShadows.card,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: colorScheme.onPrimary,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(
+              Icons.medication_liquid_outlined,
+              color: colorScheme.primary,
+            ),
+          ),
+          SizedBox(height: AppSpacing.md),
+          Text(
+            drugName,
+            style: context.textTheme.headlineSmall?.copyWith(
+              color: colorScheme.onPrimary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          SizedBox(height: AppSpacing.sm),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.16),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              '${'drug_detail.active_ingredient'.tr()}: $activeIngredient',
+              style: context.textTheme.labelLarge?.copyWith(
+                color: colorScheme.onPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

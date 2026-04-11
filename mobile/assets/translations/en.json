@@ -127,6 +127,15 @@
     "prospectus_precautions_title": "Precautions",
     "prospectus_storage_title": "Storage conditions",
     "prospectus_doctor_title": "When to contact a doctor",
+    "scan_mode_medicine_badge": "Medicine identification mode",
+    "scan_mode_prospectus_badge": "Prospectus mode",
+    "flow_step_select_title": "Choose image",
+    "flow_step_select_subtitle": "Capture with the camera or upload from the gallery.",
+    "flow_step_analyze_title": "Start analysis",
+    "flow_step_analyze_medicine_subtitle": "Extract the medicine name, dosage, and key details.",
+    "flow_step_analyze_prospectus_subtitle": "Create a readable summary grouped by headings.",
+    "analysis_hint_medicine": "Medicine identification depends on image quality; multiple candidates may be shown when certainty is low.",
+    "analysis_hint_prospectus": "The summary is generated from readable content only; the system avoids guessing when sections are unclear.",
     "recent_title": "Recent searches"
   },
   "drug_detail": {

@@ -11,16 +11,22 @@ class DrugProspectusSummaryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final medicineName = summaryData['ilac_adi']?.toString().trim();
+    final displayName = medicineName?.isNotEmpty ?? false
+        ? medicineName!
+        : 'drug_search.prospectus_summary_title'.tr();
 
     return Scaffold(
       appBar: AppTopBar(
-        title: medicineName?.isNotEmpty ?? false
-            ? medicineName!
-            : 'drug_search.prospectus_summary_title'.tr(),
+        title: displayName,
       ),
       body: ListView(
         padding: EdgeInsets.all(AppSpacing.md),
         children: [
+          _ProspectusHeroCard(
+            title: displayName,
+            type: (summaryData['prospektus_turu'] ?? '-').toString(),
+          ),
+          SizedBox(height: AppSpacing.md),
           AppCard(
             color: context.colors.tertiaryContainer,
             child: Row(
@@ -121,6 +127,7 @@ class _SummaryInfoCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: AppSpacing.sm),
       child: AppCard(
+        showShadow: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -168,6 +175,7 @@ class _SummaryListCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: AppSpacing.sm),
       child: AppCard(
+        showShadow: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -199,6 +207,77 @@ class _SummaryListCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ProspectusHeroCard extends StatelessWidget {
+  const _ProspectusHeroCard({
+    required this.title,
+    required this.type,
+  });
+
+  final String title;
+  final String type;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = context.colors;
+
+    return Container(
+      padding: EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            colorScheme.secondary,
+            colorScheme.secondaryContainer,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: AppBorders.card,
+        boxShadow: AppShadows.card,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: colorScheme.onSecondary,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(
+              Icons.description_outlined,
+              color: colorScheme.secondary,
+            ),
+          ),
+          SizedBox(height: AppSpacing.md),
+          Text(
+            title,
+            style: context.textTheme.headlineSmall?.copyWith(
+              color: colorScheme.onSecondary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          SizedBox(height: AppSpacing.sm),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.16),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              '${'drug_search.prospectus_type_title'.tr()}: $type',
+              style: context.textTheme.labelLarge?.copyWith(
+                color: colorScheme.onSecondary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

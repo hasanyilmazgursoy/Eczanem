@@ -56,69 +56,31 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  padding: EdgeInsets.all(AppSpacing.xl),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        colorScheme.primary,
-                        colorScheme.primaryContainer,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: AppBorders.card,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 26,
-                        backgroundColor: colorScheme.onPrimary,
-                        child: Icon(
-                          Icons.local_pharmacy_rounded,
-                          color: colorScheme.primary,
-                        ),
-                      ),
-                      SizedBox(height: AppSpacing.md),
-                      Text(
-                        'home.quick_actions_title'.tr(),
-                        style: textTheme.headlineSmall?.copyWith(
-                          color: colorScheme.onPrimary,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'home.quick_actions_subtitle'.tr(),
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onPrimary.withValues(alpha: 0.88),
-                        ),
-                      ),
-                      SizedBox(height: AppSpacing.lg),
-                      Text(
-                        user?.name ?? 'home.welcome_home'.tr(),
-                        style: textTheme.titleLarge?.copyWith(
-                          color: colorScheme.onPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: AppSpacing.xs),
-                      Text(
-                        user?.email ?? 'home.home_subtitle'.tr(),
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onPrimary.withValues(alpha: 0.84),
-                        ),
-                      ),
-                    ],
-                  ),
+                _HomeHeroCard(
+                  userName: user?.name ?? 'home.welcome_home'.tr(),
+                  userEmail: user?.email ?? 'home.home_subtitle'.tr(),
                 ),
                 SizedBox(height: AppSpacing.xl),
+                Text(
+                  'home.quick_actions_title'.tr(),
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                SizedBox(height: AppSpacing.xs),
+                Text(
+                  'home.quick_actions_subtitle'.tr(),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                SizedBox(height: AppSpacing.lg),
                 _QuickActionCard(
                   icon: Icons.search_rounded,
                   title: 'home.search_action_title'.tr(),
                   subtitle: 'home.search_action_subtitle'.tr(),
                   accentColor: colorScheme.primary,
+                  badge: 'AI',
                   onTap: () => context.push(AppRoutes.drugSearch),
                 ),
                 SizedBox(height: AppSpacing.md),
@@ -127,18 +89,39 @@ class _HomePageState extends ConsumerState<HomePage> {
                   title: 'home.scan_action_title'.tr(),
                   subtitle: 'home.scan_action_subtitle'.tr(),
                   accentColor: colorScheme.tertiary,
+                  badge: 'FAZ 2',
                   onTap: () => context.push(AppRoutes.drugPhotoScan),
                 ),
                 SizedBox(height: AppSpacing.xl),
                 AppCard(
+                  showShadow: true,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'home.phase1_title'.tr(),
-                        style: textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Icon(
+                              Icons.verified_user_outlined,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                          SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: Text(
+                              'home.phase1_title'.tr(),
+                              style: textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: AppSpacing.sm),
                       Text(
@@ -146,6 +129,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                         style: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
+                      ),
+                      SizedBox(height: AppSpacing.md),
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
+                        children: const [
+                          _StatusPill(label: 'Kamera tarama'),
+                          _StatusPill(label: 'Prospektüs özeti'),
+                          _StatusPill(label: 'Çoklu aday'),
+                        ],
                       ),
                     ],
                   ),
@@ -244,6 +237,7 @@ class _QuickActionCard extends StatelessWidget {
     required this.subtitle,
     required this.accentColor,
     required this.onTap,
+    this.badge,
   });
 
   final IconData icon;
@@ -251,12 +245,15 @@ class _QuickActionCard extends StatelessWidget {
   final String subtitle;
   final Color accentColor;
   final VoidCallback onTap;
+  final String? badge;
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
+      showShadow: true,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 56,
@@ -272,11 +269,21 @@ class _QuickActionCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: context.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: context.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    if (badge != null) ...[
+                      SizedBox(width: AppSpacing.sm),
+                      _ActionBadge(label: badge!, accentColor: accentColor),
+                    ],
+                  ],
                 ),
                 SizedBox(height: AppSpacing.xs),
                 Text(
@@ -291,6 +298,184 @@ class _QuickActionCard extends StatelessWidget {
           SizedBox(width: AppSpacing.sm),
           Icon(Icons.chevron_right_rounded, color: accentColor),
         ],
+      ),
+    );
+  }
+}
+
+class _HomeHeroCard extends StatelessWidget {
+  const _HomeHeroCard({
+    required this.userName,
+    required this.userEmail,
+  });
+
+  final String userName;
+  final String userEmail;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = context.colors;
+
+    return Container(
+      padding: EdgeInsets.all(AppSpacing.xl),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            colorScheme.primary,
+            colorScheme.primaryContainer,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: AppBorders.card,
+        boxShadow: AppShadows.card,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 26,
+                backgroundColor: colorScheme.onPrimary,
+                child: Icon(
+                  Icons.local_pharmacy_rounded,
+                  color: colorScheme.primary,
+                ),
+              ),
+              SizedBox(width: AppSpacing.md),
+              const Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.end,
+                  children: [
+                    _HeroChip(
+                      icon: Icons.health_and_safety_outlined,
+                      label: 'Guvenilir bilgi',
+                    ),
+                    _HeroChip(
+                      icon: Icons.bolt_outlined,
+                      label: 'Hizli tarama',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: AppSpacing.lg),
+          Text(
+            userName,
+            style: context.textTheme.headlineSmall?.copyWith(
+              color: colorScheme.onPrimary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          SizedBox(height: AppSpacing.xs),
+          Text(
+            userEmail,
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onPrimary.withValues(alpha: 0.9),
+            ),
+          ),
+          SizedBox(height: AppSpacing.lg),
+          Text(
+            'home.quick_actions_title'.tr(),
+            style: context.textTheme.titleLarge?.copyWith(
+              color: colorScheme.onPrimary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          SizedBox(height: AppSpacing.xs),
+          Text(
+            'home.quick_actions_subtitle'.tr(),
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onPrimary.withValues(alpha: 0.84),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeroChip extends StatelessWidget {
+  const _HeroChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: context.textTheme.labelMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionBadge extends StatelessWidget {
+  const _ActionBadge({required this.label, required this.accentColor});
+
+  final String label;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: accentColor.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: context.textTheme.labelMedium?.copyWith(
+          color: accentColor,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: context.textTheme.labelMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

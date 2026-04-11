@@ -127,6 +127,15 @@
         "prospectus_precautions_title": "Dikkat edilmesi gerekenler",
         "prospectus_storage_title": "Saklama koşulları",
         "prospectus_doctor_title": "Ne zaman doktora başvurulmalı",
+        "scan_mode_medicine_badge": "İlaç tanıma modu",
+        "scan_mode_prospectus_badge": "Prospektüs modu",
+        "flow_step_select_title": "Görsel seç",
+        "flow_step_select_subtitle": "Kamera ile çekin veya galeriden yükleyin.",
+        "flow_step_analyze_title": "Analizi başlat",
+        "flow_step_analyze_medicine_subtitle": "İlaç adını, dozu ve temel bilgileri çıkarın.",
+        "flow_step_analyze_prospectus_subtitle": "Başlıklar halinde okunabilir özet oluşturun.",
+        "analysis_hint_medicine": "İlaç tanıma sonucu görsel kaliteye bağlıdır; emin olunmayan durumlarda birden fazla aday gösterilebilir.",
+        "analysis_hint_prospectus": "Görsel okunabildiği ölçüde özet üretilir; net olmayan alanlarda sistem tahminde bulunmaz.",
         "recent_title": "Son aramalar"
     },
     "drug_detail": {

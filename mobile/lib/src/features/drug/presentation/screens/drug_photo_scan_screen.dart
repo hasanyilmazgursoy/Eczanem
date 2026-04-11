@@ -209,17 +209,47 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onPrimary,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Icon(
-                    Icons.document_scanner_outlined,
-                    color: colorScheme.primary,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: colorScheme.onPrimary,
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Icon(
+                        Icons.document_scanner_outlined,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                    SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.16),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            isProspectusMode
+                                ? 'drug_search.scan_mode_prospectus_badge'.tr()
+                                : 'drug_search.scan_mode_medicine_badge'.tr(),
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: colorScheme.onPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: AppSpacing.md),
                 Text(
@@ -243,6 +273,7 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
           ),
           SizedBox(height: AppSpacing.xl),
           AppCard(
+            showShadow: true,
             title: 'drug_search.scan_mode_title'.tr(),
             subtitle: 'drug_search.scan_mode_subtitle'.tr(),
             child: Wrap(
@@ -274,7 +305,38 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
           ),
           SizedBox(height: AppSpacing.xl),
           AppCard(
+            showShadow: true,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _FlowStepCard(
+                    stepNumber: '1',
+                    title: 'drug_search.flow_step_select_title'.tr(),
+                    subtitle: 'drug_search.flow_step_select_subtitle'.tr(),
+                    icon: Icons.add_a_photo_outlined,
+                  ),
+                ),
+                SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: _FlowStepCard(
+                    stepNumber: '2',
+                    title: 'drug_search.flow_step_analyze_title'.tr(),
+                    subtitle: isProspectusMode
+                        ? 'drug_search.flow_step_analyze_prospectus_subtitle'
+                            .tr()
+                        : 'drug_search.flow_step_analyze_medicine_subtitle'
+                            .tr(),
+                    icon: Icons.auto_awesome_outlined,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.xl),
+          AppCard(
             title: 'drug_search.photo_tips_title'.tr(),
+            showShadow: true,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -288,6 +350,7 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
           ),
           SizedBox(height: AppSpacing.xl),
           AppCard(
+            showShadow: true,
             title: isProspectusMode
                 ? 'drug_search.prospectus_card_title'.tr()
                 : 'drug_search.image_card_title'.tr(),
@@ -301,6 +364,36 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                   _SelectedImagePreview(selectedImage: _selectedImage!)
                 else
                   _ImageEmptyState(),
+                SizedBox(height: AppSpacing.md),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: context.colors.surfaceContainerHighest,
+                    borderRadius: AppBorders.card,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.shield_outlined,
+                        size: 20,
+                        color: context.colors.primary,
+                      ),
+                      SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          isProspectusMode
+                              ? 'drug_search.analysis_hint_prospectus'.tr()
+                              : 'drug_search.analysis_hint_medicine'.tr(),
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: context.colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 if (_imageError != null) ...[
                   SizedBox(height: AppSpacing.md),
                   _ImageErrorBanner(message: _imageError!),
@@ -447,6 +540,67 @@ class _SelectedImagePreview extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _FlowStepCard extends StatelessWidget {
+  const _FlowStepCard({
+    required this.stepNumber,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
+
+  final String stepNumber;
+  final String title;
+  final String subtitle;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceContainerHighest,
+        borderRadius: AppBorders.card,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 14,
+                backgroundColor: context.colors.primary,
+                child: Text(
+                  stepNumber,
+                  style: context.textTheme.labelMedium?.copyWith(
+                    color: context.colors.onPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Icon(icon, color: context.colors.primary),
+            ],
+          ),
+          SizedBox(height: AppSpacing.sm),
+          Text(
+            title,
+            style: context.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          SizedBox(height: AppSpacing.xs),
+          Text(
+            subtitle,
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
