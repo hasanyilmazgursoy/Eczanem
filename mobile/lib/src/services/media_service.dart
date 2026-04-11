@@ -45,6 +45,11 @@ class MediaService {
     });
   }
 
+  /// Kamera ekranı gibi özel akışlardan gelen görselleri de yükleme öncesi optimize eder.
+  Future<File> optimizeImageForUpload(File file) {
+    return _optimizeImage(file);
+  }
+
   /// Pick multiple images from gallery.
   FutureEither<List<File>> pickMultiImage({
     double? maxWidth,

@@ -3,6 +3,8 @@ import 'dart:io';
 import '../../../../imports/imports.dart';
 import '../../data/drug_repository.dart';
 
+enum _DrugPhotoScanMode { medicine, prospectus }
+
 class DrugPhotoScanScreen extends ConsumerStatefulWidget {
   const DrugPhotoScanScreen({super.key});
 
@@ -15,6 +17,7 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
   bool _isImageLoading = false;
   String? _imageError;
   File? _selectedImage;
+  _DrugPhotoScanMode _scanMode = _DrugPhotoScanMode.medicine;
 
   String _mapImageFailureToMessage(Failure failure) {
     if (failure is NetworkFailure) {
@@ -89,6 +92,25 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
     );
   }
 
+  Future<void> _openCameraCapture() async {
+    final capturedImage =
+        await context.push<File?>(AppRoutes.drugCameraCapture);
+
+    if (!mounted || capturedImage == null) {
+      return;
+    }
+
+    setState(() {
+      _selectedImage = capturedImage;
+      _imageError = null;
+    });
+
+    context.showTypedSnackBar(
+      'drug_search.image_ready'.tr(),
+      type: SnackBarType.success,
+    );
+  }
+
   Future<void> _analyzeSelectedImage() async {
     final selectedImage = _selectedImage;
     if (selectedImage == null) {
@@ -103,8 +125,9 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
       _imageError = null;
     });
 
-    final result =
-        await DrugRepository.instance.analyzeDrugImage(selectedImage);
+    final result = _scanMode == _DrugPhotoScanMode.medicine
+        ? await DrugRepository.instance.analyzeDrugImage(selectedImage)
+        : await DrugRepository.instance.summarizeProspectus(selectedImage);
 
     if (!mounted) return;
 
@@ -117,9 +140,40 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
       },
       (data) {
         setState(() => _isImageLoading = false);
+
+        if (_scanMode == _DrugPhotoScanMode.prospectus) {
+          context.push(AppRoutes.drugProspectusSummary, extra: data);
+          return;
+        }
+
+        final candidates = _resolveCandidates(data);
+        if (candidates.isNotEmpty) {
+          context.push(AppRoutes.drugImageCandidates, extra: data);
+          return;
+        }
+
         context.push(AppRoutes.drugDetail, extra: data);
       },
     );
+  }
+
+  List<String> _resolveCandidates(Map<String, dynamic> data) {
+    final rawCandidates = data['aday_ilaclar'];
+    if (rawCandidates is! List) {
+      return [];
+    }
+
+    final primaryName =
+        (data['ilac_adi'] ?? '').toString().trim().toLowerCase();
+
+    final normalized = rawCandidates
+        .map((candidate) => candidate.toString().trim())
+        .where((candidate) => candidate.isNotEmpty)
+        .where((candidate) => candidate.toLowerCase() != primaryName)
+        .toSet()
+        .toList();
+
+    return normalized;
   }
 
   void _clearSelectedImage() {
@@ -132,6 +186,7 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.colors;
+    final isProspectusMode = _scanMode == _DrugPhotoScanMode.prospectus;
 
     return Scaffold(
       appBar: AppTopBar(title: 'drug_search.photo_screen_title'.tr()),
@@ -176,10 +231,43 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                 ),
                 SizedBox(height: AppSpacing.xs),
                 Text(
-                  'drug_search.photo_screen_subtitle'.tr(),
+                  isProspectusMode
+                      ? 'drug_search.prospectus_mode_subtitle'.tr()
+                      : 'drug_search.photo_screen_subtitle'.tr(),
                   style: context.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onPrimary.withValues(alpha: 0.88),
                   ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.xl),
+          AppCard(
+            title: 'drug_search.scan_mode_title'.tr(),
+            subtitle: 'drug_search.scan_mode_subtitle'.tr(),
+            child: Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                ChoiceChip(
+                  label: Text('drug_search.scan_mode_medicine'.tr()),
+                  selected: _scanMode == _DrugPhotoScanMode.medicine,
+                  onSelected: (_) {
+                    setState(() {
+                      _scanMode = _DrugPhotoScanMode.medicine;
+                      _imageError = null;
+                    });
+                  },
+                ),
+                ChoiceChip(
+                  label: Text('drug_search.scan_mode_prospectus'.tr()),
+                  selected: _scanMode == _DrugPhotoScanMode.prospectus,
+                  onSelected: (_) {
+                    setState(() {
+                      _scanMode = _DrugPhotoScanMode.prospectus;
+                      _imageError = null;
+                    });
+                  },
                 ),
               ],
             ),
@@ -200,8 +288,12 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
           ),
           SizedBox(height: AppSpacing.xl),
           AppCard(
-            title: 'drug_search.image_card_title'.tr(),
-            subtitle: 'drug_search.image_card_subtitle'.tr(),
+            title: isProspectusMode
+                ? 'drug_search.prospectus_card_title'.tr()
+                : 'drug_search.image_card_title'.tr(),
+            subtitle: isProspectusMode
+                ? 'drug_search.prospectus_card_subtitle'.tr()
+                : 'drug_search.image_card_subtitle'.tr(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -216,9 +308,7 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                 SizedBox(height: AppSpacing.md),
                 AppButton(
                   label: 'drug_search.take_photo'.tr(),
-                  onPressed: _isImageLoading
-                      ? null
-                      : () => _pickImage(ImageSource.camera),
+                  onPressed: _isImageLoading ? null : _openCameraCapture,
                   variant: ButtonVariant.outline,
                   prefixIcon: const Icon(Icons.photo_camera_outlined),
                   isFullWidth: true,
@@ -237,8 +327,12 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                   SizedBox(height: AppSpacing.md),
                   AppButton(
                     label: _isImageLoading
-                        ? 'drug_search.analyzing_image'.tr()
-                        : 'drug_search.analyze_image'.tr(),
+                        ? isProspectusMode
+                            ? 'drug_search.analyzing_prospectus'.tr()
+                            : 'drug_search.analyzing_image'.tr()
+                        : isProspectusMode
+                            ? 'drug_search.summarize_prospectus'.tr()
+                            : 'drug_search.analyze_image'.tr(),
                     onPressed: _isImageLoading ? null : _analyzeSelectedImage,
                     isLoading: _isImageLoading,
                     isFullWidth: true,

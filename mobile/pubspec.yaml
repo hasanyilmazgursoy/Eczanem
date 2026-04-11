@@ -51,6 +51,7 @@ dependencies:
   logger: ^2.6.2
 
   # Media
+  camera: ^0.11.2+1
   image_picker: ^1.2.1
   file_picker: ^10.3.10
 

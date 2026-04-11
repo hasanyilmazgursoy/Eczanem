@@ -27,22 +27,39 @@ class DrugRepository {
   FutureEither<Map<String, dynamic>> analyzeDrugImage(File imageFile) async {
     final response = await _dio.post(
       '/api/drug/analyze-image',
-      data: FormData.fromMap(
-        {
-          'file': await MultipartFile.fromFile(
-            imageFile.path,
-            filename: imageFile.uri.pathSegments.isNotEmpty
-                ? imageFile.uri.pathSegments.last
-                : 'drug-image.jpg',
-            contentType: _resolveMediaType(imageFile.path),
-          ),
-        },
-      ),
+      data: await _buildImageUploadFormData(imageFile),
     );
 
     return response.fold(
       (failure) => left(failure),
       (response) => right(response.data as Map<String, dynamic>),
+    );
+  }
+
+  /// Prospektüs veya kutu görselini backend'e gönderip özet döndürür.
+  FutureEither<Map<String, dynamic>> summarizeProspectus(File imageFile) async {
+    final response = await _dio.post(
+      '/api/drug/prospectus',
+      data: await _buildImageUploadFormData(imageFile),
+    );
+
+    return response.fold(
+      (failure) => left(failure),
+      (response) => right(response.data as Map<String, dynamic>),
+    );
+  }
+
+  Future<FormData> _buildImageUploadFormData(File imageFile) async {
+    return FormData.fromMap(
+      {
+        'file': await MultipartFile.fromFile(
+          imageFile.path,
+          filename: imageFile.uri.pathSegments.isNotEmpty
+              ? imageFile.uri.pathSegments.last
+              : 'drug-image.jpg',
+          contentType: _resolveMediaType(imageFile.path),
+        ),
+      },
     );
   }
 

@@ -8,7 +8,10 @@ import 'package:eczanem/src/features/auth/presentation/screens/forgot_password_s
 
 import 'package:eczanem/src/features/home/presentation/screens/home_page.dart';
 import 'package:eczanem/src/features/onboarding/presentation/screens/onboarding_page.dart';
+import 'package:eczanem/src/features/drug/presentation/screens/drug_camera_capture_screen.dart';
+import 'package:eczanem/src/features/drug/presentation/screens/drug_image_candidates_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_photo_scan_screen.dart';
+import 'package:eczanem/src/features/drug/presentation/screens/drug_prospectus_summary_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_search_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_detail_screen.dart';
 
@@ -50,6 +53,27 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.drugPhotoScan,
       name: 'drugPhotoScan',
       builder: (context, state) => const DrugPhotoScanScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.drugCameraCapture,
+      name: 'drugCameraCapture',
+      builder: (context, state) => const DrugCameraCaptureScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.drugImageCandidates,
+      name: 'drugImageCandidates',
+      builder: (context, state) {
+        final analysisData = state.extra as Map<String, dynamic>;
+        return DrugImageCandidatesScreen(analysisData: analysisData);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.drugProspectusSummary,
+      name: 'drugProspectusSummary',
+      builder: (context, state) {
+        final summaryData = state.extra as Map<String, dynamic>;
+        return DrugProspectusSummaryScreen(summaryData: summaryData);
+      },
     ),
     GoRoute(
       path: AppRoutes.drugDetail,
