@@ -25,8 +25,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     final session = ref.watch(sessionProvider);
     final user = session.user;
 
-    final pageTitle =
-        _selectedIndex == 0 ? 'home.home_title'.tr() : 'home.profile_title'.tr();
+      final pageTitle = _selectedIndex == 0
+          ? 'home.home_title'.tr()
+          : 'home.profile_title'.tr();
 
     return Scaffold(
       backgroundColor: colorScheme.surface,

@@ -46,8 +46,8 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             title,
             style: theme.appBarTheme.titleTextStyle?.copyWith(
-              fontWeight: FontWeight.w600,
-            ) ??
+                  fontWeight: FontWeight.w600,
+                ) ??
                 theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
