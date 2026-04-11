@@ -1,8 +1,10 @@
 """Eczanem Backend — Uygulama yapılandırması."""
 
-from pathlib import Path
-from pydantic_settings import BaseSettings
 from functools import lru_cache
+from pathlib import Path
+
+from pydantic import field_validator
+from pydantic_settings import BaseSettings
 
 # backend klasörünün yolu (.env dosyası burada)
 BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
@@ -12,6 +14,11 @@ class Settings(BaseSettings):
     # Google AI Studio (Gemini)
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.5-flash"
+
+    # İlaç arama performans / koruma ayarları
+    drug_search_cache_ttl_seconds: int = 60 * 30
+    drug_search_rate_limit_window_seconds: int = 60
+    drug_search_rate_limit_max_requests: int = 10
 
     # JWT (geliştirme varsayılanı; prod'da env ile override edilmeli)
     jwt_secret_key: str = "eczanem-dev-secret-key-change-in-production"
@@ -33,6 +40,18 @@ class Settings(BaseSettings):
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     debug: bool = True
+
+    @field_validator("debug", mode="before")
+    @classmethod
+    def _normalize_debug_value(cls, value: object) -> object:
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized == "release":
+                return False
+            if normalized == "debug":
+                return True
+
+        return value
 
     @property
     def database_url(self) -> str:
