@@ -91,6 +91,26 @@ class AppDesignTokens extends ThemeExtension<AppDesignTokens> {
 ThemeData _buildTheme(
     ColorScheme colorScheme, AppColorsExtension customColors) {
   final textTheme = buildTextTheme();
+  final scaffoldSurface = Color.alphaBlend(
+    colorScheme.primary.withValues(alpha: 0.035),
+    colorScheme.surface,
+  );
+  final appBarSurface = Color.alphaBlend(
+    colorScheme.primary.withValues(alpha: 0.018),
+    colorScheme.surface,
+  );
+  final navigationSurface = Color.alphaBlend(
+    colorScheme.primary.withValues(alpha: 0.02),
+    colorScheme.surface,
+  );
+  final inputFill = Color.alphaBlend(
+    colorScheme.primary.withValues(alpha: 0.035),
+    colorScheme.surfaceContainerHighest,
+  );
+  final cardColor = Color.alphaBlend(
+    colorScheme.primary.withValues(alpha: 0.015),
+    colorScheme.surfaceContainerLow,
+  );
 
   return ThemeData(
     useMaterial3: true,
@@ -103,7 +123,7 @@ ThemeData _buildTheme(
     ],
 
     // --- Basic Elements ---
-    scaffoldBackgroundColor: colorScheme.surface,
+    scaffoldBackgroundColor: scaffoldSurface,
     dividerTheme: DividerThemeData(
       color: colorScheme.outlineVariant,
       thickness: 1,
@@ -118,10 +138,11 @@ ThemeData _buildTheme(
 
     // App Bar Theme
     appBarTheme: AppBarTheme(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: appBarSurface,
       foregroundColor: colorScheme.onSurface,
       elevation: 0,
       centerTitle: true,
+      scrolledUnderElevation: 0,
       titleTextStyle: textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
@@ -150,6 +171,7 @@ ThemeData _buildTheme(
         minimumSize: const Size(88, 48),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 0,
       ),
     ),
 
@@ -178,13 +200,13 @@ ThemeData _buildTheme(
         side: BorderSide(color: colorScheme.outlineVariant, width: 1),
         borderRadius: BorderRadius.circular(16),
       ),
-      color: colorScheme.surfaceContainerLow,
+      color: cardColor,
     ),
 
     // Input Decoration Theme
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+      fillColor: inputFill,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: colorScheme.outline),
@@ -210,11 +232,12 @@ ThemeData _buildTheme(
 
     // Navigation Bar Theme
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: navigationSurface,
       indicatorColor: colorScheme.secondaryContainer,
-      elevation: 8,
+      elevation: 0,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       height: 80,
+      surfaceTintColor: Colors.transparent,
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return textTheme.labelSmall?.copyWith(
@@ -256,9 +279,12 @@ ThemeData _buildTheme(
 
     // Chip Theme
     chipTheme: ChipThemeData(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
       side: BorderSide(color: colorScheme.outlineVariant),
-      backgroundColor: colorScheme.surfaceContainerLow,
+      backgroundColor: Color.alphaBlend(
+        colorScheme.primary.withValues(alpha: 0.02),
+        colorScheme.surfaceContainerLow,
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       labelStyle: textTheme.labelMedium,
     ),
@@ -296,7 +322,7 @@ ThemeData _buildTheme(
     // SnackBar Theme
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       backgroundColor: colorScheme.inverseSurface,
       contentTextStyle:

@@ -76,13 +76,99 @@ class _DrugImageCandidatesScreenState extends State<DrugImageCandidatesScreen> {
     final primaryName =
         (widget.analysisData['ilac_adi'] ?? '').toString().trim();
     final alternatives = _buildAlternatives();
+    final colorScheme = context.colors;
 
     return Scaffold(
       appBar: AppTopBar(title: 'drug_search.candidates_title'.tr()),
       body: ListView(
         padding: EdgeInsets.all(AppSpacing.lg),
         children: [
+          Container(
+            padding: EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  colorScheme.primary,
+                  colorScheme.primaryContainer,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: AppBorders.card,
+              boxShadow: AppShadows.card,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: colorScheme.onPrimary,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Icon(
+                        Icons.medication_outlined,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                    SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'drug_search.candidates_best_guess'.tr(),
+                            style: context.textTheme.labelLarge?.copyWith(
+                              color: colorScheme.onPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: AppSpacing.xs),
+                          Text(
+                            primaryName,
+                            style: context.textTheme.headlineSmall?.copyWith(
+                              color: colorScheme.onPrimary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppSpacing.md),
+                Text(
+                  'drug_search.candidates_subtitle'.tr(),
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onPrimary.withValues(alpha: 0.92),
+                  ),
+                ),
+                SizedBox(height: AppSpacing.md),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    _CandidateInfoPill(
+                      icon: Icons.tips_and_updates_outlined,
+                      label: 'drug_search.candidates_tip_primary'.tr(),
+                    ),
+                    if (alternatives.isNotEmpty)
+                      _CandidateInfoPill(
+                        icon: Icons.format_list_bulleted_rounded,
+                        label: 'drug_search.candidates_tip_alternatives'
+                            .tr(args: [alternatives.length.toString()]),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.lg),
           AppCard(
+            showShadow: true,
             color: context.colors.primaryContainer,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,6 +212,7 @@ class _DrugImageCandidatesScreenState extends State<DrugImageCandidatesScreen> {
           SizedBox(height: AppSpacing.lg),
           if (alternatives.isNotEmpty)
             AppCard(
+              showShadow: true,
               title: 'drug_search.candidate_alternatives_title'.tr(),
               subtitle: 'drug_search.candidate_alternatives_subtitle'.tr(),
               child: Column(
@@ -165,7 +252,9 @@ class _CandidateTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
+      showShadow: true,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 40,
@@ -181,24 +270,83 @@ class _CandidateTile extends StatelessWidget {
           ),
           SizedBox(width: AppSpacing.md),
           Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: AppSpacing.xs),
+                Text(
+                  'drug_search.candidate_tile_subtitle'.tr(),
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: AppSpacing.sm),
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: context.colors.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            alignment: Alignment.center,
+            child: isLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(
+                    Icons.chevron_right,
+                    color: context.colors.onSurfaceVariant,
+                    size: 18,
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CandidateInfoPill extends StatelessWidget {
+  const _CandidateInfoPill({
+    required this.icon,
+    required this.label,
+  });
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: Colors.white),
+          const SizedBox(width: 6),
+          Flexible(
             child: Text(
-              title,
-              style: context.textTheme.titleMedium?.copyWith(
+              label,
+              style: context.textTheme.labelMedium?.copyWith(
+                color: Colors.white,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          if (isLoading)
-            const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          else
-            Icon(
-              Icons.chevron_right,
-              color: context.colors.onSurfaceVariant,
-            ),
         ],
       ),
     );
