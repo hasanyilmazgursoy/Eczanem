@@ -125,6 +125,14 @@ class _HomeTab extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                 ),
               ),
+              SizedBox(height: AppSpacing.xs),
+              Text(
+                'home.quick_actions_subtitle'.tr(),
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  height: 1.4,
+                ),
+              ),
               SizedBox(height: AppSpacing.md),
               _QuickActionsGrid(),
               SizedBox(height: AppSpacing.xl),
@@ -313,6 +321,7 @@ class _QuickActionsGrid extends StatelessWidget {
           icon: Icons.local_pharmacy_outlined,
           label: 'home.action_on_duty'.tr(),
           color: const Color(0xFFE53935),
+          isComingSoon: true,
           onTap: () {
             context.showSnackBar('home.coming_soon'.tr());
           },
@@ -321,6 +330,7 @@ class _QuickActionsGrid extends StatelessWidget {
           icon: Icons.alarm_rounded,
           label: 'home.action_reminder'.tr(),
           color: const Color(0xFFFF8F00),
+          isComingSoon: true,
           onTap: () {
             context.showSnackBar('home.coming_soon'.tr());
           },
@@ -329,6 +339,7 @@ class _QuickActionsGrid extends StatelessWidget {
           icon: Icons.compare_arrows_rounded,
           label: 'home.action_interaction'.tr(),
           color: const Color(0xFF5C6BC0),
+          isComingSoon: true,
           onTap: () {
             context.showSnackBar('home.coming_soon'.tr());
           },
@@ -337,6 +348,7 @@ class _QuickActionsGrid extends StatelessWidget {
           icon: Icons.family_restroom_rounded,
           label: 'home.action_family'.tr(),
           color: const Color(0xFF26A69A),
+          isComingSoon: true,
           onTap: () {
             context.showSnackBar('home.coming_soon'.tr());
           },
@@ -352,12 +364,14 @@ class _QuickActionTile extends StatelessWidget {
     required this.label,
     required this.color,
     required this.onTap,
+    this.isComingSoon = false,
   });
 
   final IconData icon;
   final String label;
   final Color color;
   final VoidCallback onTap;
+  final bool isComingSoon;
 
   @override
   Widget build(BuildContext context) {
@@ -382,6 +396,30 @@ class _QuickActionTile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if (isComingSoon)
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: AppSpacing.xs),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      'home.coming_soon_badge'.tr(),
+                      style: textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                SizedBox(height: AppSpacing.lg),
               Container(
                 width: 48,
                 height: 48,
@@ -972,6 +1010,7 @@ class _ProfileTab extends StatelessWidget {
             _ProfileMenuItem(
               icon: Icons.settings_outlined,
               title: 'home.profile_settings'.tr(),
+              isComingSoon: true,
               onTap: () {
                 context.showSnackBar('home.coming_soon'.tr());
               },
@@ -994,11 +1033,13 @@ class _ProfileMenuItem extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.onTap,
+    this.isComingSoon = false,
   });
 
   final IconData icon;
   final String title;
   final VoidCallback onTap;
+  final bool isComingSoon;
 
   @override
   Widget build(BuildContext context) {
@@ -1015,10 +1056,25 @@ class _ProfileMenuItem extends StatelessWidget {
         child: Icon(icon, color: colorScheme.primary, size: 22),
       ),
       title: Text(title),
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: colorScheme.onSurfaceVariant,
-      ),
+      trailing: isComingSoon
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                'home.coming_soon_badge'.tr(),
+                style: context.textTheme.labelSmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            )
+          : Icon(
+              Icons.chevron_right_rounded,
+              color: colorScheme.onSurfaceVariant,
+            ),
       onTap: onTap,
     );
   }
