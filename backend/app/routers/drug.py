@@ -4,7 +4,10 @@ from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from pydantic import BaseModel
 
 from app.services.drug_search_guard import query_drug_info_with_guard
-from app.services.gemini_service import query_drug_info_from_image
+from app.services.gemini_service import (
+    query_drug_info_from_image,
+    query_prospectus_summary_from_image,
+)
 
 router = APIRouter()
 
@@ -25,6 +28,32 @@ class DrugSearchResponse(BaseModel):
     disclaimer: str = (
         "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
     )
+
+
+class DrugImageAnalyzeResponse(DrugSearchResponse):
+    aday_ilaclar: list[str] = []
+
+
+class ProspectusSummaryResponse(BaseModel):
+    ilac_adi: str
+    prospektus_turu: str
+    ne_icin_kullanilir: str
+    nasil_kullanilir: list[str]
+    dikkat_edilmesi_gerekenler: list[str]
+    yan_etkiler: list[str]
+    saklama_kosullari: list[str]
+    ne_zaman_doktora_basvurulmali: list[str]
+    disclaimer: str = (
+        "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
+    )
+
+
+def _validate_image_upload(file: UploadFile) -> None:
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=400,
+            detail="Yalnızca görsel dosyaları analiz edilebilir.",
+        )
 
 
 def _resolve_client_key(request: Request) -> str:
@@ -48,20 +77,32 @@ async def search_drug(request: DrugSearchRequest, http_request: Request):
     return result
 
 
-@router.post("/analyze-image", response_model=DrugSearchResponse)
+@router.post("/analyze-image", response_model=DrugImageAnalyzeResponse)
 async def analyze_drug_image(file: UploadFile = File(...)):
     """İlaç fotoğrafını Gemini ile analiz ederek muhtemel ilaç bilgisini döndürür."""
-    if not file.content_type or not file.content_type.startswith("image/"):
-        raise HTTPException(
-            status_code=400,
-            detail="Yalnızca görsel dosyaları analiz edilebilir.",
-        )
+    _validate_image_upload(file)
 
     image_bytes = await file.read()
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Yüklenen görsel boş olamaz.")
 
     result = await query_drug_info_from_image(
+        image_bytes=image_bytes,
+        mime_type=file.content_type,
+    )
+    return result
+
+
+@router.post("/prospectus", response_model=ProspectusSummaryResponse)
+async def summarize_prospectus_image(file: UploadFile = File(...)):
+    """Prospektüs veya kutu görselinden kısa özet çıkarır."""
+    _validate_image_upload(file)
+
+    image_bytes = await file.read()
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Yüklenen görsel boş olamaz.")
+
+    result = await query_prospectus_summary_from_image(
         image_bytes=image_bytes,
         mime_type=file.content_type,
     )

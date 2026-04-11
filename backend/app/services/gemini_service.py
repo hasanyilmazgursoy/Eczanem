@@ -31,6 +31,7 @@ Görselde gördüğün ilacı mümkünse tespit et ve aşağıdaki alanları Tü
 SADECE JSON formatında döndür, başka hiçbir şey yazma:
 {
   "ilac_adi": "İlacın ticari adı",
+    "aday_ilaclar": ["Muhtemel ilaç 1", "Muhtemel ilaç 2"],
   "etken_madde": "Etken madde adı",
   "ne_icin_kullanilir": "Kısa açıklama",
   "dozaj_bilgisi": "Önerilen dozaj",
@@ -40,7 +41,29 @@ SADECE JSON formatında döndür, başka hiçbir şey yazma:
   "kimler_kullanmamali": ["grup 1", "grup 2"]
 }
 
+Eğer tek ilaç net görünüyorsa `aday_ilaclar` alanını boş liste bırak.
+Birden fazla ilaç görünüyor ya da net emin değilsen `aday_ilaclar` içine en olası seçenekleri yaz.
 Eğer ilacı net seçemiyorsan bunu alanlarda açıkça belirt ama veri uydurma.
+Türkçe cevap ver.
+ÖNEMLİ: Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."""
+
+PROSPECTUS_PROMPT = """Sen bir eczacı asistanısın. Kullanıcı sana bir ilacın prospektüs,
+kutu arkası veya kullanım talimatı görselini verdi.
+
+Görselden okunabilen bilgileri kullanarak aşağıdaki alanları Türkçe ve SADECE JSON
+formatında döndür. Bilgi net değilse uydurma; ilgili alana kısa ve dürüst bir açıklama yaz.
+
+{
+    "ilac_adi": "İlaç adı veya görselde okunabilen ürün adı",
+    "prospektus_turu": "kutu / prospektus / etiket / bilinmiyor",
+    "ne_icin_kullanilir": "Kısa özet",
+    "nasil_kullanilir": ["madde 1", "madde 2"],
+    "dikkat_edilmesi_gerekenler": ["uyarı 1", "uyarı 2"],
+    "yan_etkiler": ["yan etki 1", "yan etki 2"],
+    "saklama_kosullari": ["koşul 1", "koşul 2"],
+    "ne_zaman_doktora_basvurulmali": ["durum 1", "durum 2"]
+}
+
 ÖNEMLİ: Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."""
 
 
@@ -113,6 +136,34 @@ async def query_drug_info_from_image(image_bytes: bytes, mime_type: str) -> dict
                 {
                     "parts": [
                         {"text": DRUG_IMAGE_PROMPT},
+                        {
+                            "inlineData": {
+                                "mimeType": mime_type,
+                                "data": encoded_image,
+                            }
+                        },
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "temperature": 0.2,
+                "responseMimeType": "application/json",
+            },
+        }
+    )
+    return _extract_json_payload(response)
+
+
+async def query_prospectus_summary_from_image(image_bytes: bytes, mime_type: str) -> dict:
+    """Prospektüs veya kutu görselinden kısa kullanım özeti çıkarmaya çalışır."""
+    encoded_image = base64.b64encode(image_bytes).decode("utf-8")
+
+    response = await _post_gemini_request(
+        {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": PROSPECTUS_PROMPT},
                         {
                             "inlineData": {
                                 "mimeType": mime_type,
