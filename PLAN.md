@@ -220,16 +220,16 @@ uyarı_tarihi = bugün + kalan_gün - 3  // 3 gün önceden uyar
 
 ## FAZ 5 — İlaç Etkileşim Kontrolü & Doğal Alternatifler (1-2 hafta)
 
-**Durum:** ⬜ Başlanmadı
+**Durum:** 🟢 Tamamlandı
 
 ### Backend
-- [ ] `POST /api/drug/interaction` — İlaç listesi → etkileşim analizi
-- [ ] `POST /api/drug/natural-alternatives` — Doğal çözüm önerileri
+- [x] `POST /api/drug/interaction` — İlaç listesi → etkileşim analizi
+- [x] `POST /api/drug/natural-alternatives` — Doğal çözüm önerileri
 
 ### Flutter Ekranları
-- [ ] Etkileşim Kontrol: Profildeki ilaçlar + manuel ekleme → "Kontrol Et"
-- [ ] Etkileşim Sonuç: Renk kodlu (🟢 Güvenli, 🟡 Dikkatli, 🔴 Tehlikeli)
-- [ ] Doğal Alternatifler: İlaç detayında ek tab "🌿 Doğal Alternatifler"
+- [x] Etkileşim Kontrol: Profildeki ilaçlar + manuel ekleme → "Kontrol Et"
+- [x] Etkileşim Sonuç: Renk kodlu (🟢 Güvenli, 🟡 Dikkatli, 🔴 Tehlikeli)
+- [x] Doğal Alternatifler: İlaç detayında CTA ile açılan ekran
 
 ### Çıktı
 İlaç etkileşim kontrolü ve doğal alternatif önerileri çalışıyor.
@@ -304,7 +304,7 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 | Ara Faz | Geçmiş Merkezi | 2-3 gün | 🟢 |
 | 3 | Kullanıcı + Aile Profili | 1-2 hafta | 🟡 |
 | 4 | Hatırlatıcı + Stok Takibi | 1-2 hafta | ⬜ |
-| 5 | Etkileşim + Doğal Alternatif | 1-2 hafta | ⬜ |
+| 5 | Etkileşim + Doğal Alternatif | 1-2 hafta | 🟢 |
 | 6 | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | ⬜ |
 | 7 | Acil Kart + Sağlık Notları | 1 hafta | ⬜ |
 | 8 | Test & Yayın | 1-2 hafta | ⬜ |

@@ -185,7 +185,9 @@
     "side_effects": "Side Effects",
     "warnings": "Warnings",
     "contraindications": "Who Should Not Use It",
-    "disclaimer": "This information is for general informational purposes only and does not constitute medical advice."
+    "disclaimer": "This information is for general informational purposes only and does not constitute medical advice.",
+    "interaction_cta": "Add to interaction check",
+    "natural_alternatives_cta": "View natural alternatives"
   },
   "drug_search_history": {
     "title": "Search History",
@@ -206,5 +208,40 @@
     "mode_prospectus": "Prospectus",
     "medicine_fallback": "No active ingredient information",
     "prospectus_fallback": "No prospectus type information"
+  },
+  "drug_interaction": {
+    "title": "Drug Interaction Check",
+    "hero_title": "Check medicines together",
+    "hero_subtitle": "You currently selected {0} medicines. Add at least two to analyze potential interactions.",
+    "selected_title": "Selected medicines",
+    "selected_subtitle": "Pick medicines from your history or add a new one manually.",
+    "input_hint": "Add medicine name",
+    "empty_selection": "You have not selected any medicines for interaction analysis yet.",
+    "analyze_button": "Check Interaction",
+    "analyzing": "Analyzing interactions...",
+    "error_title": "Interaction analysis could not be completed",
+    "min_two_drugs": "At least two medicines are required for an interaction analysis.",
+    "generic_error": "Interaction analysis is unavailable right now. Please try again.",
+    "suggestions_title": "Quick pick from history",
+    "suggestions_subtitle": "You can add medicines from your recent searches and scans.",
+    "suggestions_empty": "Search or scan a few medicines first to see suggestions here.",
+    "risk_low": "🟢 Low risk",
+    "risk_medium": "🟡 Use with caution",
+    "risk_high": "🔴 High risk",
+    "precautions_title": "Things to watch for",
+    "no_summary": "No general summary could be created.",
+    "no_interaction_items": "No clear interaction was found, but you should still confirm combined use with your doctor or pharmacist."
+  },
+  "drug_natural_alternatives": {
+    "title": "Natural Alternatives",
+    "input_title": "Explore natural support options",
+    "input_subtitle": "These suggestions do not replace medication; they only offer supportive ideas.",
+    "input_hint": "Type a medicine name",
+    "button": "Get Alternatives",
+    "loading": "Loading alternatives...",
+    "error_title": "Natural alternatives could not be fetched",
+    "empty_error": "Enter a medicine name to see natural alternatives.",
+    "generic_error": "Natural alternative suggestions could not be loaded right now.",
+    "empty_result": "No clear natural support suggestion was found for this medicine."
   }
 }

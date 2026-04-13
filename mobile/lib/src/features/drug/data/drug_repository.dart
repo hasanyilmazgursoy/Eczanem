@@ -49,6 +49,34 @@ class DrugRepository {
     );
   }
 
+  /// Seçilen ilaç listesi için etkileşim analizi yapar.
+  FutureEither<Map<String, dynamic>> analyzeDrugInteraction(
+    List<String> drugs,
+  ) async {
+    final response = await _dio.post(
+      '/api/drug/interaction',
+      data: {'drugs': drugs},
+    );
+
+    return response.fold(
+      (failure) => left(failure),
+      (response) => right(response.data as Map<String, dynamic>),
+    );
+  }
+
+  /// Bir ilacın kullanım amacına destek olabilecek doğal alternatifleri listeler.
+  FutureEither<Map<String, dynamic>> getNaturalAlternatives(String drugName) async {
+    final response = await _dio.post(
+      '/api/drug/natural-alternatives',
+      data: {'drug_name': drugName},
+    );
+
+    return response.fold(
+      (failure) => left(failure),
+      (response) => right(response.data as Map<String, dynamic>),
+    );
+  }
+
   Future<FormData> _buildImageUploadFormData(File imageFile) async {
     return FormData.fromMap(
       {

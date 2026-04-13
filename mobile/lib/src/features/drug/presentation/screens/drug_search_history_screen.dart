@@ -49,6 +49,11 @@ class _DrugSearchHistoryScreenState extends State<DrugSearchHistoryScreen> {
       appBar: AppTopBar(
         title: 'drug_search_history.title'.tr(),
         actions: [
+          IconButton(
+            onPressed: () => context.push(AppRoutes.drugInteraction),
+            icon: const Icon(Icons.compare_arrows_rounded),
+            tooltip: 'drug_interaction.title'.tr(),
+          ),
           if (_history.isNotEmpty)
             TextButton(
               onPressed: _clearAll,

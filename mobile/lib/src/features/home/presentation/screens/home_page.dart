@@ -339,10 +339,7 @@ class _QuickActionsGrid extends StatelessWidget {
           icon: Icons.compare_arrows_rounded,
           label: 'home.action_interaction'.tr(),
           color: const Color(0xFF5C6BC0),
-          isComingSoon: true,
-          onTap: () {
-            context.showSnackBar('home.coming_soon'.tr());
-          },
+          onTap: () => context.push(AppRoutes.drugInteraction),
         ),
         _QuickActionTile(
           icon: Icons.family_restroom_rounded,

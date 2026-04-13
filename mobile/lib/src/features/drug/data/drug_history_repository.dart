@@ -101,6 +101,28 @@ class DrugHistoryRepository {
   FutureEither<void> clearScans() async {
     return StorageService.instance.remove(_recentScansKey);
   }
+
+  List<String> getSuggestedDrugNames() {
+    final suggestions = <String>[];
+
+    for (final query in getRecentSearches()) {
+      final normalized = query.trim();
+      if (normalized.isEmpty) continue;
+      if (!suggestions.any((item) => item.toLowerCase() == normalized.toLowerCase())) {
+        suggestions.add(normalized);
+      }
+    }
+
+    for (final entry in getRecentScans()) {
+      final normalized = entry.title.trim();
+      if (normalized.isEmpty) continue;
+      if (!suggestions.any((item) => item.toLowerCase() == normalized.toLowerCase())) {
+        suggestions.add(normalized);
+      }
+    }
+
+    return suggestions;
+  }
 }
 
 enum DrugScanHistoryMode { medicine, prospectus }

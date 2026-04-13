@@ -14,6 +14,8 @@ import 'package:eczanem/src/features/drug/presentation/screens/drug_photo_scan_s
 import 'package:eczanem/src/features/drug/presentation/screens/drug_prospectus_summary_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_search_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_detail_screen.dart';
+import 'package:eczanem/src/features/drug/presentation/screens/drug_interaction_screen.dart';
+import 'package:eczanem/src/features/drug/presentation/screens/drug_natural_alternatives_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_scan_history_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_search_history_screen.dart';
 
@@ -97,6 +99,24 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.drugScanHistory,
       name: 'drugScanHistory',
       builder: (context, state) => const DrugScanHistoryScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.drugInteraction,
+      name: 'drugInteraction',
+      builder: (context, state) {
+        final initialDrugs = state.extra is List
+            ? (state.extra as List).map((item) => item.toString()).toList()
+            : const <String>[];
+        return DrugInteractionScreen(initialDrugs: initialDrugs);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.drugNaturalAlternatives,
+      name: 'drugNaturalAlternatives',
+      builder: (context, state) {
+        final initialDrugName = state.extra as String?;
+        return DrugNaturalAlternativesScreen(initialDrugName: initialDrugName);
+      },
     ),
   ],
 );

@@ -68,6 +68,56 @@ formatında döndür. Bilgi net değilse uydurma; ilgili alana kısa ve dürüst
 
 ÖNEMLİ: Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."""
 
+DRUG_INTERACTION_PROMPT = """Sen dikkatli çalışan bir eczacı asistanısın.
+Kullanıcı sana birlikte kullanılması muhtemel ilaçların listesini verecek.
+
+SADECE aşağıdaki JSON formatında cevap ver:
+{
+    "genel_risk_seviyesi": "dusuk | orta | yuksek",
+    "ozet": "Kısa genel değerlendirme",
+    "dikkat_edilmesi_gerekenler": ["madde 1", "madde 2"],
+    "etkilesimler": [
+        {
+            "ilaclar": ["İlaç A", "İlaç B"],
+            "risk_seviyesi": "dusuk | orta | yuksek",
+            "neden": "Etkileşimin nedeni veya klinik açıklama",
+            "oneri": "Pratik ve güvenli yaklaşım"
+        }
+    ]
+}
+
+Kurallar:
+- Türkçe cevap ver.
+- Emin olmadığın bilgiyi kesinlik gibi sunma.
+- Ciddi risk yoksa bile kullanıcıyı doktor/eczacı onayı konusunda uyar.
+- Etkileşim bulunamazsa `etkilesimler` alanını boş liste döndür ama yine kısa bir özet yaz.
+- Tıbbi tavsiye verme, güvenlik odaklı ol."""
+
+NATURAL_ALTERNATIVES_PROMPT = """Sen temkinli bir eczacı asistanısın.
+Kullanıcı sana bir ilaç adı verecek. Bu ilacın kullanım amacına destek olabilecek,
+ilaç yerine geçmeyen doğal veya yaşam tarzı temelli destek seçeneklerini özetle.
+
+SADECE aşağıdaki JSON formatında cevap ver:
+{
+    "ilac_adi": "İlaç adı",
+    "hedef": "İlacın genel kullanım amacı / semptom alanı",
+    "alternatifler": [
+        {
+            "ad": "Öneri adı",
+            "tur": "bitkisel | beslenme | yaşam tarzı | destekleyici alışkanlık",
+            "aciklama": "Kısa açıklama",
+            "dikkat": "Kimler dikkat etmeli / ne zaman kaçınmalı"
+        }
+    ],
+    "uyari": "Bu önerilerin ilaç tedavisinin yerine geçmediğini belirten kısa uyarı"
+}
+
+Kurallar:
+- Türkçe cevap ver.
+- Kesin tedavi iddiasında bulunma.
+- Riskli veya yanıltıcı öneri uydurma.
+- Alternatif yoksa bunu dürüstçe belirt ve listeyi boş döndür."""
+
 MAX_IMAGE_DIMENSION = 1400
 OPTIMIZED_IMAGE_QUALITY = 82
 
@@ -211,6 +261,56 @@ async def query_prospectus_summary_from_image(
             ],
             "generationConfig": {
                 "temperature": 0.2,
+                "responseMimeType": "application/json",
+            },
+        }
+    )
+    return _extract_json_payload(response)
+
+
+async def query_drug_interactions(drug_names: list[str]) -> dict:
+    """Birlikte kullanılan ilaçlar için olası etkileşimleri özetler."""
+    response = await _post_gemini_request(
+        {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": (
+                                f"{DRUG_INTERACTION_PROMPT}\n\n"
+                                f"İlaç listesi: {', '.join(drug_names)}"
+                            )
+                        }
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "temperature": 0.2,
+                "responseMimeType": "application/json",
+            },
+        }
+    )
+    return _extract_json_payload(response)
+
+
+async def query_natural_alternatives(drug_name: str) -> dict:
+    """Bir ilacın kullanım amacına yönelik doğal destek önerilerini listeler."""
+    response = await _post_gemini_request(
+        {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": (
+                                f"{NATURAL_ALTERNATIVES_PROMPT}\n\n"
+                                f"İlaç adı: {drug_name}"
+                            )
+                        }
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "temperature": 0.3,
                 "responseMimeType": "application/json",
             },
         }

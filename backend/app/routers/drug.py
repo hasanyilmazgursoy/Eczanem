@@ -5,6 +5,8 @@ from pydantic import BaseModel
 
 from app.services.drug_search_guard import query_drug_info_with_guard
 from app.services.gemini_service import (
+    query_drug_interactions,
+    query_natural_alternatives,
     query_drug_info_from_image,
     query_prospectus_summary_from_image,
 )
@@ -14,6 +16,14 @@ router = APIRouter()
 
 class DrugSearchRequest(BaseModel):
     query: str
+
+
+class DrugInteractionRequest(BaseModel):
+    drugs: list[str]
+
+
+class NaturalAlternativesRequest(BaseModel):
+    drug_name: str
 
 
 class DrugSearchResponse(BaseModel):
@@ -46,6 +56,37 @@ class ProspectusSummaryResponse(BaseModel):
     disclaimer: str = (
         "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
     )
+
+
+class DrugInteractionItem(BaseModel):
+    ilaclar: list[str]
+    risk_seviyesi: str
+    neden: str
+    oneri: str
+
+
+class DrugInteractionResponse(BaseModel):
+    genel_risk_seviyesi: str
+    ozet: str
+    dikkat_edilmesi_gerekenler: list[str]
+    etkilesimler: list[DrugInteractionItem]
+    disclaimer: str = (
+        "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
+    )
+
+
+class NaturalAlternativeItem(BaseModel):
+    ad: str
+    tur: str
+    aciklama: str
+    dikkat: str
+
+
+class NaturalAlternativesResponse(BaseModel):
+    ilac_adi: str
+    hedef: str
+    alternatifler: list[NaturalAlternativeItem]
+    uyari: str
 
 
 def _validate_image_upload(file: UploadFile) -> None:
@@ -106,4 +147,31 @@ async def summarize_prospectus_image(file: UploadFile = File(...)):
         image_bytes=image_bytes,
         mime_type=file.content_type,
     )
+    return result
+
+
+@router.post("/interaction", response_model=DrugInteractionResponse)
+async def analyze_drug_interactions(request: DrugInteractionRequest):
+    """İlaç listesi için olası etkileşimleri özetler."""
+    normalized_drugs = [drug.strip() for drug in request.drugs if drug.strip()]
+    unique_drugs = list(dict.fromkeys(normalized_drugs))
+
+    if len(unique_drugs) < 2:
+        raise HTTPException(
+            status_code=400,
+            detail="Etkileşim analizi için en az iki ilaç gereklidir.",
+        )
+
+    result = await query_drug_interactions(unique_drugs)
+    return result
+
+
+@router.post("/natural-alternatives", response_model=NaturalAlternativesResponse)
+async def get_natural_alternatives(request: NaturalAlternativesRequest):
+    """İlaçla ilişkili doğal destek seçeneklerini özetler."""
+    drug_name = request.drug_name.strip()
+    if not drug_name:
+        raise HTTPException(status_code=400, detail="İlaç adı boş olamaz.")
+
+    result = await query_natural_alternatives(drug_name)
     return result

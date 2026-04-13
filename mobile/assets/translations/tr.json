@@ -185,7 +185,9 @@
         "side_effects": "Yan Etkiler",
         "warnings": "Uyarılar",
         "contraindications": "Kimler Kullanmamalı",
-        "disclaimer": "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
+        "disclaimer": "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz.",
+        "interaction_cta": "Etkileşim kontrolüne ekle",
+        "natural_alternatives_cta": "Doğal alternatifleri gör"
     },
     "drug_search_history": {
         "title": "Arama Geçmişi",
@@ -206,5 +208,40 @@
         "mode_prospectus": "Prospektüs",
         "medicine_fallback": "Etken madde bilgisi bulunamadı",
         "prospectus_fallback": "Prospektüs türü bilgisi bulunamadı"
+    },
+    "drug_interaction": {
+        "title": "İlaç Etkileşim Kontrolü",
+        "hero_title": "İlaçları birlikte kontrol edin",
+        "hero_subtitle": "Şu anda seçili {0} ilaç var. En az iki ilaç ekleyerek olası etkileşimleri analiz edin.",
+        "selected_title": "Seçili ilaçlar",
+        "selected_subtitle": "Geçmişinizden ilaç seçin veya elinizle yeni ilaç ekleyin.",
+        "input_hint": "İlaç adı ekleyin",
+        "empty_selection": "Henüz etkileşim analizi için ilaç seçmediniz.",
+        "analyze_button": "Etkileşimi Kontrol Et",
+        "analyzing": "Etkileşim analiz ediliyor...",
+        "error_title": "Etkileşim analizi tamamlanamadı",
+        "min_two_drugs": "Etkileşim analizi için en az iki ilaç gereklidir.",
+        "generic_error": "Etkileşim analizi şu anda tamamlanamadı. Lütfen tekrar deneyin.",
+        "suggestions_title": "Geçmişten hızlı seçim",
+        "suggestions_subtitle": "Son arama ve taramalarınızdan ilaç ekleyebilirsiniz.",
+        "suggestions_empty": "Öneri gösterebilmek için önce birkaç ilaç arayın veya tarayın.",
+        "risk_low": "🟢 Düşük risk",
+        "risk_medium": "🟡 Dikkatli kullan",
+        "risk_high": "🔴 Yüksek risk",
+        "precautions_title": "Dikkat edilmesi gerekenler",
+        "no_summary": "Genel özet oluşturulamadı.",
+        "no_interaction_items": "Belirgin bir etkileşim bulunamadı; yine de birlikte kullanım için doktorunuza veya eczacınıza danışın."
+    },
+    "drug_natural_alternatives": {
+        "title": "Doğal Alternatifler",
+        "input_title": "İlaç için doğal destekleri keşfedin",
+        "input_subtitle": "Bu öneriler ilacın yerine geçmez; yalnızca destekleyici seçenekler sunar.",
+        "input_hint": "İlaç adı yazın",
+        "button": "Alternatifleri Getir",
+        "loading": "Alternatifler yükleniyor...",
+        "error_title": "Doğal alternatifler alınamadı",
+        "empty_error": "Doğal alternatifleri görmek için bir ilaç adı girin.",
+        "generic_error": "Doğal alternatif önerileri şu anda getirilemedi.",
+        "empty_result": "Bu ilaç için belirgin bir doğal destek önerisi bulunamadı."
     }
 }

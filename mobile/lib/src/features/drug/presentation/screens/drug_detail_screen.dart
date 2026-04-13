@@ -22,6 +22,35 @@ class DrugDetailScreen extends StatelessWidget {
             activeIngredient: activeIngredient,
           ),
           SizedBox(height: AppSpacing.md),
+          AppCard(
+            showShadow: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppButton(
+                  label: 'drug_detail.interaction_cta'.tr(),
+                  onPressed: () => context.push(
+                    AppRoutes.drugInteraction,
+                    extra: [drugName],
+                  ),
+                  isFullWidth: true,
+                  prefixIcon: const Icon(Icons.compare_arrows_rounded),
+                ),
+                SizedBox(height: AppSpacing.sm),
+                AppButton(
+                  label: 'drug_detail.natural_alternatives_cta'.tr(),
+                  onPressed: () => context.push(
+                    AppRoutes.drugNaturalAlternatives,
+                    extra: drugName,
+                  ),
+                  isFullWidth: true,
+                  variant: ButtonVariant.secondary,
+                  prefixIcon: const Icon(Icons.eco_outlined),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppSpacing.md),
           // Sorumluluk reddi
           AppCard(
             color: context.colors.tertiaryContainer,
