@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../../../../imports/imports.dart';
+import '../../data/drug_history_repository.dart';
 import '../../data/drug_repository.dart';
 
 enum _DrugPhotoScanMode { medicine, prospectus }
@@ -140,6 +141,13 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
       },
       (data) {
         setState(() => _isImageLoading = false);
+
+        DrugHistoryRepository.instance.saveScanResult(
+          mode: _scanMode == _DrugPhotoScanMode.prospectus
+              ? DrugScanHistoryMode.prospectus
+              : DrugScanHistoryMode.medicine,
+          payload: data,
+        );
 
         if (_scanMode == _DrugPhotoScanMode.prospectus) {
           context.push(AppRoutes.drugProspectusSummary, extra: data);

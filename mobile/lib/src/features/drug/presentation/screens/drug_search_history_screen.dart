@@ -1,4 +1,5 @@
 import '../../../../imports/imports.dart';
+import '../../data/drug_history_repository.dart';
 
 /// Arama geçmişi ekranı.
 ///
@@ -14,9 +15,6 @@ class DrugSearchHistoryScreen extends StatefulWidget {
 }
 
 class _DrugSearchHistoryScreenState extends State<DrugSearchHistoryScreen> {
-  // DrugSearchContent içindeki _recentSearchesKey ile eşleşmeli.
-  static const _storageKey = 'drug_recent_searches';
-
   List<String> _history = const [];
 
   @override
@@ -26,22 +24,21 @@ class _DrugSearchHistoryScreenState extends State<DrugSearchHistoryScreen> {
   }
 
   void _load() {
-    final saved =
-        StorageService.instance.getStringList(_storageKey) ?? const [];
-    setState(() => _history = saved);
+    setState(() {
+      _history = DrugHistoryRepository.instance.getRecentSearches();
+    });
   }
 
   Future<void> _deleteItem(int index) async {
-    final updated = List<String>.from(_history)..removeAt(index);
-    await StorageService.instance.setStringList(_storageKey, updated);
+    await DrugHistoryRepository.instance.removeSearchAt(index);
     if (!mounted) return;
-    setState(() => _history = updated);
+    _load();
   }
 
   Future<void> _clearAll() async {
-    await StorageService.instance.remove(_storageKey);
+    await DrugHistoryRepository.instance.clearSearches();
     if (!mounted) return;
-    setState(() => _history = const []);
+    _load();
   }
 
   @override

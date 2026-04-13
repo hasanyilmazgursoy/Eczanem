@@ -18,4 +18,5 @@ abstract final class AppRoutes {
   static const String drugProspectusSummary = '/drug-prospectus-summary';
   static const String drugDetail = '/drug-detail';
   static const String drugSearchHistory = '/drug-search-history';
+  static const String drugScanHistory = '/drug-scan-history';
 }

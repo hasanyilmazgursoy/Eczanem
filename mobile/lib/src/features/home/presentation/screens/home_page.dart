@@ -1005,7 +1005,7 @@ class _ProfileTab extends StatelessWidget {
             _ProfileMenuItem(
               icon: Icons.document_scanner_rounded,
               title: 'home.profile_scan_history'.tr(),
-              onTap: () => context.push(AppRoutes.drugPhotoScan),
+              onTap: () => context.push(AppRoutes.drugScanHistory),
             ),
             _ProfileMenuItem(
               icon: Icons.settings_outlined,

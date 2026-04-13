@@ -14,6 +14,7 @@ import 'package:eczanem/src/features/drug/presentation/screens/drug_photo_scan_s
 import 'package:eczanem/src/features/drug/presentation/screens/drug_prospectus_summary_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_search_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_detail_screen.dart';
+import 'package:eczanem/src/features/drug/presentation/screens/drug_scan_history_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_search_history_screen.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -91,6 +92,11 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.drugSearchHistory,
       name: 'drugSearchHistory',
       builder: (context, state) => const DrugSearchHistoryScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.drugScanHistory,
+      name: 'drugScanHistory',
+      builder: (context, state) => const DrugScanHistoryScreen(),
     ),
   ],
 );

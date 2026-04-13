@@ -56,8 +56,8 @@
         "scan_tip_2": "İlaç adı ve bilgileri kadraj içinde olsun.",
         "scan_tip_3": "Tek seferde bir ilaç fotoğraflayın.",
         "scan_start": "Taramaya Başla",
-        "profile_my_drugs": "İlaç Rehberi",
-        "profile_scan_history": "Tarama Merkezi",
+        "profile_my_drugs": "Arama Geçmişi",
+        "profile_scan_history": "Tarama Geçmişi",
         "profile_settings": "Ayarlar",
         "phase1_title": "FAZ 2 ilerleme durumu",
         "phase1_subtitle": "Metin aramaya ek olarak fotoğrafla ilaç tanıma akışını adım adım devreye alıyoruz. Bu ekran arama ve profil işlemlerini tek yerde toplar.",
@@ -194,5 +194,17 @@
         "clear_all": "Tümünü Temizle",
         "delete_tooltip": "Sil",
         "go_search": "İlaç Ara"
+    },
+    "drug_scan_history": {
+        "title": "Tarama Geçmişi",
+        "empty_title": "Henüz tarama geçmişi yok",
+        "empty_subtitle": "Fotoğrafla analiz ettiğiniz ilaçlar ve prospektüs özetleri burada görünecek.",
+        "clear_all": "Tümünü Temizle",
+        "delete_tooltip": "Sil",
+        "go_scan": "Tarama Başlat",
+        "mode_medicine": "İlaç tanıma",
+        "mode_prospectus": "Prospektüs",
+        "medicine_fallback": "Etken madde bilgisi bulunamadı",
+        "prospectus_fallback": "Prospektüs türü bilgisi bulunamadı"
     }
 }

@@ -1,4 +1,5 @@
 import '../../../../imports/imports.dart';
+import '../../data/drug_history_repository.dart';
 import '../../data/drug_repository.dart';
 
 class DrugSearchScreen extends StatelessWidget {
@@ -30,7 +31,6 @@ class DrugSearchContent extends ConsumerStatefulWidget {
 }
 
 class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
-  static const _recentSearchesKey = 'drug_recent_searches';
   final _searchController = TextEditingController();
   final _debouncer = Debouncer();
   bool _isLoading = false;
@@ -53,22 +53,17 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   }
 
   Future<void> _loadRecentSearches() async {
-    final recentSearches =
-        StorageService.instance.getStringList(_recentSearchesKey) ?? const [];
+    final recentSearches = DrugHistoryRepository.instance.getRecentSearches();
     if (!mounted) return;
     setState(() => _recentSearches = recentSearches);
   }
 
   Future<void> _saveRecentSearch(String query) async {
-    final updated = [
-      query,
-      ..._recentSearches
-          .where((item) => item.toLowerCase() != query.toLowerCase()),
-    ].take(8).toList();
-
-    await StorageService.instance.setStringList(_recentSearchesKey, updated);
+    await DrugHistoryRepository.instance.saveRecentSearch(query);
     if (!mounted) return;
-    setState(() => _recentSearches = updated);
+    setState(() {
+      _recentSearches = DrugHistoryRepository.instance.getRecentSearches();
+    });
   }
 
   @override

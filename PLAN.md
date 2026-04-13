@@ -3,7 +3,7 @@
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
 **Başlangıç Tarihi:** 9 Nisan 2026  
 **Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
-**Durum:** 🟡 FAZ 2 Başladı
+**Durum:** 🟢 FAZ 2 + Geçmiş Merkezi tamamlandı
 
 ---
 
@@ -64,7 +64,7 @@ asistanı uygulaması.
 - [x] State management: Riverpod kurulumu
 - [x] Tema & tasarım sistemi: Renk paleti, tipografi, karanlık/aydınlık mod altyapısı
 - [x] HTTP client: `dio` paketi ile backend bağlantı katmanı
-- [ ] Local storage: Hive yerine şu an SharedPreferences/SecureStorage kullanılıyor
+- [x] Local storage: Hive tabanlı depolama aktif, eski SharedPreferences verisi migrate ediliyor
 - [x] Navigasyon: `go_router` ile sayfa yönetimi
 
 ### Çıktı
@@ -135,13 +135,33 @@ Fotoğraf çekip ilaç tanıma, çoklu aday seçimi ve prospektüs özetleme ça
 
 ---
 
+## ARA FAZ — Geçmiş Merkezi & Profil Kısayolları (2-3 gün)
+
+**Durum:** 🟢 Tamamlandı
+
+### Flutter
+- [x] Arama geçmişi ekranı eklendi, geçmiş sorgudan otomatik yeniden arama destekleniyor
+- [x] Tarama geçmişi ekranı eklendi; ilaç tanıma ve prospektüs özetleri yerel olarak saklanıyor
+- [x] Profil sekmesindeki kısayollar gerçek geçmiş ekranlarına bağlandı
+- [x] Arama/tarama geçmişi için ortak yerel repository katmanı oluşturuldu
+- [x] Boş durum, tek silme ve tümünü temizleme aksiyonları eklendi
+
+### Doğrulama
+- [x] `flutter analyze`
+- [x] `flutter test`
+
+### Çıktı
+Kullanıcı hem metin aramalarını hem de görsel analiz geçmişini profile sekmesinden tekrar açabiliyor.
+
+---
+
 ## FAZ 3 — Kullanıcı Sistemi & Aile Profili (1-2 hafta)
 
-**Durum:** ⬜ Başlanmadı
+**Durum:** 🟡 Kısmen hazır (temel auth var, aile profili yok)
 
 ### Backend
-- [ ] `POST /api/auth/register` — E-posta + şifre ile kayıt
-- [ ] `POST /api/auth/login` — JWT token döndür
+- [x] `POST /api/auth/register` — E-posta + şifre ile kayıt
+- [x] `POST /api/auth/login` — JWT token döndür
 - [ ] `POST /api/auth/google` — Google ile giriş (opsiyonel)
 - [ ] `CRUD /api/profile/family/` — Aile bireyi yönetimi
 - [ ] `CRUD /api/profile/family/{id}/drugs/` — Aile bireyinin ilaç listesi
@@ -152,7 +172,7 @@ Fotoğraf çekip ilaç tanıma, çoklu aday seçimi ve prospektüs özetleme ça
 - `family_member_drugs` (id, family_member_id, drug_name, dosage, frequency, start/end_date, notes)
 
 ### Flutter Ekranları
-- [ ] Giriş/Kayıt: Tab yapısı + Google ile giriş
+- [x] Giriş/Kayıt temel ekranları
 - [ ] Profil Ana: Kendi profili + aile bireyleri grid (emoji avatarlar)
 - [ ] Birey Detay: İlaç listesi, ekle/çıkar
 - [ ] Birey Ekle: Ad, ilişki, yaş, emoji seç
@@ -278,10 +298,11 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 
 | Faz | İçerik | Süre | Durum |
 |-----|--------|------|-------|
-| 0 | Altyapı & Kurulum | 3-4 gün | ⬜ |
-| 1 | MVP — İlaç Sorgulama | 1-2 hafta | ⬜ |
-| 2 | Kamera + Prospektüs | 1-2 hafta | ⬜ |
-| 3 | Kullanıcı + Aile Profili | 1-2 hafta | ⬜ |
+| 0 | Altyapı & Kurulum | 3-4 gün | 🟢 |
+| 1 | MVP — İlaç Sorgulama | 1-2 hafta | 🟢 |
+| 2 | Kamera + Prospektüs | 1-2 hafta | 🟢 |
+| Ara Faz | Geçmiş Merkezi | 2-3 gün | 🟢 |
+| 3 | Kullanıcı + Aile Profili | 1-2 hafta | 🟡 |
 | 4 | Hatırlatıcı + Stok Takibi | 1-2 hafta | ⬜ |
 | 5 | Etkileşim + Doğal Alternatif | 1-2 hafta | ⬜ |
 | 6 | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | ⬜ |
