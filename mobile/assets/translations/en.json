@@ -186,5 +186,13 @@
     "warnings": "Warnings",
     "contraindications": "Who Should Not Use It",
     "disclaimer": "This information is for general informational purposes only and does not constitute medical advice."
+  },
+  "drug_search_history": {
+    "title": "Search History",
+    "empty_title": "No search history yet",
+    "empty_subtitle": "Your searches will appear here as you look up medicines.",
+    "clear_all": "Clear All",
+    "delete_tooltip": "Delete",
+    "go_search": "Search Medicines"
   }
 }

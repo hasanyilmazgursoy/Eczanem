@@ -1000,12 +1000,12 @@ class _ProfileTab extends StatelessWidget {
             _ProfileMenuItem(
               icon: Icons.medication_rounded,
               title: 'home.profile_my_drugs'.tr(),
-              onTap: () => onSwitchTab(1),
+              onTap: () => context.push(AppRoutes.drugSearchHistory),
             ),
             _ProfileMenuItem(
               icon: Icons.document_scanner_rounded,
               title: 'home.profile_scan_history'.tr(),
-              onTap: () => onSwitchTab(2),
+              onTap: () => context.push(AppRoutes.drugPhotoScan),
             ),
             _ProfileMenuItem(
               icon: Icons.settings_outlined,

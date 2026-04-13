@@ -186,5 +186,13 @@
         "warnings": "Uyarılar",
         "contraindications": "Kimler Kullanmamalı",
         "disclaimer": "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
+    },
+    "drug_search_history": {
+        "title": "Arama Geçmişi",
+        "empty_title": "Henüz arama geçmişi yok",
+        "empty_subtitle": "İlaç aradıkça geçmişiniz burada görünecek.",
+        "clear_all": "Tümünü Temizle",
+        "delete_tooltip": "Sil",
+        "go_search": "İlaç Ara"
     }
 }
