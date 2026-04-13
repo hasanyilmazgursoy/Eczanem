@@ -2,21 +2,28 @@ import '../../../../imports/imports.dart';
 import '../../data/drug_repository.dart';
 
 class DrugSearchScreen extends StatelessWidget {
-  const DrugSearchScreen({super.key});
+  const DrugSearchScreen({super.key, this.initialQuery});
+
+  final String? initialQuery;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppTopBar(title: 'drug_search.text_search_page_title'.tr()),
-      body: const DrugSearchContent(),
+      body: DrugSearchContent(initialQuery: initialQuery),
     );
   }
 }
 
 class DrugSearchContent extends ConsumerStatefulWidget {
   final bool showHeader;
+  final String? initialQuery;
 
-  const DrugSearchContent({super.key, this.showHeader = true});
+  const DrugSearchContent({
+    super.key,
+    this.showHeader = true,
+    this.initialQuery,
+  });
 
   @override
   ConsumerState<DrugSearchContent> createState() => _DrugSearchContentState();
@@ -34,6 +41,14 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   @override
   void initState() {
     super.initState();
+    final initialQuery = widget.initialQuery?.trim();
+    if (initialQuery != null && initialQuery.isNotEmpty) {
+      _searchController.text = initialQuery;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _searchDrug();
+      });
+    }
     _loadRecentSearches();
   }
 

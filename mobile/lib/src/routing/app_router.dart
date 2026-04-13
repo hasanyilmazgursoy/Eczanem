@@ -48,7 +48,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.drugSearch,
       name: 'drugSearch',
-      builder: (context, state) => const DrugSearchScreen(),
+      builder: (context, state) {
+        final initialQuery = state.extra as String?;
+        return DrugSearchScreen(initialQuery: initialQuery);
+      },
     ),
     GoRoute(
       path: AppRoutes.drugPhotoScan,

@@ -62,10 +62,12 @@ class _DrugSearchHistoryScreenState extends State<DrugSearchHistoryScreen> {
             ),
         ],
       ),
-      body: _history.isEmpty ? _EmptyState() : _HistoryList(
-        history: _history,
-        onDeleteItem: _deleteItem,
-      ),
+      body: _history.isEmpty
+          ? _EmptyState()
+          : _HistoryList(
+              history: _history,
+              onDeleteItem: _deleteItem,
+            ),
     );
   }
 }
@@ -119,8 +121,8 @@ class _HistoryList extends StatelessWidget {
             tooltip: 'drug_search_history.delete_tooltip'.tr(),
             onPressed: () => onDeleteItem(index),
           ),
-          // İlaca git: arama ekranı zaten son aramaları gösteriyor.
-          onTap: () => context.push(AppRoutes.drugSearch),
+          // Sorguyu otomatik taşıyarak kullanıcının kaldığı yerden devam etmesini sağlar.
+          onTap: () => context.push(AppRoutes.drugSearch, extra: query),
         );
       },
     );
