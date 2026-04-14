@@ -1,43 +1,91 @@
 # Eczanem
 
-Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
+Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle geliştirilen mobil sağlık uygulaması.
 
-`Eczanem`, Flutter ile geliştirilen mobil istemci ve FastAPI ile geliştirilen backend servisinden oluşur. Uygulama; ilaç arama, ilaç detaylarını görüntüleme, kullanıcı oturumu, gerçek cihazda çalışma ve FAZ 2 kapsamında başlayan görsel analiz akışını şu anda aktif olarak desteklemektedir.
+`Eczanem`; ilaç arama, fotoğraftan ilaç tanıma, prospektüs özetleme, arama/tarama geçmişi, ilaç etkileşim kontrolü, doğal alternatif önerileri ve offline çalışan ilaç hatırlatıcılarını aynı uygulamada birleştirir. Proje şu anda aktif olarak çalışan bir MVP+ seviyesindedir ve sonraki büyük adımlar aile profili, nöbetçi eczane ve acil durum modülleridir.
 
-## Mevcut durum
+## Öne çıkanlar
 
-- **Aktif faz:** FAZ 2 — Kamera ile tanıma başlangıcı
-- **Mobil:** Flutter + Riverpod + Dio + GoRouter
-- **Backend:** FastAPI + Gemini entegrasyonu + JWT tabanlı auth
-- **Gerçek cihaz desteği:** Android telefonda doğrulandı
-- **Arama korumaları:** 24 saat Redis cache + bellek içi fallback + IP bazlı rate limit
-- **Görsel analiz:** Kamera / galeri seçimi + önizleme + backend analiz endpoint'i hazır
+- Yazıyla ilaç arama ve detay görüntüleme
+- Kamera / galeri ile ilaç kutusu analizi
+- Prospektüs görselinden özet üretme
+- Arama geçmişi ve tarama geçmişi
+- İlaç etkileşim kontrolü
+- İlaç bazlı doğal alternatif önerileri
+- JWT tabanlı kullanıcı oturumu
+- Hive tabanlı yerel depolama
+- Redis cache + rate limit korumaları
 
-## Özellikler
+## Güncel durum
 
-### Tamamlananlar
+### Tamamlanan fazlar
 
-- Kullanıcı kayıt / giriş akışı
-- Oturumun güvenli saklanması
-- Ana sayfa + alt navigasyon
+- **FAZ 0** — Altyapı ve kurulum
+- **FAZ 1** — Temel ilaç sorgulama / MVP
+- **FAZ 2** — Kamera ile tanıma + prospektüs tarama
+- **FAZ 4** — Hatırlatıcı, stok takibi ve offline bildirimler
+- **Ara Faz** — Geçmiş merkezi ve profil kısayolları
+- **FAZ 5** — İlaç etkileşim kontrolü + doğal alternatifler
+
+### Devam eden / eksik alanlar
+
+- **FAZ 3** — Aile profili (kısmen hazır, auth var ama aile yönetimi yok)
+- **FAZ 6** — Nöbetçi eczane + sesli sorgu
+- **FAZ 7** — Acil durum kartı + sağlık notları
+- **FAZ 8** — Test, yayın ve son polish
+
+### Teknik özet
+
+- **Mobil:** Flutter, Riverpod, Dio, GoRouter, easy_localization, Hive
+- **Backend:** FastAPI, Gemini API, JWT auth, Redis cache, dosya tabanlı kullanıcı store
+- **Gerçek cihaz:** Android telefon üzerinde LAN bağlantısıyla doğrulandı
+- **Doğrulama:** `flutter analyze` ve `flutter test` başarılı
+
+## Özellik matrisi
+
+### Çalışan modüller
+
+- Kullanıcı kayıt / giriş / oturum akışı
+- Ana sayfa ve 4 sekmeli navigasyon
 - İlaç adıyla arama
 - İlaç detay ekranı
-- Son aramalar
-- Arama debounce
-- Skeleton loading
-- Daha anlamlı boş / hata / tekrar dene durumları
-- Hive tabanlı yerel depolama
-- Gerçek cihazda backend’e LAN üzerinden bağlanma
-- Kamera veya galeriden görsel seçip ilaç analizi başlatma
+- Arama geçmişi
+- Kamera ve galeriden görsel seçme
+- İlaç kutusu analizi ve çoklu aday akışı
+- Prospektüs özeti ekranı
+- Tarama geçmişi
+- İlaç etkileşim analizi
+- Doğal alternatif öneri ekranı
+- Yerel ilaç hatırlatıcıları, stok dashboard'u ve offline bildirimler
 
-### Planlananlar
+### Yol haritasındaki sıradaki modüller
 
-- Çoklu ilaç tespiti ve gelişmiş görselle ilaç tanıma
-- Prospektüs özetleme
-- Aile profili yönetimi
-- Hatırlatıcı ve stok takibi
-- İlaç etkileşim kontrolü
+- Aile profili ve aile bireyi ilaç listeleri
 - Nöbetçi eczane entegrasyonu
+- Sesli ilaç sorgulama
+- Acil durum kartı ve sağlık günlüğü
+
+## Mimarinin kısa özeti
+
+```text
+Flutter Mobile App
+ ├─ Auth
+ ├─ Home / Navigation
+ ├─ Drug Search
+ ├─ Photo Scan + Prospectus Summary
+ ├─ Search/Scan History
+ ├─ Drug Interaction Check
+ └─ Natural Alternatives
+
+FastAPI Backend
+ ├─ /health
+ ├─ /api/auth/*
+ ├─ /api/drug/search
+ ├─ /api/drug/analyze-image
+ ├─ /api/drug/prospectus
+ ├─ /api/drug/interaction
+ └─ /api/drug/natural-alternatives
+```
 
 ## Teknoloji yığını
 
@@ -48,11 +96,13 @@ Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
 - Riverpod
 - Dio
 - GoRouter
-- Easy Localization
+- easy_localization
 - Hive
 - SharedPreferences (yalnızca eski verileri migrate etmek için)
 - Flutter Secure Storage
 - Skeletonizer
+- Camera
+- Image Picker
 
 ### Backend
 
@@ -61,19 +111,21 @@ Kişisel ilaç asistanı odaklı bir mobil sağlık uygulaması.
 - HTTPX
 - Python-Jose
 - Passlib / bcrypt
-- PostgreSQL (planlandı)
-- Redis (ilaç arama cache katmanında etkin)
+- Redis
+- Gemini API
+- PostgreSQL (hedef mimaride planlı, henüz aktif veri katmanı değil)
 
 ## Proje yapısı
 
 ```text
 Eczanem/
-├─ backend/        # FastAPI servisi
-├─ mobile/         # Flutter mobil uygulaması
+├─ backend/              # FastAPI servisi
+├─ mobile/               # Flutter mobil uygulaması
 ├─ docker-compose.yml
-├─ PLAN.md         # ürün ve faz yol haritası
+├─ PLAN.md               # faz bazlı yol haritası
 ├─ README.md
-└─ CHANGELOG.md
+├─ CHANGELOG.md
+└─ CONTRIBUTING.md
 ```
 
 ## Hızlı başlangıç
@@ -82,13 +134,16 @@ Eczanem/
 
 `backend/.env.example` dosyasını referans alarak `backend/.env` oluşturun.
 
-Gerekli alanlar:
+Temel değişkenler:
 
 - `GEMINI_API_KEY`
 - `JWT_SECRET_KEY`
-- API / DB / Redis ayarları
+- `API_HOST`
+- `API_PORT`
+- `REDIS_*`
+- `POSTGRES_*`
 
-Sanal ortam ve bağımlılık kurulumu:
+Kurulum:
 
 ```text
 python -m venv .venv
@@ -96,7 +151,7 @@ python -m venv .venv
 pip install -r backend/requirements.txt
 ```
 
-Backend’i çalıştırma:
+Çalıştırma:
 
 ```text
 cd backend
@@ -111,26 +166,22 @@ GET http://127.0.0.1:8000/health
 
 ### 2) Mobil kurulumu
 
-```text
-cd mobile
-flutter pub get
-```
+`mobile/.env.example` dosyasını kopyalayarak `mobile/.env` oluşturun.
 
-`mobile/.env` içinde backend adresini tanımlayın.
-
-Emülatör için örnek:
+Örnek:
 
 ```text
 API_BASE_URL=http://10.0.2.2:8000
 ```
 
-Gerçek cihaz için örnek:
+Kurulum:
 
 ```text
-API_BASE_URL=http://192.168.1.139:8000
+cd mobile
+flutter pub get
 ```
 
-Ardından uygulamayı başlatın:
+Çalıştırma:
 
 ```text
 cd mobile
@@ -141,27 +192,47 @@ flutter run
 
 Android telefonda test ederken:
 
-- Telefon ve bilgisayar aynı Wi‑Fi ağında olmalı
-- Backend `0.0.0.0:8000` üzerinden çalışmalı
+- telefon ve bilgisayar aynı Wi‑Fi ağında olmalı
+- backend `0.0.0.0:8000` üzerinden çalışmalı
 - `mobile/.env` içindeki `API_BASE_URL`, bilgisayarın yerel IP adresi olmalı
 
-## Docker Compose
+Örnek:
 
-Depoda `docker-compose.yml` mevcuttur:
+```text
+API_BASE_URL=http://192.168.1.139:8000
+```
 
-- `api`
-- `db`
-- `redis`
+## Kullanılabilir API uçları
 
-Not: Compose altyapısı mevcut olsa da geliştirmenin ana akışı şu an yerel Python/Flutter çalıştırması üzerinden ilerlemektedir.
+### Genel
+
+- `GET /health`
+
+### Auth
+
+- `POST /api/auth/signup`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `POST /api/auth/logout`
+- `POST /api/auth/forgot-password`
+
+### Drug
+
+- `POST /api/drug/search`
+- `POST /api/drug/analyze-image`
+- `POST /api/drug/prospectus`
+- `POST /api/drug/interaction`
+- `POST /api/drug/natural-alternatives`
 
 ## Geliştirme komutları
 
-### Mobil analiz
+### Mobil doğrulama
 
 ```text
 cd mobile
 flutter analyze
+flutter test
 ```
 
 ### Backend sözdizimi kontrolü
@@ -177,6 +248,14 @@ Geliştirme sırasında kullanılan örnek hesap:
 
 - **E-posta:** `hasan.test@example.com`
 - **Şifre:** `123456`
+
+## Bilinen sınırlamalar
+
+- Aile profili modülü henüz tamamlanmadı
+- Nöbetçi eczane entegrasyonu henüz yok
+- Release APK üretilebilir; ancak mağaza yayını için Android imzalama anahtarı (keystore) henüz tanımlı değil
+- Backend auth katmanı şu an dosya tabanlı kullanıcı store kullanıyor (`backend/data/users.json`)
+- PostgreSQL hedef mimaride planlı olsa da aktif kalıcı veri katmanı olarak henüz devrede değil
 
 ## Yol haritası
 

@@ -3,7 +3,7 @@
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
 **Başlangıç Tarihi:** 9 Nisan 2026  
 **Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
-**Durum:** 🟢 FAZ 2 + Geçmiş Merkezi tamamlandı
+**Durum:** 🟢 FAZ 2 + FAZ 4 + Geçmiş Merkezi + FAZ 5 tamamlandı
 
 ---
 
@@ -189,19 +189,19 @@ Kullanıcı aile bireylerinin ilaçlarını ayrı ayrı yönetebiliyor.
 
 ## FAZ 4 — Hatırlatıcı & Stok Takibi (1-2 hafta)
 
-**Durum:** ⬜ Başlanmadı
+**Durum:** 🟢 Tamamlandı
 
 ### Flutter Ekranları
-- [ ] Hatırlatıcı Ekle: İlaç seç → saat/gün/sıklık → bildirim ayarla
-- [ ] Hatırlatıcı Listesi: Aktif hatırlatıcılar + açma/kapama toggle
-- [ ] Stok Giriş: Kutuda kaç tablet + günlük doz → otomatik bitiş hesabı
-- [ ] Stok Dashboard: Kalan miktar progress bar + "X gün sonra bitecek" uyarısı
-- [ ] Bildirim: "💊 Aspirin alma zamanı!" — local notification
+- [x] Hatırlatıcı Ekle: İlaç seç → saat + günlük sıklık + stok bilgisi
+- [x] Hatırlatıcı Listesi: Aktif hatırlatıcılar + açma/kapama toggle
+- [x] Stok Giriş: Kutuda kaç tablet + günlük doz → otomatik bitiş hesabı
+- [x] Stok Dashboard: Kalan miktar progress bar + "X gün sonra bitecek" uyarısı
+- [x] Bildirim: "💊 Aspirin alma zamanı!" — local notification
 
 ### Flutter Paketleri
 - `flutter_local_notifications` — local bildirim
 - `timezone` — saat dilimi yönetimi
-- `workmanager` — arka plan görevi
+- `flutter_timezone` — cihaz saat dilimini doğru çözme
 
 ### Stok Hesaplama
 ```
@@ -210,11 +210,11 @@ uyarı_tarihi = bugün + kalan_gün - 3  // 3 gün önceden uyar
 ```
 
 ### Önemli
-- Bildirimler tamamen offline çalışmalı (local notification)
-- "✅ Aldım" butonu → stok otomatik azalır
+- [x] "✅ Aldım" butonu → stok otomatik azalır
+- [x] Bildirimler tamamen offline çalışmalı (local notification)
 
 ### Çıktı
-İlaç hatırlatıcı + stok takibi çalışıyor.
+Yerel çalışan ilaç hatırlatıcı, stok takibi ve offline bildirim akışı hazır.
 
 ---
 
@@ -303,7 +303,7 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 | 2 | Kamera + Prospektüs | 1-2 hafta | 🟢 |
 | Ara Faz | Geçmiş Merkezi | 2-3 gün | 🟢 |
 | 3 | Kullanıcı + Aile Profili | 1-2 hafta | 🟡 |
-| 4 | Hatırlatıcı + Stok Takibi | 1-2 hafta | ⬜ |
+| 4 | Hatırlatıcı + Stok Takibi | 1-2 hafta | 🟢 |
 | 5 | Etkileşim + Doğal Alternatif | 1-2 hafta | 🟢 |
 | 6 | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | ⬜ |
 | 7 | Acil Kart + Sağlık Notları | 1 hafta | ⬜ |
