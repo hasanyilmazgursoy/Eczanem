@@ -330,10 +330,7 @@ class _QuickActionsGrid extends StatelessWidget {
           icon: Icons.alarm_rounded,
           label: 'home.action_reminder'.tr(),
           color: const Color(0xFFFF8F00),
-          isComingSoon: true,
-          onTap: () {
-            context.showSnackBar('home.coming_soon'.tr());
-          },
+          onTap: () => context.push(AppRoutes.medicationReminders),
         ),
         _QuickActionTile(
           icon: Icons.compare_arrows_rounded,
@@ -1003,6 +1000,11 @@ class _ProfileTab extends StatelessWidget {
               icon: Icons.document_scanner_rounded,
               title: 'home.profile_scan_history'.tr(),
               onTap: () => context.push(AppRoutes.drugScanHistory),
+            ),
+            _ProfileMenuItem(
+              icon: Icons.alarm_rounded,
+              title: 'home.profile_reminders'.tr(),
+              onTap: () => context.push(AppRoutes.medicationReminders),
             ),
             _ProfileMenuItem(
               icon: Icons.settings_outlined,

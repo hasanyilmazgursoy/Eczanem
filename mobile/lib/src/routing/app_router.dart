@@ -18,6 +18,7 @@ import 'package:eczanem/src/features/drug/presentation/screens/drug_interaction_
 import 'package:eczanem/src/features/drug/presentation/screens/drug_natural_alternatives_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_scan_history_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_search_history_screen.dart';
+import 'package:eczanem/src/features/reminder/presentation/screens/medication_reminders_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
@@ -99,6 +100,14 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.drugScanHistory,
       name: 'drugScanHistory',
       builder: (context, state) => const DrugScanHistoryScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.medicationReminders,
+      name: 'medicationReminders',
+      builder: (context, state) {
+        final initialDrugName = state.extra as String?;
+        return MedicationRemindersScreen(initialDrugName: initialDrugName);
+      },
     ),
     GoRoute(
       path: AppRoutes.drugInteraction,

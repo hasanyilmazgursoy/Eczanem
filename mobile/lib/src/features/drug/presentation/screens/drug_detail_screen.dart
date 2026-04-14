@@ -28,6 +28,16 @@ class DrugDetailScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AppButton(
+                  label: 'drug_detail.reminder_cta'.tr(),
+                  onPressed: () => context.push(
+                    AppRoutes.medicationReminders,
+                    extra: drugName,
+                  ),
+                  isFullWidth: true,
+                  prefixIcon: const Icon(Icons.alarm_rounded),
+                ),
+                SizedBox(height: AppSpacing.sm),
+                AppButton(
                   label: 'drug_detail.interaction_cta'.tr(),
                   onPressed: () => context.push(
                     AppRoutes.drugInteraction,
