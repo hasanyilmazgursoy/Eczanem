@@ -108,7 +108,8 @@ class DrugHistoryRepository {
     for (final query in getRecentSearches()) {
       final normalized = query.trim();
       if (normalized.isEmpty) continue;
-      if (!suggestions.any((item) => item.toLowerCase() == normalized.toLowerCase())) {
+      if (!suggestions
+          .any((item) => item.toLowerCase() == normalized.toLowerCase())) {
         suggestions.add(normalized);
       }
     }
@@ -116,7 +117,8 @@ class DrugHistoryRepository {
     for (final entry in getRecentScans()) {
       final normalized = entry.title.trim();
       if (normalized.isEmpty) continue;
-      if (!suggestions.any((item) => item.toLowerCase() == normalized.toLowerCase())) {
+      if (!suggestions
+          .any((item) => item.toLowerCase() == normalized.toLowerCase())) {
         suggestions.add(normalized);
       }
     }

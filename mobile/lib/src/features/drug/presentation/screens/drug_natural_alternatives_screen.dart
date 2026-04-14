@@ -53,7 +53,8 @@ class _DrugNaturalAlternativesScreenState
       _error = null;
     });
 
-    final result = await DrugRepository.instance.getNaturalAlternatives(drugName);
+    final result =
+        await DrugRepository.instance.getNaturalAlternatives(drugName);
 
     if (!mounted) return;
 

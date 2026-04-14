@@ -65,7 +65,8 @@ class DrugRepository {
   }
 
   /// Bir ilacın kullanım amacına destek olabilecek doğal alternatifleri listeler.
-  FutureEither<Map<String, dynamic>> getNaturalAlternatives(String drugName) async {
+  FutureEither<Map<String, dynamic>> getNaturalAlternatives(
+      String drugName) async {
     final response = await _dio.post(
       '/api/drug/natural-alternatives',
       data: {'drug_name': drugName},

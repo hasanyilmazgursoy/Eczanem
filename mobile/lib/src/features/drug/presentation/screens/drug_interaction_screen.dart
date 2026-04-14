@@ -141,7 +141,8 @@ class _DrugInteractionScreenState extends State<DrugInteractionScreen> {
                         .map(
                           (drug) => InputChip(
                             label: Text(drug),
-                            avatar: const Icon(Icons.medication_outlined, size: 18),
+                            avatar:
+                                const Icon(Icons.medication_outlined, size: 18),
                             onDeleted: () => _removeDrug(drug),
                           ),
                         )
@@ -197,7 +198,8 @@ class _DrugInteractionScreenState extends State<DrugInteractionScreen> {
           ),
           if (_result != null) ...[
             SizedBox(height: AppSpacing.lg),
-            _InteractionResultCard(result: _result!, selectedDrugs: _selectedDrugs),
+            _InteractionResultCard(
+                result: _result!, selectedDrugs: _selectedDrugs),
           ],
         ],
       ),
@@ -254,7 +256,8 @@ class _HeroCard extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.xs),
           Text(
-            'drug_interaction.hero_subtitle'.tr(args: [selectedCount.toString()]),
+            'drug_interaction.hero_subtitle'
+                .tr(args: [selectedCount.toString()]),
             style: context.textTheme.bodyLarge?.copyWith(
               color: Colors.white.withValues(alpha: 0.88),
             ),
@@ -279,7 +282,8 @@ class _InteractionResultCard extends StatelessWidget {
     final riskLevel = (result['genel_risk_seviyesi'] ?? 'orta').toString();
     final riskColor = _resolveRiskColor(riskLevel);
     final interactions = (result['etkilesimler'] as List?) ?? const [];
-    final precautions = (result['dikkat_edilmesi_gerekenler'] as List?) ?? const [];
+    final precautions =
+        (result['dikkat_edilmesi_gerekenler'] as List?) ?? const [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -292,7 +296,8 @@ class _InteractionResultCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: riskColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(999),
@@ -316,7 +321,8 @@ class _InteractionResultCard extends StatelessWidget {
               ),
               SizedBox(height: AppSpacing.md),
               Text(
-                result['ozet']?.toString() ?? 'drug_interaction.no_summary'.tr(),
+                result['ozet']?.toString() ??
+                    'drug_interaction.no_summary'.tr(),
                 style: context.textTheme.bodyMedium,
               ),
             ],
@@ -353,7 +359,8 @@ class _InteractionResultCard extends StatelessWidget {
           ...interactions.map(
             (item) => Padding(
               padding: EdgeInsets.only(bottom: AppSpacing.md),
-              child: _InteractionItemCard(item: Map<String, dynamic>.from(item as Map)),
+              child: _InteractionItemCard(
+                  item: Map<String, dynamic>.from(item as Map)),
             ),
           ),
         SizedBox(height: AppSpacing.md),
