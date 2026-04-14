@@ -8,4 +8,4 @@ export 'copy_service.dart';
 export 'permission_service.dart';
 export 'url_launcher_service.dart';
 export 'media_service.dart';
-
+export 'notification_service.dart';
