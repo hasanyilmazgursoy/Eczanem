@@ -193,65 +193,87 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = context.colors;
     final isProspectusMode = _scanMode == _DrugPhotoScanMode.prospectus;
+    final colorScheme = context.colors;
+    final textTheme = context.textTheme;
 
     return Scaffold(
       appBar: AppTopBar(title: 'drug_search.photo_screen_title'.tr()),
-      body: ListView(
-        padding: EdgeInsets.all(AppSpacing.xl),
-        children: [
-          Container(
-            padding: EdgeInsets.all(AppSpacing.xl),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  colorScheme.primary,
-                  colorScheme.primaryContainer,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: AppBorders.card,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Mod Seçimi (Devasa Butonlar halinde)
+              Container(
+                decoration: BoxDecoration(
+                  color:
+                      colorScheme.surfaceContainerHigh.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(6),
+                child: Row(
                   children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: colorScheme.onPrimary,
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      child: Icon(
-                        Icons.document_scanner_outlined,
-                        color: colorScheme.primary,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() {
+                          _scanMode = _DrugPhotoScanMode.medicine;
+                          _imageError = null;
+                        }),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: EdgeInsets.symmetric(
+                              vertical: AppSpacing.md),
+                          decoration: BoxDecoration(
+                            color: !isProspectusMode
+                                ? colorScheme.primary
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow:
+                                !isProspectusMode ? AppShadows.card : null,
+                          ),
+                          child: Center(
+                            child: Text(
+                              'drug_search.scan_mode_medicine'.tr(),
+                              style: textTheme.titleMedium?.copyWith(
+                                color: !isProspectusMode
+                                    ? colorScheme.onPrimary
+                                    : colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(width: AppSpacing.md),
                     Expanded(
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
+                      child: GestureDetector(
+                        onTap: () => setState(() {
+                          _scanMode = _DrugPhotoScanMode.prospectus;
+                          _imageError = null;
+                        }),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: EdgeInsets.symmetric(
+                              vertical: AppSpacing.md),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.16),
-                            borderRadius: BorderRadius.circular(999),
+                            color: isProspectusMode
+                                ? colorScheme.primary
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow:
+                                isProspectusMode ? AppShadows.card : null,
                           ),
-                          child: Text(
-                            isProspectusMode
-                                ? 'drug_search.scan_mode_prospectus_badge'.tr()
-                                : 'drug_search.scan_mode_medicine_badge'.tr(),
-                            style: context.textTheme.labelLarge?.copyWith(
-                              color: colorScheme.onPrimary,
-                              fontWeight: FontWeight.w700,
+                          child: Center(
+                            child: Text(
+                              'drug_search.scan_mode_prospectus'.tr(),
+                              style: textTheme.titleMedium?.copyWith(
+                                color: isProspectusMode
+                                    ? colorScheme.onPrimary
+                                    : colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
@@ -259,263 +281,107 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: AppSpacing.md),
-                Text(
-                  'drug_search.photo_screen_title'.tr(),
-                  style: context.textTheme.headlineSmall?.copyWith(
-                    color: colorScheme.onPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                SizedBox(height: AppSpacing.xs),
-                Text(
-                  isProspectusMode
-                      ? 'drug_search.prospectus_mode_subtitle'.tr()
-                      : 'drug_search.photo_screen_subtitle'.tr(),
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: colorScheme.onPrimary.withValues(alpha: 0.88),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: AppSpacing.xl),
-          AppCard(
-            showShadow: true,
-            title: 'drug_search.scan_mode_title'.tr(),
-            subtitle: 'drug_search.scan_mode_subtitle'.tr(),
-            child: Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.sm,
-              children: [
-                ChoiceChip(
-                  label: Text('drug_search.scan_mode_medicine'.tr()),
-                  selected: _scanMode == _DrugPhotoScanMode.medicine,
-                  onSelected: (_) {
-                    setState(() {
-                      _scanMode = _DrugPhotoScanMode.medicine;
-                      _imageError = null;
-                    });
-                  },
-                ),
-                ChoiceChip(
-                  label: Text('drug_search.scan_mode_prospectus'.tr()),
-                  selected: _scanMode == _DrugPhotoScanMode.prospectus,
-                  onSelected: (_) {
-                    setState(() {
-                      _scanMode = _DrugPhotoScanMode.prospectus;
-                      _imageError = null;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: AppSpacing.xl),
-          AppCard(
-            showShadow: true,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              ),
+              SizedBox(height: AppSpacing.xxl),
+
+              if (_selectedImage != null) ...[
                 Expanded(
-                  child: _FlowStepCard(
-                    stepNumber: '1',
-                    title: 'drug_search.flow_step_select_title'.tr(),
-                    subtitle: 'drug_search.flow_step_select_subtitle'.tr(),
-                    icon: Icons.add_a_photo_outlined,
-                  ),
-                ),
-                SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: _FlowStepCard(
-                    stepNumber: '2',
-                    title: 'drug_search.flow_step_analyze_title'.tr(),
-                    subtitle: isProspectusMode
-                        ? 'drug_search.flow_step_analyze_prospectus_subtitle'
-                            .tr()
-                        : 'drug_search.flow_step_analyze_medicine_subtitle'
-                            .tr(),
-                    icon: Icons.auto_awesome_outlined,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: AppSpacing.xl),
-          AppCard(
-            title: 'drug_search.photo_tips_title'.tr(),
-            showShadow: true,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _TipRow(text: 'drug_search.photo_tip_1'.tr()),
-                SizedBox(height: AppSpacing.sm),
-                _TipRow(text: 'drug_search.photo_tip_2'.tr()),
-                SizedBox(height: AppSpacing.sm),
-                _TipRow(text: 'drug_search.photo_tip_3'.tr()),
-              ],
-            ),
-          ),
-          SizedBox(height: AppSpacing.xl),
-          AppCard(
-            showShadow: true,
-            title: isProspectusMode
-                ? 'drug_search.prospectus_card_title'.tr()
-                : 'drug_search.image_card_title'.tr(),
-            subtitle: isProspectusMode
-                ? 'drug_search.prospectus_card_subtitle'.tr()
-                : 'drug_search.image_card_subtitle'.tr(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (_selectedImage != null)
-                  _SelectedImagePreview(selectedImage: _selectedImage!)
-                else
-                  _ImageEmptyState(),
-                SizedBox(height: AppSpacing.md),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(AppSpacing.md),
-                  decoration: BoxDecoration(
-                    color: context.colors.surfaceContainerHighest,
-                    borderRadius: AppBorders.card,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.shield_outlined,
-                        size: 20,
-                        color: context.colors.primary,
-                      ),
-                      SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Text(
-                          isProspectusMode
-                              ? 'drug_search.analysis_hint_prospectus'.tr()
-                              : 'drug_search.analysis_hint_medicine'.tr(),
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: context.colors.onSurfaceVariant,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.file(_selectedImage!, fit: BoxFit.cover),
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: IconButton.filled(
+                            onPressed: _clearSelectedImage,
+                            icon: const Icon(Icons.close_rounded),
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.black54,
+                              foregroundColor: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 if (_imageError != null) ...[
                   SizedBox(height: AppSpacing.md),
                   _ImageErrorBanner(message: _imageError!),
                 ],
-                SizedBox(height: AppSpacing.md),
+                SizedBox(height: AppSpacing.xl),
                 AppButton(
-                  label: 'drug_search.take_photo'.tr(),
-                  onPressed: _isImageLoading ? null : _openCameraCapture,
-                  variant: ButtonVariant.outline,
-                  prefixIcon: const Icon(Icons.photo_camera_outlined),
+                  label: _isImageLoading
+                      ? isProspectusMode
+                          ? 'drug_search.analyzing_prospectus'.tr()
+                          : 'drug_search.analyzing_image'.tr()
+                      : isProspectusMode
+                          ? 'drug_search.summarize_prospectus'.tr()
+                          : 'drug_search.analyze_image'.tr(),
+                  onPressed: _isImageLoading ? null : _analyzeSelectedImage,
+                  isLoading: _isImageLoading,
                   isFullWidth: true,
+                  prefixIcon: const Icon(Icons.auto_awesome_outlined),
                 ),
-                SizedBox(height: AppSpacing.sm),
-                AppButton(
-                  label: 'drug_search.pick_from_gallery'.tr(),
+              ] else ...[
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.document_scanner_rounded,
+                        size: 80,
+                        color: colorScheme.primary.withValues(alpha: 0.3),
+                      ),
+                      SizedBox(height: AppSpacing.xl),
+                      Text(
+                        isProspectusMode
+                            ? 'drug_search.prospectus_mode_subtitle'.tr()
+                            : 'Fotoğraf seçin veya yeni bir fotoğraf çekin.',
+                        textAlign: TextAlign.center,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Dev Butonlar
+                OutlinedButton.icon(
                   onPressed: _isImageLoading
                       ? null
                       : () => _pickImage(ImageSource.gallery),
-                  variant: ButtonVariant.secondary,
-                  prefixIcon: const Icon(Icons.photo_library_outlined),
-                  isFullWidth: true,
+                  icon: const Icon(Icons.photo_library_rounded, size: 28),
+                  label: Text('drug_search.pick_from_gallery'.tr(),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 64),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
                 ),
-                if (_selectedImage != null) ...[
-                  SizedBox(height: AppSpacing.md),
-                  AppButton(
-                    label: _isImageLoading
-                        ? isProspectusMode
-                            ? 'drug_search.analyzing_prospectus'.tr()
-                            : 'drug_search.analyzing_image'.tr()
-                        : isProspectusMode
-                            ? 'drug_search.summarize_prospectus'.tr()
-                            : 'drug_search.analyze_image'.tr(),
-                    onPressed: _isImageLoading ? null : _analyzeSelectedImage,
-                    isLoading: _isImageLoading,
-                    isFullWidth: true,
-                    prefixIcon: const Icon(Icons.auto_awesome_outlined),
+                SizedBox(height: AppSpacing.lg),
+                FilledButton.icon(
+                  onPressed: _isImageLoading ? null : _openCameraCapture,
+                  icon: const Icon(Icons.camera_alt_rounded, size: 28),
+                  label: Text('drug_search.take_photo'.tr(),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 64),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
                   ),
-                  SizedBox(height: AppSpacing.sm),
-                  AppButton(
-                    label: 'drug_search.clear_selected_image'.tr(),
-                    onPressed: _isImageLoading ? null : _clearSelectedImage,
-                    variant: ButtonVariant.ghost,
-                    isFullWidth: true,
-                    prefixIcon: const Icon(Icons.delete_outline),
-                  ),
-                ],
+                ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TipRow extends StatelessWidget {
-  const _TipRow({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(Icons.check_circle_outline,
-            size: 18, color: context.colors.primary),
-        SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: Text(
-            text,
-            style: context.textTheme.bodyMedium,
+            ],
           ),
         ),
-      ],
-    );
-  }
-}
-
-class _ImageEmptyState extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: AppBorders.card,
-        border: Border.all(color: context.colors.outlineVariant),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.add_a_photo_outlined,
-            size: 40,
-            color: context.colors.primary,
-          ),
-          SizedBox(height: AppSpacing.sm),
-          Text(
-            'drug_search.image_empty_title'.tr(),
-            style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: AppSpacing.xs),
-          Text(
-            'drug_search.image_empty_subtitle'.tr(),
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: context.colors.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
       ),
     );
   }

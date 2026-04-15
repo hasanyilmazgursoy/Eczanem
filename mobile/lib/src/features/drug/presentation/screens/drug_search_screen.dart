@@ -167,25 +167,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   }
 
   Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '💊 Eczanem',
-          style: context.textTheme.headlineLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: context.colors.primary,
-          ),
-        ),
-        SizedBox(height: AppSpacing.xs),
-        Text(
-          'home.home_subtitle'.tr(),
-          style: context.textTheme.bodyLarge?.copyWith(
-            color: context.colors.onSurfaceVariant,
-          ),
-        ),
-      ],
-    );
+    return const SizedBox.shrink();
   }
 
   Widget _buildSearchField() {

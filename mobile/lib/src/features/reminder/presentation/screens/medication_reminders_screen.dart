@@ -205,126 +205,6 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final activeCount = _reminders.where((item) => item.isActive).length;
-    final trackedCount =
-        _reminders.where((item) => item.hasStockTracking).length;
-    final lowStockCount = _reminders
-        .where((item) => item.hasStockTracking && item.isLowStock)
-        .length;
-
-    return Scaffold(
-      appBar: AppTopBar(
-        title: 'medication_reminder.title'.tr(),
-        actions: [
-          IconButton(
-            onPressed: () => _openEditor(),
-            icon: const Icon(Icons.add_rounded),
-            tooltip: 'medication_reminder.add_title'.tr(),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openEditor(),
-        icon: const Icon(Icons.add_alarm_rounded),
-        label: Text('medication_reminder.add_button'.tr()),
-      ),
-      body: ListView(
-        padding: EdgeInsets.all(AppSpacing.lg),
-        children: [
-          _ReminderHeroCard(
-            totalCount: _reminders.length,
-            activeCount: activeCount,
-            lowStockCount: lowStockCount,
-          ),
-          if (!_notificationPermissionGranted) ...[
-            SizedBox(height: AppSpacing.md),
-            _NotificationPermissionCard(
-              onOpenSettings: _openNotificationSettings,
-            ),
-          ],
-          SizedBox(height: AppSpacing.lg),
-          Row(
-            children: [
-              Expanded(
-                child: _SummaryMetricCard(
-                  icon: Icons.alarm_on_rounded,
-                  label: 'medication_reminder.metric_active'.tr(),
-                  value: activeCount.toString(),
-                  color: context.colors.primary,
-                ),
-              ),
-              SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: _SummaryMetricCard(
-                  icon: Icons.inventory_2_outlined,
-                  label: 'medication_reminder.metric_stock'.tr(),
-                  value: trackedCount.toString(),
-                  color: Colors.teal,
-                ),
-              ),
-              SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: _SummaryMetricCard(
-                  icon: Icons.warning_amber_rounded,
-                  label: 'medication_reminder.metric_low'.tr(),
-                  value: lowStockCount.toString(),
-                  color: Colors.orange,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: AppSpacing.lg),
-          if (_reminders.isEmpty)
-            _EmptyState(
-              onAddPressed: () => _openEditor(),
-            )
-          else ...[
-            Text(
-              'medication_reminder.list_title'.tr(),
-              style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            SizedBox(height: AppSpacing.xs),
-            Text(
-              'medication_reminder.list_subtitle'.tr(),
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colors.onSurfaceVariant,
-              ),
-            ),
-            SizedBox(height: AppSpacing.md),
-            ..._reminders.map(
-              (reminder) => Padding(
-                padding: EdgeInsets.only(bottom: AppSpacing.md),
-                child: _ReminderCard(
-                  reminder: reminder,
-                  onToggle: (value) => _toggleReminder(reminder, value),
-                  onTakeDose:
-                      reminder.isOutOfStock ? null : () => _takeDose(reminder),
-                  onEdit: () => _openEditor(existing: reminder),
-                  onDelete: () => _deleteReminder(reminder),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _ReminderHeroCard extends StatelessWidget {
-  const _ReminderHeroCard({
-    required this.totalCount,
-    required this.activeCount,
-    required this.lowStockCount,
-  });
-
-  final int totalCount;
-  final int activeCount;
-  final int lowStockCount;
 
   @override
   Widget build(BuildContext context) {
@@ -365,21 +245,18 @@ class _ReminderHeroCard extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.xs),
           Text(
-            'medication_reminder.hero_subtitle'.tr(
-              args: [
-                totalCount.toString(),
-                activeCount.toString(),
-                lowStockCount.toString(),
-              ],
-            ),
-            style: context.textTheme.bodyLarge?.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
+            '\ tane aktif hatırlatıcınız var.',
+            style: context.textTheme.titleMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
       ),
     );
   }
+
+
 }
 
 class _SummaryMetricCard extends StatelessWidget {
@@ -599,29 +476,38 @@ class _ReminderCard extends StatelessWidget {
             ],
           ],
           SizedBox(height: AppSpacing.md),
-          Row(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: onEdit,
-                  icon: const Icon(Icons.edit_outlined),
-                  label: Text('medication_reminder.edit_button'.tr()),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: onEdit,
+                      icon: const Icon(Icons.edit_outlined),
+                      label: Text('medication_reminder.edit_button'.tr()),
+                    ),
+                  ),
+                  SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: AppButton(
+                      label: 'medication_reminder.take_now_button'.tr(),
+                      onPressed: onTakeDose,
+                      isFullWidth: true,
+                      prefixIcon:
+                          const Icon(Icons.check_circle_outline_rounded),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: AppButton(
-                  label: 'medication_reminder.take_now_button'.tr(),
-                  onPressed: onTakeDose,
-                  isFullWidth: true,
-                  prefixIcon: const Icon(Icons.check_circle_outline_rounded),
+              SizedBox(height: AppSpacing.sm),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton.filledTonal(
+                  onPressed: onDelete,
+                  icon: const Icon(Icons.delete_outline_rounded),
+                  tooltip: 'medication_reminder.delete_tooltip'.tr(),
                 ),
-              ),
-              SizedBox(width: AppSpacing.sm),
-              IconButton.filledTonal(
-                onPressed: onDelete,
-                icon: const Icon(Icons.delete_outline_rounded),
-                tooltip: 'medication_reminder.delete_tooltip'.tr(),
               ),
             ],
           ),
