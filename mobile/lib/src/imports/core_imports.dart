@@ -24,3 +24,7 @@ export '../features/home/presentation/screens/home_page.dart';
 export '../features/onboarding/presentation/screens/onboarding_page.dart';
 export '../features/drug/presentation/screens/drug_search_screen.dart';
 export '../features/drug/presentation/screens/drug_detail_screen.dart';
+export '../features/profile/presentation/screens/family_screen.dart';
+export '../features/profile/presentation/screens/family_member_detail_screen.dart';
+export '../features/pharmacy/presentation/screens/pharmacy_screen.dart';
+export 'package:url_launcher/url_launcher.dart';
