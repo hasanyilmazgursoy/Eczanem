@@ -85,6 +85,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                     context.push(AppRoutes.drugScanHistory);
                   },
                 ),
+                const Divider(),
+                ListTile(
+                  leading: Icon(Icons.family_restroom_rounded,
+                      color: colorScheme.primary, size: 28),
+                  title: Text('family.title'.tr(),
+                      style: textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  onTap: () {
+                    context.pop();
+                    context.push(AppRoutes.familyMembers);
+                  },
+                ),
                 SizedBox(height: AppSpacing.lg),
                 OutlinedButton.icon(
                   onPressed: () {
@@ -185,6 +197,22 @@ class _HomePageState extends ConsumerState<HomePage> {
                 onTap: () => context.push(AppRoutes.medicationReminders),
               ),
               SizedBox(height: AppSpacing.xl),
+              _HugeActionCard(
+                icon: Icons.family_restroom_rounded,
+                title: 'home.action_family'.tr(),
+                subtitle: 'family.empty_subtitle'.tr(),
+                color: const Color(0xFF00897B),
+                onTap: () => context.push(AppRoutes.familyMembers),
+              ),
+              SizedBox(height: AppSpacing.xl),
+              _HugeActionCard(
+                icon: Icons.local_pharmacy_rounded,
+                title: 'home.action_pharmacy'.tr(),
+                subtitle: 'pharmacy.initial_subtitle'.tr(),
+                color: const Color(0xFF5E35B1),
+                onTap: () => context.push(AppRoutes.pharmacyNearby),
+              ),
+              SizedBox(height: AppSpacing.xl),
             ],
           ),
         ),
@@ -253,7 +281,7 @@ class _HugeActionCard extends StatelessWidget {
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: color,
-                        fontSize: 24, // Even larger
+                        fontSize: 24,
                       ),
                     ),
                     SizedBox(height: AppSpacing.xs),
