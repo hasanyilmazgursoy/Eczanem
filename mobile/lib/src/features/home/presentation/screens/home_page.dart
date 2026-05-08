@@ -166,7 +166,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
               SizedBox(height: AppSpacing.sm),
               Text(
-                'Size nasıl yardımcı olabilirim?',
+                'home.welcome_subtitle'.tr(),
                 style: textTheme.titleMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
@@ -192,7 +192,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               _HugeActionCard(
                 icon: Icons.alarm_rounded,
                 title: 'home.action_reminder'.tr(),
-                subtitle: 'Doz saatlerini ve stok bilgilerinizi takip edin.',
+                subtitle: 'home.action_reminder_subtitle'.tr(),
                 color: const Color(0xFFFF8F00),
                 onTap: () => context.push(AppRoutes.medicationReminders),
               ),
