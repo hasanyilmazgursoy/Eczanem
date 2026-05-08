@@ -23,6 +23,8 @@ import 'package:eczanem/src/features/profile/presentation/screens/family_screen.
 import 'package:eczanem/src/features/profile/presentation/screens/family_member_detail_screen.dart';
 import 'package:eczanem/src/features/profile/data/models/family_member.dart';
 import 'package:eczanem/src/features/pharmacy/presentation/screens/pharmacy_screen.dart';
+import 'package:eczanem/src/features/emergency/presentation/screens/emergency_card_screen.dart';
+import 'package:eczanem/src/features/health_notes/presentation/screens/health_notes_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
@@ -148,6 +150,16 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.pharmacyNearby,
       name: 'pharmacyNearby',
       builder: (context, state) => const PharmacyScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.emergencyCard,
+      name: 'emergencyCard',
+      builder: (context, state) => const EmergencyCardScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.healthNotes,
+      name: 'healthNotes',
+      builder: (context, state) => const HealthNotesScreen(),
     ),
   ],
 );

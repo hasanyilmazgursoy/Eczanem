@@ -1,7 +1,7 @@
 /// Centralized route path constants for GoRouter.
 ///
 /// Use these variables instead of raw strings throughout the app.
-/// Example: `context.go(AppRoutes.onboarding)` instead of `context.go('/')`.  
+/// Example: `context.go(AppRoutes.onboarding)` instead of `context.go('/')`.
 abstract final class AppRoutes {
   AppRoutes._();
 
@@ -25,4 +25,6 @@ abstract final class AppRoutes {
   static const String familyMembers = '/family';
   static const String familyMemberDetail = '/family-member-detail';
   static const String pharmacyNearby = '/pharmacy-nearby';
+  static const String emergencyCard = '/emergency-card';
+  static const String healthNotes = '/health-notes';
 }

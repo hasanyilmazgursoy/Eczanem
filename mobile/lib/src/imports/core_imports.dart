@@ -27,4 +27,6 @@ export '../features/drug/presentation/screens/drug_detail_screen.dart';
 export '../features/profile/presentation/screens/family_screen.dart';
 export '../features/profile/presentation/screens/family_member_detail_screen.dart';
 export '../features/pharmacy/presentation/screens/pharmacy_screen.dart';
+export '../features/emergency/presentation/screens/emergency_card_screen.dart';
+export '../features/health_notes/presentation/screens/health_notes_screen.dart';
 export 'package:url_launcher/url_launcher.dart';
