@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     drug_search_rate_limit_max_requests: int = 10
     drug_search_redis_enabled: bool = True
 
+    # Nöbetçi eczane (CollectAPI) — .env'e COLLECT_API_KEY=apikey <key> ekle
+    collect_api_key: str = ""
+
     # JWT (geliştirme varsayılanı; prod'da env ile override edilmeli)
     jwt_secret_key: str = "eczanem-dev-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"
@@ -55,21 +58,10 @@ class Settings(BaseSettings):
 
         return value
 
-    @property
-    def database_url(self) -> str:
-        return (
-            f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
-            f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
-        )
-
-    @property
-    def redis_url(self) -> str:
-        return f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
-
-    model_config = {
-        "env_file": str(BACKEND_DIR / ".env"),
-        "env_file_encoding": "utf-8",
-    }
+    class Config:
+        env_file = str(BACKEND_DIR / ".env")
+        env_file_encoding = "utf-8"
+        extra = "ignore"
 
 
 @lru_cache
