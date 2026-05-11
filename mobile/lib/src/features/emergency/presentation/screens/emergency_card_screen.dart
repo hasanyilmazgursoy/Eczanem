@@ -1,3 +1,5 @@
+import 'package:share_plus/share_plus.dart';
+
 import '../../../../imports/imports.dart';
 import '../../data/emergency_card_repository.dart';
 import '../../data/models/emergency_card.dart';
@@ -124,6 +126,60 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
     setState(() => _isEditing = !_isEditing);
   }
 
+  /// Acil kart bilgilerini düz metin olarak paylaşır.
+  void _shareCard() {
+    final card = _card;
+    if (card == null || card.isEmpty) return;
+
+    final buffer = StringBuffer();
+    buffer.writeln('🆘 ACİL DURUM KARTI');
+    buffer.writeln('─' * 30);
+
+    if (card.bloodType.isNotEmpty) {
+      buffer.writeln('🩸 Kan Grubu: ${card.bloodType}');
+    }
+    if (card.allergies.isNotEmpty) {
+      buffer.writeln('\n⚠️ Alerjiler:');
+      for (final a in card.allergies) {
+        buffer.writeln('  • $a');
+      }
+    }
+    if (card.chronicConditions.isNotEmpty) {
+      buffer.writeln('\n🫀 Kronik Hastalıklar:');
+      for (final c in card.chronicConditions) {
+        buffer.writeln('  • $c');
+      }
+    }
+    if (card.currentMedications.isNotEmpty) {
+      buffer.writeln('\n💊 Düzenli İlaçlar:');
+      for (final m in card.currentMedications) {
+        buffer.writeln('  • $m');
+      }
+    }
+    if (card.emergencyContactName.isNotEmpty ||
+        card.emergencyContactPhone.isNotEmpty) {
+      buffer.writeln('\n📞 Acil İletişim:');
+      if (card.emergencyContactName.isNotEmpty) {
+        buffer.writeln('  ${card.emergencyContactName}');
+      }
+      if (card.emergencyContactPhone.isNotEmpty) {
+        buffer.writeln('  ${card.emergencyContactPhone}');
+      }
+    }
+    if (card.doctorName.isNotEmpty || card.doctorPhone.isNotEmpty) {
+      buffer.writeln('\n🏥 Doktor:');
+      if (card.doctorName.isNotEmpty) buffer.writeln('  ${card.doctorName}');
+      if (card.doctorPhone.isNotEmpty) {
+        buffer.writeln('  ${card.doctorPhone}');
+      }
+    }
+    if (card.notes.isNotEmpty) {
+      buffer.writeln('\n📝 Notlar:\n${card.notes}');
+    }
+
+    Share.share(buffer.toString(), subject: 'Acil Durum Kartım');
+  }
+
   /// Chip listesine yeni öğe ekle (alerji, hastalık, ilaç).
   void _addItem(List<String> list) {
     final text = _newItemCtrl.text.trim();
@@ -152,6 +208,13 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
           ),
         ),
         actions: [
+          // Görüntüleme modunda paylaş butonu
+          if (!_isEditing && _card != null && !_card!.isEmpty)
+            IconButton(
+              onPressed: _shareCard,
+              icon: const Icon(Icons.share_outlined, color: Colors.white),
+              tooltip: 'emergency_card.share'.tr(),
+            ),
           // Düzenleme / İptal toggle
           TextButton.icon(
             onPressed: _toggleEdit,
@@ -655,8 +718,8 @@ class _EditableChipSectionState extends State<_EditableChipSection> {
                 backgroundColor: widget.color.withValues(alpha: 0.1),
                 side: BorderSide(color: widget.color.withValues(alpha: 0.4)),
                 labelStyle: TextStyle(color: widget.color),
-                deleteIcon: Icon(Icons.close_rounded, size: 16,
-                    color: widget.color),
+                deleteIcon:
+                    Icon(Icons.close_rounded, size: 16, color: widget.color),
                 onDeleted: () => widget.onRemove(entry.key),
               );
             }).toList(),

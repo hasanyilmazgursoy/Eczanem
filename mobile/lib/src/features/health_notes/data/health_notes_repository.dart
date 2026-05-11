@@ -1,4 +1,4 @@
-import '../../../../imports/imports.dart';
+import '../../../imports/imports.dart';
 import 'models/health_note.dart';
 
 /// Sağlık notlarını Hive üzerinde liste olarak yöneten repository.
@@ -15,10 +15,7 @@ class HealthNotesRepository {
   List<HealthNote> getNotes() {
     final rawItems =
         StorageService.instance.getStringList(_storageKey) ?? const [];
-    return rawItems
-        .map(HealthNote.tryParse)
-        .whereType<HealthNote>()
-        .toList();
+    return rawItems.map(HealthNote.tryParse).whereType<HealthNote>().toList();
   }
 
   /// Belirli kategorideki notları döner.
@@ -53,9 +50,8 @@ class HealthNotesRepository {
   /// Mevcut notu günceller.
   FutureEither<HealthNote> updateNote(HealthNote updated) async {
     return runTask(() async {
-      final notes = getNotes()
-          .map((n) => n.id == updated.id ? updated : n)
-          .toList();
+      final notes =
+          getNotes().map((n) => n.id == updated.id ? updated : n).toList();
       await _persist(notes);
       return updated;
     });

@@ -205,103 +205,111 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(AppSpacing.xl),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFFF8F00), Color(0xFFFFB300)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    final activeCount = _reminders.where((r) => r.isActive).length;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('medication_reminder.title'.tr()),
+        centerTitle: false,
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _openEditor,
+        icon: const Icon(Icons.add_alarm_rounded),
+        label: Text('medication_reminder.add_button'.tr()),
+      ),
+      body: ListView(
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.md,
+          AppSpacing.lg,
+          // FAB'ın arkasını kapatmayacak kadar alt boşluk
+          AppSpacing.xxl * 3,
         ),
-        borderRadius: AppBorders.card,
-        boxShadow: AppShadows.card,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Hero kart — aktif hatırlatıcı sayısı
           Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(18),
+            padding: EdgeInsets.all(AppSpacing.xl),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFFF8F00), Color(0xFFFFB300)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: AppBorders.card,
+              boxShadow: AppShadows.card,
             ),
-            child: const Icon(
-              Icons.alarm_on_rounded,
-              color: Colors.white,
-              size: 30,
+            child: Row(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: const Icon(
+                    Icons.alarm_on_rounded,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+                SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'medication_reminder.hero_title'.tr(),
+                        style: context.textTheme.headlineSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      SizedBox(height: AppSpacing.xxs),
+                      Text(
+                        'medication_reminder.active_count'
+                            .tr(args: [activeCount.toString()]),
+                        style: context.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
+
+          // Bildirim izni uyarısı
+          if (!_notificationPermissionGranted) ...[
+            SizedBox(height: AppSpacing.md),
+            _NotificationPermissionCard(
+              onOpenSettings: _openNotificationSettings,
+            ),
+          ],
+
           SizedBox(height: AppSpacing.md),
-          Text(
-            'medication_reminder.hero_title'.tr(),
-            style: context.textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          SizedBox(height: AppSpacing.xs),
-          Text(
-            '\ tane aktif hatırlatıcınız var.',
-            style: context.textTheme.titleMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-
-}
-
-class _SummaryMetricCard extends StatelessWidget {
-  const _SummaryMetricCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppCard(
-      showShadow: true,
-      child: Column(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(icon, color: color),
-          ),
-          SizedBox(height: AppSpacing.sm),
-          Text(
-            value,
-            style: context.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          SizedBox(height: AppSpacing.xxs),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: context.textTheme.labelMedium?.copyWith(
-              color: context.colors.onSurfaceVariant,
-            ),
-          ),
+          // Boş durum ya da hatırlatıcı listesi
+          if (_reminders.isEmpty)
+            _EmptyState(onAddPressed: _openEditor)
+          else
+            ...List.generate(_reminders.length, (index) {
+              final reminder = _reminders[index];
+              return Padding(
+                padding: EdgeInsets.only(bottom: AppSpacing.md),
+                child: _ReminderCard(
+                  reminder: reminder,
+                  onToggle: (value) => _toggleReminder(reminder, value),
+                  onEdit: () => _openEditor(existing: reminder),
+                  onDelete: () => _deleteReminder(reminder),
+                  onTakeDose: () => _takeDose(reminder),
+                ),
+              );
+            }),
         ],
       ),
     );

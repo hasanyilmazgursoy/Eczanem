@@ -291,7 +291,8 @@
         "last_taken": "Son doz: {}",
         "edit_button": "Düzenle",
         "take_now_button": "Aldım",
-        "delete_tooltip": "Hatırlatıcıyı sil"
+        "delete_tooltip": "Hatırlatıcıyı sil",
+        "active_count": "{} aktif hatırlatıcı"
     },
     "family": {
         "title": "Aile Profili",
@@ -347,7 +348,13 @@
         "open_maps": "Haritada Aç",
         "call": "Ara",
         "location_permission_denied": "Konum izni verilmedi. Nöbetçi eczane bulmak için konum iznine ihtiyaç var.",
-        "location_unavailable": "Konum bilgisi alınamadı. Lütfen tekrar deneyin."
+        "location_unavailable": "Konum bilgisi alınamadı. Lütfen tekrar deneyin.",
+        "get_location": "Konumumu Al",
+        "location_denied": "Konum izni reddedildi.",
+        "location_error": "Konum alınamadı. Lütfen tekrar deneyin.",
+        "map_view": "Harita Görünümü",
+        "list_view": "Liste Görünümü",
+        "directions": "Yol Tarifi"
     },
     "emergency_card": {
         "title": "Acil Durum Kartım",
@@ -377,7 +384,8 @@
         "last_updated": "Son güncelleme: {}",
         "empty_title": "Acil Kartınız Hazır Değil",
         "empty_subtitle": "Acil durumlarda yardımcı olacak bilgileri doldurun.",
-        "create_card": "Kart Oluştur"
+        "create_card": "Kart Oluştur",
+        "share": "Paylaş"
     },
     "health_notes": {
         "title": "Sağlık Notlarım",
@@ -408,6 +416,8 @@
         "empty_filtered_title": "Bu Kategoride Not Yok",
         "empty_filtered_subtitle": "Bu kategoriye ait kayıt bulunmuyor.",
         "delete_confirm_title": "Notu Sil",
-        "delete_confirm_message": "Bu not kalıcı olarak silinecek."
+        "delete_confirm_message": "Bu not kalıcı olarak silinecek.",
+        "calendar_view": "Takvim Görünümü",
+        "list_view": "Liste Görünümü"
     }
 }

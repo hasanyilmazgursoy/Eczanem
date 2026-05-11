@@ -258,15 +258,21 @@ class _HugeActionCard extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     // Use solid backgrounds for extreme contrast.
-    final backgroundColor = isDarkMode ? color.withValues(alpha: 0.15) : color.withValues(alpha: 0.08);
-    final borderColor = isDarkMode ? color.withValues(alpha: 0.3) : color.withValues(alpha: 0.5);
+    final backgroundColor = isDarkMode
+        ? color.withValues(alpha: 0.15)
+        : color.withValues(alpha: 0.08);
+    final borderColor = isDarkMode
+        ? color.withValues(alpha: 0.3)
+        : color.withValues(alpha: 0.5);
     final titleColor = isDarkMode ? color : color.withValues(alpha: 1.0);
     final iconContainerColor = color;
     final iconColor = Colors.white;
     final chevronColor = isDarkMode ? color : color;
 
     // Ensure subtitle contrast
-    final subtitleColor = isDarkMode ? context.colors.onSurfaceVariant.withValues(alpha: 0.9) : context.colors.onSurfaceVariant;
+    final subtitleColor = isDarkMode
+        ? context.colors.onSurfaceVariant.withValues(alpha: 0.9)
+        : context.colors.onSurfaceVariant;
 
     return Material(
       color: backgroundColor,
@@ -294,16 +300,15 @@ class _HugeActionCard extends StatelessWidget {
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: iconContainerColor,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                     BoxShadow(
-                       color: color.withValues(alpha: 0.3),
-                       blurRadius: 8,
-                       offset: const Offset(0, 4),
-                     )
-                  ]
-                ),
+                    color: iconContainerColor,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: color.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      )
+                    ]),
                 child: Icon(icon, color: iconColor, size: 40),
               ),
               SizedBox(width: AppSpacing.lg),
@@ -315,7 +320,7 @@ class _HugeActionCard extends StatelessWidget {
                       title,
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
-                          color: titleColor,
+                        color: titleColor,
                         fontSize: 24,
                       ),
                     ),

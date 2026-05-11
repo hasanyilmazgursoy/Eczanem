@@ -291,7 +291,8 @@
     "last_taken": "Last dose: {}",
     "edit_button": "Edit",
     "take_now_button": "Taken",
-    "delete_tooltip": "Delete reminder"
+    "delete_tooltip": "Delete reminder",
+    "active_count": "{} active reminders"
   },
   "family": {
     "title": "Family Profile",
@@ -347,7 +348,13 @@
     "open_maps": "Open in Maps",
     "call": "Call",
     "location_permission_denied": "Location permission denied. Location permission is needed to find on-duty pharmacies.",
-    "location_unavailable": "Location info could not be retrieved. Please try again."
+    "location_unavailable": "Location info could not be retrieved. Please try again.",
+    "get_location": "Get My Location",
+    "location_denied": "Location permission denied.",
+    "location_error": "Could not get location. Please try again.",
+    "map_view": "Map View",
+    "list_view": "List View",
+    "directions": "Directions"
   },
   "emergency_card": {
     "title": "My Emergency Card",
@@ -377,7 +384,8 @@
     "last_updated": "Last updated: {}",
     "empty_title": "Your Emergency Card Is Not Ready",
     "empty_subtitle": "Fill in information that will help in emergencies.",
-    "create_card": "Create Card"
+    "create_card": "Create Card",
+    "share": "Share"
   },
   "health_notes": {
     "title": "My Health Notes",
@@ -408,6 +416,8 @@
     "empty_filtered_title": "No Notes in This Category",
     "empty_filtered_subtitle": "No records found for this category.",
     "delete_confirm_title": "Delete Note",
-    "delete_confirm_message": "This note will be permanently deleted."
+    "delete_confirm_message": "This note will be permanently deleted.",
+    "calendar_view": "Calendar View",
+    "list_view": "List View"
   }
 }

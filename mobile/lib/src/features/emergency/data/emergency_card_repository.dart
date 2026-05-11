@@ -1,4 +1,4 @@
-import '../../../../imports/imports.dart';
+import '../../../imports/imports.dart';
 import 'models/emergency_card.dart';
 
 /// Acil durum kartını Hive üzerinde singleton olarak yöneten repository.

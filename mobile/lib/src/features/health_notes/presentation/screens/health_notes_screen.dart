@@ -1,3 +1,5 @@
+import 'package:table_calendar/table_calendar.dart';
+
 import '../../../../imports/imports.dart';
 import '../../data/health_notes_repository.dart';
 import '../../data/models/health_note.dart';
@@ -16,6 +18,9 @@ class HealthNotesScreen extends StatefulWidget {
 class _HealthNotesScreenState extends State<HealthNotesScreen> {
   List<HealthNote> _notes = const [];
   String? _selectedCategory; // null = tümü
+  bool _showCalendar = false; // liste / takvim toggle
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
 
   @override
   void initState() {
@@ -33,6 +38,15 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
   List<HealthNote> get _filteredNotes {
     if (_selectedCategory == null) return _notes;
     return _notes.where((n) => n.category == _selectedCategory).toList();
+  }
+
+  /// Belirli güne ait notları döner (takvim görünümü için).
+  List<HealthNote> _getNotesForDay(DateTime day) {
+    return _notes.where((n) {
+      return n.date.year == day.year &&
+          n.date.month == day.month &&
+          n.date.day == day.day;
+    }).toList();
   }
 
   Future<void> _openAddSheet({HealthNote? existing}) async {
@@ -106,6 +120,24 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
             fontWeight: FontWeight.w800,
           ),
         ),
+        actions: [
+          // Liste / Takvim toggle
+          IconButton(
+            onPressed: () => setState(() {
+              _showCalendar = !_showCalendar;
+              if (_showCalendar) _selectedDay = DateTime.now();
+            }),
+            icon: Icon(
+              _showCalendar
+                  ? Icons.list_rounded
+                  : Icons.calendar_month_rounded,
+              color: Colors.white,
+            ),
+            tooltip: _showCalendar
+                ? 'health_notes.list_view'.tr()
+                : 'health_notes.calendar_view'.tr(),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openAddSheet(),
@@ -114,17 +146,93 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
         icon: const Icon(Icons.add_rounded),
         label: Text('health_notes.add'.tr()),
       ),
-      body: Column(
-        children: [
-          // Kategori filtresi yatay kaydırma çubuğu
-          _CategoryFilterBar(
-            selected: _selectedCategory,
-            onSelected: (cat) =>
-                setState(() => _selectedCategory = cat),
+      body: _showCalendar ? _buildCalendarView() : _buildListView(),
+    );
+  }
+
+  /// Liste görünümü — kategori filtresi + notlar.
+  Widget _buildListView() {
+    return Column(
+      children: [
+        _CategoryFilterBar(
+          selected: _selectedCategory,
+          onSelected: (cat) => setState(() => _selectedCategory = cat),
+        ),
+        Expanded(child: _buildNoteList()),
+      ],
+    );
+  }
+
+  /// Takvim görünümü — aylık takvim + seçili günün notları.
+  Widget _buildCalendarView() {
+    final selectedDay = _selectedDay ?? DateTime.now();
+    final dayNotes = _getNotesForDay(selectedDay);
+
+    return Column(
+      children: [
+        TableCalendar<HealthNote>(
+          firstDay: DateTime(2020),
+          lastDay: DateTime(2030),
+          focusedDay: _focusedDay,
+          selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+          eventLoader: _getNotesForDay,
+          calendarFormat: CalendarFormat.month,
+          // Sadece aylık görünüme izin ver
+          availableCalendarFormats: const {CalendarFormat.month: ''},
+          headerStyle: const HeaderStyle(formatButtonVisible: false),
+          calendarStyle: CalendarStyle(
+            todayDecoration: BoxDecoration(
+              color: const Color(0xFF1565C0).withValues(alpha: 0.4),
+              shape: BoxShape.circle,
+            ),
+            selectedDecoration: const BoxDecoration(
+              color: Color(0xFF1565C0),
+              shape: BoxShape.circle,
+            ),
+            // Not olan günlerde küçük nokta göster
+            markerDecoration: const BoxDecoration(
+              color: Color(0xFF1565C0),
+              shape: BoxShape.circle,
+            ),
           ),
-          Expanded(child: _buildNoteList()),
-        ],
-      ),
+          onDaySelected: (selected, focused) {
+            setState(() {
+              _selectedDay = selected;
+              _focusedDay = focused;
+            });
+          },
+          onPageChanged: (focused) {
+            _focusedDay = focused;
+          },
+        ),
+        const Divider(height: 1),
+        Expanded(
+          child: dayNotes.isEmpty
+              ? _EmptyNotesState(
+                  isFiltered: true,
+                  onAdd: () => _openAddSheet(),
+                )
+              : ListView.separated(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.xl,
+                    AppSpacing.md,
+                    AppSpacing.xl,
+                    AppSpacing.xxl + 56,
+                  ),
+                  itemCount: dayNotes.length,
+                  separatorBuilder: (_, __) =>
+                      SizedBox(height: AppSpacing.md),
+                  itemBuilder: (context, index) {
+                    final note = dayNotes[index];
+                    return _NoteCard(
+                      note: note,
+                      onEdit: () => _openAddSheet(existing: note),
+                      onDelete: () => _deleteNote(note),
+                    );
+                  },
+                ),
+        ),
+      ],
     );
   }
 
@@ -200,8 +308,7 @@ class _CategoryFilterBar extends StatelessWidget {
             label: Text(
               cat == null ? label : '${HealthNoteCategory.iconFor(cat)} $label',
               style: TextStyle(
-                fontWeight:
-                    isSelected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
             selected: isSelected,
@@ -419,8 +526,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
             isEdit
                 ? 'health_notes.edit_title'.tr()
                 : 'health_notes.add_title'.tr(),
-            style:
-                textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           SizedBox(height: AppSpacing.xl),
           // Tarih seçici
@@ -466,16 +572,11 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                   '${HealthNoteCategory.iconFor(cat)} ${"health_notes.category_$cat".tr()}',
                 ),
                 selected: isSelected,
-                onSelected: (_) =>
-                    setState(() => _selectedCategory = cat),
+                onSelected: (_) => setState(() => _selectedCategory = cat),
                 selectedColor: const Color(0xFF1565C0),
                 labelStyle: TextStyle(
-                  color: isSelected
-                      ? Colors.white
-                      : colorScheme.onSurface,
-                  fontWeight: isSelected
-                      ? FontWeight.bold
-                      : FontWeight.normal,
+                  color: isSelected ? Colors.white : colorScheme.onSurface,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               );
             }).toList(),
@@ -497,10 +598,8 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                   style: const TextStyle(fontSize: 22),
                 ),
                 selected: isSelected,
-                onSelected: (_) =>
-                    setState(() => _selectedMood = mood),
-                selectedColor:
-                    colorScheme.primaryContainer,
+                onSelected: (_) => setState(() => _selectedMood = mood),
+                selectedColor: colorScheme.primaryContainer,
               );
             }).toList(),
           ),
@@ -518,9 +617,8 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
           AppButton(
             onPressed: _status.isLoading ? null : _save,
             isLoading: _status.isLoading,
-            label: isEdit
-                ? 'health_notes.update'.tr()
-                : 'health_notes.save'.tr(),
+            label:
+                isEdit ? 'health_notes.update'.tr() : 'health_notes.save'.tr(),
             color: const Color(0xFF1565C0),
             isFullWidth: true,
           ),
@@ -575,8 +673,7 @@ class _EmptyNotesState extends StatelessWidget {
                 onPressed: onAdd,
                 label: 'health_notes.add_first'.tr(),
                 color: const Color(0xFF1565C0),
-                prefixIcon:
-                    const Icon(Icons.add_rounded, color: Colors.white),
+                prefixIcon: const Icon(Icons.add_rounded, color: Colors.white),
               ),
             ],
           ],
