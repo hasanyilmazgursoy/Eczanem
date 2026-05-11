@@ -128,9 +128,7 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
               if (_showCalendar) _selectedDay = DateTime.now();
             }),
             icon: Icon(
-              _showCalendar
-                  ? Icons.list_rounded
-                  : Icons.calendar_month_rounded,
+              _showCalendar ? Icons.list_rounded : Icons.calendar_month_rounded,
               color: Colors.white,
             ),
             tooltip: _showCalendar
@@ -220,8 +218,7 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
                     AppSpacing.xxl + 56,
                   ),
                   itemCount: dayNotes.length,
-                  separatorBuilder: (_, __) =>
-                      SizedBox(height: AppSpacing.md),
+                  separatorBuilder: (_, __) => SizedBox(height: AppSpacing.md),
                   itemBuilder: (context, index) {
                     final note = dayNotes[index];
                     return _NoteCard(

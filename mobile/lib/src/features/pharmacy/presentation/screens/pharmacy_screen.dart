@@ -106,7 +106,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
       // Eğer il/ilçe alanları boşsa otomatik doldurmak için Geocoding
       // paketi gerekir; şimdilik sadece konumu alıp haritayı açıyoruz.
       if (_ilCtrl.text.trim().isEmpty) {
-        _ilCtrl.text = '${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}';
+        _ilCtrl.text =
+            '${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}';
       }
 
       setState(() => _showMap = true);
@@ -164,9 +165,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
             icon: Icon(
               _showMap ? Icons.list_rounded : Icons.map_rounded,
             ),
-            tooltip: _showMap
-                ? 'pharmacy.list_view'.tr()
-                : 'pharmacy.map_view'.tr(),
+            tooltip:
+                _showMap ? 'pharmacy.list_view'.tr() : 'pharmacy.map_view'.tr(),
           ),
         ],
       ),
@@ -188,8 +188,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                           labelText: 'pharmacy.il_label'.tr(),
                           hintText: 'pharmacy.il_hint'.tr(),
                           isDense: true,
-                          prefixIcon:
-                              const Icon(Icons.location_city_rounded),
+                          prefixIcon: const Icon(Icons.location_city_rounded),
                         ),
                         onSubmitted: (_) => _search(),
                       ),
@@ -217,8 +216,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2.5),
+                          child: CircularProgressIndicator(strokeWidth: 2.5),
                         )
                       : const Icon(Icons.search_rounded),
                   label: Text('pharmacy.search_button'.tr()),
@@ -242,9 +240,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
   /// Harita görünümü — FlutterMap + eczane markerları.
   Widget _buildMapView(colorScheme) {
     // Koordinatı olan eczaneleri filtrele
-    final mappable = _pharmacies
-        .where((p) => p.lat != null && p.lon != null)
-        .toList();
+    final mappable =
+        _pharmacies.where((p) => p.lat != null && p.lon != null).toList();
 
     // Merkez: ilk eczane veya İstanbul varsayılanı
     final center = mappable.isNotEmpty
@@ -416,8 +413,7 @@ class _InitialState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.local_pharmacy_rounded,
-                size: 80,
-                color: colorScheme.primary.withValues(alpha: 0.4)),
+                size: 80, color: colorScheme.primary.withValues(alpha: 0.4)),
             SizedBox(height: AppSpacing.lg),
             Text('pharmacy.initial_title'.tr(),
                 style: textTheme.headlineSmall
@@ -425,8 +421,8 @@ class _InitialState extends StatelessWidget {
                 textAlign: TextAlign.center),
             SizedBox(height: AppSpacing.sm),
             Text('pharmacy.initial_subtitle'.tr(),
-                style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant),
+                style: textTheme.bodyMedium
+                    ?.copyWith(color: colorScheme.onSurfaceVariant),
                 textAlign: TextAlign.center),
           ],
         ),
@@ -451,17 +447,16 @@ class _ApiUnavailableState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.info_outline_rounded,
-                size: 64,
-                color: colorScheme.primary.withValues(alpha: 0.5)),
+                size: 64, color: colorScheme.primary.withValues(alpha: 0.5)),
             SizedBox(height: AppSpacing.lg),
             Text('pharmacy.no_results_title'.tr(),
-                style: textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style:
+                    textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center),
             SizedBox(height: AppSpacing.sm),
             Text('pharmacy.no_results_subtitle'.tr(),
-                style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant),
+                style: textTheme.bodyMedium
+                    ?.copyWith(color: colorScheme.onSurfaceVariant),
                 textAlign: TextAlign.center),
           ],
         ),
