@@ -3,7 +3,7 @@
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
 **Başlangıç Tarihi:** 9 Nisan 2026  
 **Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
-**Durum:** 🟢 FAZ 2 + FAZ 4 + Geçmiş Merkezi + FAZ 5 tamamlandı
+**Durum:** 🟢 FAZ 0, 1, 2, Ara Faz, 4 ve 5 tamamlandı · 🟡 FAZ 3, 6 ve 7 büyük ölçüde geliştirildi · ⬜ FAZ 8 aktif odak
 
 ---
 
@@ -157,14 +157,14 @@ Kullanıcı hem metin aramalarını hem de görsel analiz geçmişini profile se
 
 ## FAZ 3 — Kullanıcı Sistemi & Aile Profili (1-2 hafta)
 
-**Durum:** 🟡 Kısmen hazır (temel auth var, aile profili yok)
+**Durum:** 🟡 Büyük ölçüde hazır
 
 ### Backend
 - [x] `POST /api/auth/register` — E-posta + şifre ile kayıt
 - [x] `POST /api/auth/login` — JWT token döndür
 - [ ] `POST /api/auth/google` — Google ile giriş (opsiyonel)
-- [ ] `CRUD /api/profile/family/` — Aile bireyi yönetimi
-- [ ] `CRUD /api/profile/family/{id}/drugs/` — Aile bireyinin ilaç listesi
+- [x] `CRUD /api/profile/family/` — Aile bireyi yönetimi
+- [x] `CRUD /api/profile/family/{id}/drugs/` — Aile bireyinin ilaç listesi
 
 ### Veritabanı Tabloları
 - `users` (id, email, password_hash, name, created_at)
@@ -173,9 +173,10 @@ Kullanıcı hem metin aramalarını hem de görsel analiz geçmişini profile se
 
 ### Flutter Ekranları
 - [x] Giriş/Kayıt temel ekranları
-- [ ] Profil Ana: Kendi profili + aile bireyleri grid (emoji avatarlar)
-- [ ] Birey Detay: İlaç listesi, ekle/çıkar
-- [ ] Birey Ekle: Ad, ilişki, yaş, emoji seç
+- [x] Profil Ana: Kendi profili + aile bireyleri grid (emoji avatarlar)
+- [x] Birey Detay: İlaç listesi, ekle/çıkar
+- [x] Birey Ekle: Ad, ilişki, yaş, emoji seç
+- [ ] Backend senkronizasyonu ve tam release polish
 
 ### Önemli Kararlar
 - Giriş yapmayanlar → tüm veri local'de (Hive/SQLite)
@@ -238,17 +239,18 @@ Yerel çalışan ilaç hatırlatıcı, stok takibi ve offline bildirim akışı 
 
 ## FAZ 6 — Nöbetçi Eczane + Sesli Sorgulama (1-2 hafta)
 
-**Durum:** ⬜ Başlanmadı
+**Durum:** 🟡 Büyük ölçüde hazır
 
 ### Backend
-- [ ] `GET /api/pharmacy/nearby?lat=X&lon=Y` — En yakın nöbetçi eczaneler
-- [ ] Veri kaynağı: CollectAPI veya nosyapi.com
-- [ ] Cache: 6 saat
+- [x] `GET /api/pharmacy/nearby?lat=X&lon=Y` — En yakın nöbetçi eczaneler
+- [x] Veri kaynağı: CollectAPI tabanlı servis katmanı
+- [ ] Cache: 6 saat ve prod sertliği
 
 ### Flutter Ekranları
 - [ ] Eczane Harita: Google Maps/OpenStreetMap üzerinde pinler
-- [ ] Eczane Liste: Mesafe sıralı, telefon, adres, yol tarifi butonu
+- [x] Eczane Liste: Liste, telefon, adres ve temel aksiyonlar
 - [ ] Sesli Arama: Mikrofon butonu → STT → ilaç arama
+- [ ] Konum izinleri ve yayın seviyesi kullanıcı akışı polish
 
 ### Flutter Paketleri
 - `geolocator` — konum alma
@@ -263,15 +265,15 @@ Nöbetçi eczane bulma + sesle ilaç sorgulama çalışıyor.
 
 ## FAZ 7 — Acil Durum Kartı & Sağlık Notu (1 hafta)
 
-**Durum:** ⬜ Başlanmadı
+**Durum:** 🟡 Büyük ölçüde hazır
 
 ### Flutter Ekranları
-- [ ] Acil Kart Düzenle: Kan grubu, alerjiler, kronik hastalıklar, acil kişi
-- [ ] Acil Kart Görüntüle: Tek ekranda tüm bilgi, büyük font, yüksek kontrast
+- [x] Acil Kart Düzenle: Kan grubu, alerjiler, kronik hastalıklar, acil kişi
+- [x] Acil Kart Görüntüle: Tek ekranda tüm bilgi, büyük font, yüksek kontrast
 - [ ] Paylaş: PDF olarak dışa aktar
-- [ ] Sağlık Notu Ekle: Tarih, kategori, metin, emoji mood
-- [ ] Not Geçmişi: Takvim görünümü + liste + filtreleme
-- [ ] Doktor Raporu: Tarih aralığı seç → Gemini ile özetle
+- [x] Sağlık Notu Ekle: Tarih, kategori, metin, emoji mood
+- [x] Not Geçmişi: Liste + kategori filtreleme
+- [ ] Takvim görünümü ve doktor raporu özeti
 
 ### Çıktı
 Acil durum kartı + sağlık günlüğü çalışıyor.
@@ -280,17 +282,18 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 
 ## FAZ 8 — Test, UI Polish & Yayın (1-2 hafta)
 
-**Durum:** ⬜ Başlanmadı
+**Durum:** 🟡 Başlatıldı
 
 - [ ] UI/UX iyileştirme: Tutarlı tasarım, animasyonlar, empty state ekranları
-- [ ] Karanlık mod: Tam dark theme desteği
-- [ ] Onboarding: İlk açılışta 3-4 sayfalık tanıtım
+- [ ] Karanlık mod: Tam dark theme desteği ve hardcoded color temizliği
+- [x] Onboarding: İlk açılışta temel onboarding akışı
 - [ ] Hata yönetimi: Her ekranda yükleniyor/hata/boş/başarılı durumları
 - [ ] Performans: Lazy loading, image caching, API response caching
-- [ ] Güvenlik: HTTPS zorunlu, API key gizleme, input sanitization
+- [ ] Güvenlik: HTTPS zorunlu, API key gizleme, input sanitization, CORS sertleştirme
 - [ ] Test: Widget testleri + API testleri (Pytest)
 - [ ] Play Store: App icon, screenshots, açıklama, privacy policy
 - [ ] Backend Deploy: Railway / Render / VPS
+- [ ] Dokümantasyon senkronizasyonu: README, PLAN, CHANGELOG, release checklist
 
 ---
 
@@ -305,8 +308,8 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 | 3 | Kullanıcı + Aile Profili | 1-2 hafta | 🟡 |
 | 4 | Hatırlatıcı + Stok Takibi | 1-2 hafta | 🟢 |
 | 5 | Etkileşim + Doğal Alternatif | 1-2 hafta | 🟢 |
-| 6 | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | ⬜ |
-| 7 | Acil Kart + Sağlık Notları | 1 hafta | ⬜ |
-| 8 | Test & Yayın | 1-2 hafta | ⬜ |
+| 6 | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | 🟡 |
+| 7 | Acil Kart + Sağlık Notları | 1 hafta | 🟡 |
+| 8 | Test & Yayın | 1-2 hafta | 🟡 |
 
 **Toplam: ~8-14 hafta**

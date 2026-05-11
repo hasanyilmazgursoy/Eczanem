@@ -19,6 +19,12 @@ import 'package:eczanem/src/features/drug/presentation/screens/drug_natural_alte
 import 'package:eczanem/src/features/drug/presentation/screens/drug_scan_history_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_search_history_screen.dart';
 import 'package:eczanem/src/features/reminder/presentation/screens/medication_reminders_screen.dart';
+import 'package:eczanem/src/features/profile/presentation/screens/family_screen.dart';
+import 'package:eczanem/src/features/profile/presentation/screens/family_member_detail_screen.dart';
+import 'package:eczanem/src/features/profile/data/models/family_member.dart';
+import 'package:eczanem/src/features/pharmacy/presentation/screens/pharmacy_screen.dart';
+import 'package:eczanem/src/features/emergency/presentation/screens/emergency_card_screen.dart';
+import 'package:eczanem/src/features/health_notes/presentation/screens/health_notes_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
@@ -126,6 +132,34 @@ final GoRouter appRouter = GoRouter(
         final initialDrugName = state.extra as String?;
         return DrugNaturalAlternativesScreen(initialDrugName: initialDrugName);
       },
+    ),
+    GoRoute(
+      path: AppRoutes.familyMembers,
+      name: 'familyMembers',
+      builder: (context, state) => const FamilyScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.familyMemberDetail,
+      name: 'familyMemberDetail',
+      builder: (context, state) {
+        final member = state.extra as FamilyMember;
+        return FamilyMemberDetailScreen(member: member);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.pharmacyNearby,
+      name: 'pharmacyNearby',
+      builder: (context, state) => const PharmacyScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.emergencyCard,
+      name: 'emergencyCard',
+      builder: (context, state) => const EmergencyCardScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.healthNotes,
+      name: 'healthNotes',
+      builder: (context, state) => const HealthNotesScreen(),
     ),
   ],
 );

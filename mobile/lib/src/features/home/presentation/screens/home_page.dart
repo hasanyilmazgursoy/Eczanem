@@ -85,6 +85,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                     context.push(AppRoutes.drugScanHistory);
                   },
                 ),
+                const Divider(),
+                ListTile(
+                  leading: Icon(Icons.family_restroom_rounded,
+                      color: colorScheme.primary, size: 28),
+                  title: Text('family.title'.tr(),
+                      style: textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  onTap: () {
+                    context.pop();
+                    context.push(AppRoutes.familyMembers);
+                  },
+                ),
                 SizedBox(height: AppSpacing.lg),
                 OutlinedButton.icon(
                   onPressed: () {
@@ -154,7 +166,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
               SizedBox(height: AppSpacing.sm),
               Text(
-                'Size nasıl yardımcı olabilirim?',
+                'home.welcome_subtitle'.tr(),
                 style: textTheme.titleMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
@@ -180,9 +192,41 @@ class _HomePageState extends ConsumerState<HomePage> {
               _HugeActionCard(
                 icon: Icons.alarm_rounded,
                 title: 'home.action_reminder'.tr(),
-                subtitle: 'Doz saatlerini ve stok bilgilerinizi takip edin.',
+                subtitle: 'home.action_reminder_subtitle'.tr(),
                 color: const Color(0xFFFF8F00),
                 onTap: () => context.push(AppRoutes.medicationReminders),
+              ),
+              SizedBox(height: AppSpacing.xl),
+              _HugeActionCard(
+                icon: Icons.family_restroom_rounded,
+                title: 'home.action_family'.tr(),
+                subtitle: 'family.empty_subtitle'.tr(),
+                color: const Color(0xFF00897B),
+                onTap: () => context.push(AppRoutes.familyMembers),
+              ),
+              SizedBox(height: AppSpacing.xl),
+              _HugeActionCard(
+                icon: Icons.local_pharmacy_rounded,
+                title: 'home.action_pharmacy'.tr(),
+                subtitle: 'pharmacy.initial_subtitle'.tr(),
+                color: const Color(0xFF5E35B1),
+                onTap: () => context.push(AppRoutes.pharmacyNearby),
+              ),
+              SizedBox(height: AppSpacing.xl),
+              _HugeActionCard(
+                icon: Icons.emergency_rounded,
+                title: 'home.action_emergency_card'.tr(),
+                subtitle: 'home.action_emergency_card_subtitle'.tr(),
+                color: const Color(0xFFB71C1C),
+                onTap: () => context.push(AppRoutes.emergencyCard),
+              ),
+              SizedBox(height: AppSpacing.xl),
+              _HugeActionCard(
+                icon: Icons.health_and_safety_rounded,
+                title: 'home.action_health_notes'.tr(),
+                subtitle: 'home.action_health_notes_subtitle'.tr(),
+                color: const Color(0xFF00796B),
+                onTap: () => context.push(AppRoutes.healthNotes),
               ),
               SizedBox(height: AppSpacing.xl),
             ],
@@ -271,7 +315,7 @@ class _HugeActionCard extends StatelessWidget {
                       title,
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: titleColor,
+                          color: titleColor,
                         fontSize: 24,
                       ),
                     ),

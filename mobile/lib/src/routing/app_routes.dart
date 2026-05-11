@@ -22,4 +22,9 @@ abstract final class AppRoutes {
   static const String medicationReminders = '/medication-reminders';
   static const String drugInteraction = '/drug-interaction';
   static const String drugNaturalAlternatives = '/drug-natural-alternatives';
+  static const String familyMembers = '/family';
+  static const String familyMemberDetail = '/family-member-detail';
+  static const String pharmacyNearby = '/pharmacy-nearby';
+  static const String emergencyCard = '/emergency-card';
+  static const String healthNotes = '/health-notes';
 }

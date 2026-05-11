@@ -2,7 +2,7 @@
 
 Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle geliştirilen mobil sağlık uygulaması.
 
-`Eczanem`; ilaç arama, fotoğraftan ilaç tanıma, prospektüs özetleme, arama/tarama geçmişi, ilaç etkileşim kontrolü, doğal alternatif önerileri ve offline çalışan ilaç hatırlatıcılarını aynı uygulamada birleştirir. Proje şu anda aktif olarak çalışan bir MVP+ seviyesindedir ve sonraki büyük adımlar aile profili, nöbetçi eczane ve acil durum modülleridir.
+`Eczanem`; ilaç arama, fotoğraftan ilaç tanıma, prospektüs özetleme, arama/tarama geçmişi, ilaç etkileşim kontrolü, doğal alternatif önerileri, offline çalışan ilaç hatırlatıcıları, aile profili, nöbetçi eczane, acil durum kartı ve sağlık notlarını aynı uygulamada birleştirir. Proje şu anda çalışan bir MVP+ seviyesini geçmiş durumda; mevcut odak FAZ 8 polish, test ve yayın hazırlığıdır.
 
 ## Öne çıkanlar
 
@@ -29,10 +29,10 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 
 ### Devam eden / eksik alanlar
 
-- **FAZ 3** — Aile profili (kısmen hazır, auth var ama aile yönetimi yok)
-- **FAZ 6** — Nöbetçi eczane + sesli sorgu
-- **FAZ 7** — Acil durum kartı + sağlık notları
-- **FAZ 8** — Test, yayın ve son polish
+- **FAZ 3** — Aile profili ekranları ve yerel veri akışı hazır; backend senkronizasyonu ve son polish eksik
+- **FAZ 6** — Nöbetçi eczane ekranı ve backend endpoint'i hazır; sesli sorgu ve yayın seviyesinde doğrulama eksik
+- **FAZ 7** — Acil durum kartı ve sağlık notları modülleri hazır; dışa aktarma / ileri seviye özetleme gibi ekler eksik
+- **FAZ 8** — Test, yayın ve son polish aktif odak alanı
 
 ### Teknik özet
 
@@ -57,13 +57,18 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - İlaç etkileşim analizi
 - Doğal alternatif öneri ekranı
 - Yerel ilaç hatırlatıcıları, stok dashboard'u ve offline bildirimler
+- Aile profili, aile bireyi detayları ve birey bazlı ilaç listeleri
+- Nöbetçi eczane ekranı ve backend sorgulama akışı
+- Acil durum kartı oluşturma / düzenleme
+- Sağlık notları ekleme, filtreleme ve düzenleme
 
-### Yol haritasındaki sıradaki modüller
+### Yol haritasındaki sıradaki odaklar
 
-- Aile profili ve aile bireyi ilaç listeleri
-- Nöbetçi eczane entegrasyonu
-- Sesli ilaç sorgulama
-- Acil durum kartı ve sağlık günlüğü
+- FAZ 8 polish: empty state, error state ve dark mode tutarlılığı
+- Mobil ve backend test kapsamını genişletme
+- Backend production hazırlığı: CORS, secret/config yönetimi, temel logging
+- Release checklist, mağaza hazırlığı ve deploy planı
+- Sonraki faz için büyük işler: sesli ilaç sorgulama, veritabanı migration, backend senkronizasyonu
 
 ## Mimarinin kısa özeti
 
@@ -225,6 +230,20 @@ API_BASE_URL=http://192.168.1.139:8000
 - `POST /api/drug/interaction`
 - `POST /api/drug/natural-alternatives`
 
+### Profile
+
+- `GET /api/profile/family/`
+- `POST /api/profile/family/`
+- `PUT /api/profile/family/{id}`
+- `DELETE /api/profile/family/{id}`
+- `GET /api/profile/family/{id}/drugs/`
+- `POST /api/profile/family/{id}/drugs/`
+- `DELETE /api/profile/family/{id}/drugs/{drug_id}`
+
+### Pharmacy
+
+- `GET /api/pharmacy/nearby`
+
 ## Geliştirme komutları
 
 ### Mobil doğrulama
@@ -251,11 +270,12 @@ Geliştirme sırasında kullanılan örnek hesap:
 
 ## Bilinen sınırlamalar
 
-- Aile profili modülü henüz tamamlanmadı
-- Nöbetçi eczane entegrasyonu henüz yok
-- Release APK üretilebilir; ancak mağaza yayını için Android imzalama anahtarı (keystore) henüz tanımlı değil
-- Backend auth katmanı şu an dosya tabanlı kullanıcı store kullanıyor (`backend/data/users.json`)
+- Aile profili, nöbetçi eczane, acil kart ve sağlık notları modülleri şu an ağırlıklı olarak local-first / kısmi backend entegrasyon yaklaşımıyla ilerliyor
+- Sesli ilaç sorgulama henüz eklenmedi
+- Release APK üretilebilir; ancak mağaza yayını için Android imzalama anahtarı (keystore), privacy policy ve store materyalleri henüz tamamlanmadı
+- Backend auth ve profil katmanı şu an dosya tabanlı store kullanıyor (`backend/data/users.json`, `backend/data/family_profiles.json`)
 - PostgreSQL hedef mimaride planlı olsa da aktif kalıcı veri katmanı olarak henüz devrede değil
+- Backend production güvenliği için CORS, secret yönetimi ve test kapsamı daha da sertleştirilmeli
 
 ## Yol haritası
 
