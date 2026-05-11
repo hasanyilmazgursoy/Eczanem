@@ -1,6 +1,7 @@
-import '../../../../imports/imports.dart';
+﻿import '../../../../imports/imports.dart';
 
-/// İlaç bilgi detay ekranı — API'den dönen veriyi gösterir
+
+/// Ä°laÃ§ bilgi detay ekranÄ± â€” API'den dÃ¶nen veriyi gÃ¶sterir
 class DrugDetailScreen extends StatelessWidget {
   final Map<String, dynamic> drugData;
 
@@ -47,16 +48,7 @@ class DrugDetailScreen extends StatelessWidget {
                   prefixIcon: const Icon(Icons.compare_arrows_rounded),
                 ),
                 SizedBox(height: AppSpacing.sm),
-                AppButton(
-                  label: 'drug_detail.natural_alternatives_cta'.tr(),
-                  onPressed: () => context.push(
-                    AppRoutes.drugNaturalAlternatives,
-                    extra: drugName,
-                  ),
-                  isFullWidth: true,
-                  variant: ButtonVariant.secondary,
-                  prefixIcon: const Icon(Icons.eco_outlined),
-                ),
+                _InlineNaturalAlternatives(drugName: drugName, alternatives: (drugData['alternatifler'] as List?)?.cast<Map<String, dynamic>>()),
               ],
             ),
           ),
@@ -91,7 +83,7 @@ class DrugDetailScreen extends StatelessWidget {
             color: context.colors.primary,
           ),
 
-          // Ne İçin Kullanılır
+          // Ne Ä°Ã§in KullanÄ±lÄ±r
           _InfoCard(
             icon: Icons.medical_information_outlined,
             title: 'drug_detail.usage'.tr(),
@@ -107,7 +99,7 @@ class DrugDetailScreen extends StatelessWidget {
             color: Colors.teal,
           ),
 
-          // Kullanım Şekli
+          // KullanÄ±m Åekli
           _InfoCard(
             icon: Icons.schedule_outlined,
             title: 'drug_detail.how_to_use'.tr(),
@@ -123,7 +115,7 @@ class DrugDetailScreen extends StatelessWidget {
             color: Colors.orange,
           ),
 
-          // Uyarılar
+          // UyarÄ±lar
           _ListCard(
             icon: Icons.error_outline,
             title: 'drug_detail.warnings'.tr(),
@@ -131,7 +123,7 @@ class DrugDetailScreen extends StatelessWidget {
             color: Colors.red,
           ),
 
-          // Kimler Kullanmamalı
+          // Kimler KullanmamalÄ±
           _ListCard(
             icon: Icons.block_outlined,
             title: 'drug_detail.contraindications'.tr(),
@@ -151,7 +143,7 @@ class DrugDetailScreen extends StatelessWidget {
   }
 }
 
-/// Tek satırlık bilgi kartı
+/// Tek satÄ±rlÄ±k bilgi kartÄ±
 class _InfoCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -207,7 +199,7 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
-/// Liste öğesi içeren kart (yan etkiler, uyarılar vb.)
+/// Liste Ã¶ÄŸesi iÃ§eren kart (yan etkiler, uyarÄ±lar vb.)
 class _ListCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -262,7 +254,7 @@ class _ListCard extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('• ', style: TextStyle(color: color)),
+                      Text('â€¢ ', style: TextStyle(color: color)),
                       Expanded(child: Text(item)),
                     ],
                   ),
@@ -344,3 +336,54 @@ class _DrugHeroCard extends StatelessWidget {
     );
   }
 }
+
+class _InlineNaturalAlternatives extends StatelessWidget {
+  final List<dynamic>? alternatives;
+  final String drugName;
+  const _InlineNaturalAlternatives({required this.drugName, this.alternatives});
+
+  @override
+  Widget build(BuildContext context) {
+    final altList = alternatives ?? [];
+    if (altList.isEmpty) return const SizedBox.shrink();
+
+    return AppCard(
+      showShadow: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.eco_outlined, color: Colors.green),
+              SizedBox(width: 8),
+              Text('drug_detail.natural_alternatives_cta'.tr(), style: context.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+            ],
+          ),
+          SizedBox(height: 16),
+          ...altList.map((item) {
+            final mapItem = Map<String, dynamic>.from(item as Map);
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(mapItem['ad']?.toString() ?? '-', style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(mapItem['aciklama']?.toString() ?? '-'),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+

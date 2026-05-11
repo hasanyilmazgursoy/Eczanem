@@ -1,4 +1,4 @@
-import '../../../../imports/imports.dart';
+﻿import '../../../../imports/imports.dart';
 import '../../data/drug_history_repository.dart';
 import '../../data/drug_repository.dart';
 
@@ -114,7 +114,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
     final message = failure.message.toLowerCase();
 
     if (message.contains('429') ||
-        message.contains('çok fazla') ||
+        message.contains('Ã§ok fazla') ||
         message.contains('too many')) {
       return 'drug_search.rate_limit_error'.tr();
     }
@@ -154,11 +154,12 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
           ],
           _buildSearchField(),
           SizedBox(height: AppSpacing.md),
+          _buildSearchButton(),
+          SizedBox(height: AppSpacing.xl),
           if (_recentSearches.isNotEmpty) ...[
             _buildRecentSearches(),
             SizedBox(height: AppSpacing.md),
           ],
-          _buildSearchButton(),
           SizedBox(height: AppSpacing.md),
           _buildBodyState(),
         ],
@@ -171,27 +172,57 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   }
 
   Widget _buildSearchField() {
-    return AppTextField(
-      controller: _searchController,
-      hint: 'drug_search.search_hint'.tr(),
-      prefixIcon: const Icon(Icons.search),
-      textInputAction: TextInputAction.search,
-      onFieldSubmitted: (_) => _searchDrug(),
-      onChanged: (value) {
-        setState(() {});
-        if (value.trim().length < 3) return;
-        // FAZ 1: kullanıcı yazmayı bitirince aramayı hızlı başlat.
-        _debouncer.run(_searchDrug);
-      },
-      suffixIcon: _searchController.text.isNotEmpty
-          ? IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                _searchController.clear();
-                setState(() {});
-              },
-            )
-          : null,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        controller: _searchController,
+        focusNode: FocusNode(),
+        textInputAction: TextInputAction.search,
+        style: context.textTheme.headlineMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: 28,
+        ),
+        decoration: InputDecoration(
+          hintText: 'drug_search.search_hint'.tr(),
+          hintStyle: context.textTheme.headlineMedium?.copyWith(
+            color: context.colors.onSurface.withValues(alpha: 0.3),
+            fontWeight: FontWeight.bold,
+            fontSize: 28,
+          ),
+          prefixIcon: Padding(
+            padding: EdgeInsets.all(AppSpacing.md),
+            child: Icon(
+              Icons.search_rounded,
+              size: 40,
+              color: context.colors.primary,
+            ),
+          ),
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear_rounded, size: 30),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() {});
+                  },
+                )
+              : null,
+          filled: true,
+          fillColor:
+              context.colors.surfaceContainerHighest.withValues(alpha: 0.5),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(32),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            vertical: AppSpacing.xxl,
+            horizontal: AppSpacing.lg,
+          ),
+        ),
+        onChanged: (value) {
+          setState(() {});
+        },
+        onSubmitted: (_) => _searchDrug(),
+      ),
     );
   }
 
@@ -331,3 +362,5 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
     );
   }
 }
+
+

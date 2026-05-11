@@ -211,9 +211,21 @@ class _HugeActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    // Use solid backgrounds for extreme contrast.
+    final backgroundColor = isDarkMode ? color.withValues(alpha: 0.15) : color.withValues(alpha: 0.08);
+    final borderColor = isDarkMode ? color.withValues(alpha: 0.3) : color.withValues(alpha: 0.5);
+    final titleColor = isDarkMode ? color : color.withValues(alpha: 1.0);
+    final iconContainerColor = color;
+    final iconColor = Colors.white;
+    final chevronColor = isDarkMode ? color : color;
+
+    // Ensure subtitle contrast
+    final subtitleColor = isDarkMode ? context.colors.onSurfaceVariant.withValues(alpha: 0.9) : context.colors.onSurfaceVariant;
 
     return Material(
-      color: color.withValues(alpha: 0.1),
+      color: backgroundColor,
       borderRadius: BorderRadius.circular(28),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -227,7 +239,7 @@ class _HugeActionCard extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             border: Border.all(
-              color: color.withValues(alpha: 0.3),
+              color: borderColor,
               width: 2,
             ),
             borderRadius: BorderRadius.circular(28),
@@ -238,10 +250,17 @@ class _HugeActionCard extends StatelessWidget {
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: color,
+                  color: iconContainerColor,
                   borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                     BoxShadow(
+                       color: color.withValues(alpha: 0.3),
+                       blurRadius: 8,
+                       offset: const Offset(0, 4),
+                     )
+                  ]
                 ),
-                child: Icon(icon, color: Colors.white, size: 40),
+                child: Icon(icon, color: iconColor, size: 40),
               ),
               SizedBox(width: AppSpacing.lg),
               Expanded(
@@ -252,8 +271,8 @@ class _HugeActionCard extends StatelessWidget {
                       title,
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: color,
-                        fontSize: 24, // Even larger
+                        color: titleColor,
+                        fontSize: 24,
                       ),
                     ),
                     SizedBox(height: AppSpacing.xs),
@@ -262,7 +281,7 @@ class _HugeActionCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(
-                        color: context.colors.onSurfaceVariant,
+                        color: subtitleColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -271,7 +290,7 @@ class _HugeActionCard extends StatelessWidget {
               ),
               Icon(
                 Icons.chevron_right_rounded,
-                color: color,
+                color: chevronColor,
                 size: 36,
               ),
             ],

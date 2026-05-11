@@ -1,17 +1,30 @@
-import 'package:eczanem/src/imports/core_imports.dart';
+﻿import 'package:eczanem/src/imports/core_imports.dart';
 import 'package:eczanem/src/imports/packages_imports.dart';
 
 import 'package:eczanem/src/features/auth/presentation/providers/auth_provider.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final formKey = GlobalKey<FormState>();
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    const obscurePassword = true;
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool obscurePassword = true;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
 
     final isLoading = ref.watch(authControllerProvider);
 
@@ -79,9 +92,13 @@ class LoginScreen extends ConsumerWidget {
                         obscureText: obscurePassword,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
-                          icon: const Icon(Icons.visibility),
-                          onPressed: () {},
-                        ),
+                    icon: Icon(obscurePassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        obscurePassword = !obscurePassword;
+                      });
+                    },
+                  ),
                         validator: (v) {
                           if (AppUtils.isBlank(v)) {
                             return 'auth.password_required'.tr();
@@ -132,7 +149,7 @@ class LoginScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: AppSpacing.lg.h),
                       AppButton(
-                        label: 'Sign In',
+                        label: 'auth.login'.tr(),
                         isLoading: isLoading,
                         onPressed: isLoading ? null : handleLogin,
                         width: ButtonSize.large,
@@ -228,3 +245,7 @@ class LoginScreen extends ConsumerWidget {
     );
   }
 }
+
+
+
+

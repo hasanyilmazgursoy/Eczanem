@@ -1,4 +1,4 @@
-import 'package:eczanem/src/imports/core_imports.dart';
+﻿import 'package:eczanem/src/imports/core_imports.dart';
 import 'package:eczanem/src/imports/packages_imports.dart';
 
 import 'package:eczanem/src/features/auth/presentation/providers/auth_provider.dart';
@@ -130,7 +130,7 @@ class SignupScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: AppSpacing.lg.h),
                       AppButton(
-                        label: 'Create Account',
+                        label: 'auth.create_account'.tr(),
                         isLoading: isLoading,
                         onPressed: isLoading ? null : handleSignup,
                         width: ButtonSize.large,
@@ -225,3 +225,4 @@ class SignupScreen extends ConsumerWidget {
     );
   }
 }
+
