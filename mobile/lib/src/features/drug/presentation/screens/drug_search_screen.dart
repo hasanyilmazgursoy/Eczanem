@@ -1,4 +1,6 @@
-﻿import '../../../../imports/imports.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+
+import '../../../../imports/imports.dart';
 import '../../data/drug_history_repository.dart';
 import '../../data/drug_repository.dart';
 
@@ -38,6 +40,11 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   String? _error;
   List<String> _recentSearches = const [];
 
+  // Sesli arama
+  final SpeechToText _speech = SpeechToText();
+  bool _speechAvailable = false;
+  bool _isListening = false;
+
   @override
   void initState() {
     super.initState();
@@ -50,12 +57,67 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
       });
     }
     _loadRecentSearches();
+    _initSpeech();
   }
 
   Future<void> _loadRecentSearches() async {
     final recentSearches = DrugHistoryRepository.instance.getRecentSearches();
     if (!mounted) return;
     setState(() => _recentSearches = recentSearches);
+  }
+
+  /// speech_to_text başlatılır; kullanılamazsa _speechAvailable false kalır.
+  Future<void> _initSpeech() async {
+    final available = await _speech.initialize(
+      onError: (error) {
+        if (!mounted) return;
+        setState(() => _isListening = false);
+      },
+      onStatus: (status) {
+        if (!mounted) return;
+        // Dinleme bitince (done / notListening) aramayı otomatik başlat.
+        if (status == 'done' || status == 'notListening') {
+          final hadText = _searchController.text.trim().isNotEmpty;
+          setState(() => _isListening = false);
+          if (hadText) _searchDrug();
+        }
+      },
+    );
+    if (mounted) setState(() => _speechAvailable = available);
+  }
+
+  /// Mikrofon butonuna basıldığında: dinliyorsa durdur, değilse başlat.
+  Future<void> _toggleVoiceSearch() async {
+    if (_isListening) {
+      await _speech.stop();
+      setState(() => _isListening = false);
+      return;
+    }
+
+    if (!_speechAvailable) {
+      context.showTypedSnackBar(
+        'drug_search.voice_unavailable'.tr(),
+        type: SnackBarType.error,
+      );
+      return;
+    }
+
+    setState(() {
+      _isListening = true;
+      _searchController.clear();
+      _hasSearched = false;
+      _error = null;
+    });
+
+    await _speech.listen(
+      onResult: (result) {
+        if (!mounted) return;
+        setState(() => _searchController.text = result.recognizedWords);
+      },
+      localeId: 'tr_TR',
+      listenFor: const Duration(seconds: 10),
+      pauseFor: const Duration(seconds: 2),
+    );
   }
 
   Future<void> _saveRecentSearch(String query) async {
@@ -70,6 +132,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   void dispose() {
     _debouncer.dispose();
     _searchController.dispose();
+    _speech.cancel();
     super.dispose();
   }
 
@@ -114,7 +177,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
     final message = failure.message.toLowerCase();
 
     if (message.contains('429') ||
-        message.contains('Ã§ok fazla') ||
+        message.contains('Ã\u00a7ok fazla') ||
         message.contains('too many')) {
       return 'drug_search.rate_limit_error'.tr();
     }
@@ -183,7 +246,9 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
           fontSize: 28,
         ),
         decoration: InputDecoration(
-          hintText: 'drug_search.search_hint'.tr(),
+          hintText: _isListening
+              ? 'drug_search.voice_listening'.tr()
+              : 'drug_search.search_hint'.tr(),
           hintStyle: context.textTheme.headlineMedium?.copyWith(
             color: context.colors.onSurface.withValues(alpha: 0.3),
             fontWeight: FontWeight.bold,
@@ -197,15 +262,35 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
               color: context.colors.primary,
             ),
           ),
-          suffixIcon: _searchController.text.isNotEmpty
+          suffixIcon: _isListening
               ? IconButton(
-                  icon: const Icon(Icons.clear_rounded, size: 30),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() {});
-                  },
+                  icon: Icon(
+                    Icons.stop_circle_outlined,
+                    size: 30,
+                    color: context.colors.error,
+                  ),
+                  tooltip: 'drug_search.voice_stop'.tr(),
+                  onPressed: _toggleVoiceSearch,
                 )
-              : null,
+              : _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear_rounded, size: 30),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {});
+                      },
+                    )
+                  : _speechAvailable
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.mic_rounded,
+                            size: 30,
+                            color: context.colors.primary,
+                          ),
+                          tooltip: 'drug_search.voice_search'.tr(),
+                          onPressed: _toggleVoiceSearch,
+                        )
+                      : null,
           filled: true,
           fillColor:
               context.colors.surfaceContainerHighest.withValues(alpha: 0.5),
@@ -362,5 +447,3 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
     );
   }
 }
-
-

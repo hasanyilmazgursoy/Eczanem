@@ -171,7 +171,11 @@
     "flow_step_analyze_prospectus_subtitle": "Generate a readable summary under headings.",
     "analysis_hint_medicine": "Medicine recognition depends on image quality; multiple candidates may be shown when uncertain.",
     "analysis_hint_prospectus": "Summary is generated based on image readability; the system won't guess unclear areas.",
-    "recent_title": "Recent searches"
+    "recent_title": "Recent searches",
+    "voice_search": "Voice search",
+    "voice_listening": "Listening... Speak now",
+    "voice_stop": "Stop listening",
+    "voice_unavailable": "Voice search is not available on this device."
   },
   "drug_detail": {
     "title": "Medicine Info",
@@ -228,9 +232,9 @@
     "suggestions_title": "Quick pick from history",
     "suggestions_subtitle": "You can add medicines from your recent searches and scans.",
     "suggestions_empty": "Search or scan a few medicines first to see suggestions.",
-    "risk_low": "🟢 Low risk",
-    "risk_medium": "🟡 Use with caution",
-    "risk_high": "🔴 High risk",
+    "risk_low": "\ud83d\udfe2 Low risk",
+    "risk_medium": "\ud83d\udfe1 Use with caution",
+    "risk_high": "\ud83d\udd34 High risk",
     "precautions_title": "Precautions",
     "no_summary": "General summary could not be generated.",
     "no_interaction_items": "No significant interaction found; still consult your doctor or pharmacist before combined use."
@@ -418,6 +422,16 @@
     "delete_confirm_title": "Delete Note",
     "delete_confirm_message": "This note will be permanently deleted.",
     "calendar_view": "Calendar View",
-    "list_view": "List View"
+    "list_view": "List View",
+    "report_title": "Health Report",
+    "report_button": "Generate Report",
+    "report_total": "Total Notes",
+    "report_by_category": "By Category",
+    "report_mood_title": "Mood Distribution",
+    "report_last7": "Last 7 Days",
+    "report_last7_empty": "No notes in the last 7 days.",
+    "report_no_notes": "At least one note is required to generate a report.",
+    "report_share_text": "My Health Notes Report",
+    "report_share": "Share Report"
   }
 }
