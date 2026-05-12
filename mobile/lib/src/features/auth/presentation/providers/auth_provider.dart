@@ -3,6 +3,7 @@ import 'package:eczanem/src/imports/packages_imports.dart';
 
 import 'package:eczanem/src/features/auth/domain/repositories/auth_repository.dart';
 import 'package:eczanem/src/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:eczanem/src/features/profile/data/family_repository.dart';
 
 // Provides the single instance of AuthRepositoryImpl
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -37,6 +38,10 @@ class AuthController extends StateNotifier<bool> {
       (failure) =>
           showToast(context, message: failure.message, status: 'error'),
       (user) {
+        // Login başarılı: arka planda aile profili backend'den senkronize et
+        Future<void>.microtask(
+          () => FamilyRepository.instance.syncFromBackend(),
+        );
         if (rootContext?.mounted ?? false) {
           rootContext!.go(AppRoutes.home);
         }
