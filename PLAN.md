@@ -3,14 +3,14 @@
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
 **Başlangıç Tarihi:** 9 Nisan 2026  
 **Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
-**Durum:** 🟢 FAZ 0, 1, 2, Ara Faz, 4 ve 5 tamamlandı · 🟡 FAZ 3, 6 ve 7 büyük ölçüde geliştirildi · ⬜ FAZ 8 aktif odak
+**Durum:** 🟢 FAZ 0, 1, 2, Ara Faz, 4 ve 5 tamamlandı · 🟡 FAZ 3 büyük ölçüde hazır · 🟡 FAZ 6 sesli arama tamamlandı · 🟡 FAZ 7 büyük ölçüde hazır · 🟡 FAZ 8 aktif odak
 
 ---
 
 ## Genel Bakış
 
-Kullanıcıların ilaç bilgilerini yazarak veya fotoğraf çekerek sorguladığı, ilaçlar arası etkileşim
-kontrolü yapan, hatırlatıcı kuran ve aile bireylerinin ilaçlarını yöneten kapsamlı bir mobil sağlık
+Kullanıcıların ilaç bilgilerini yazarak veya fotoğraf çekerek sorgulandığı, ilaçlar arası etkileşim
+kontrolü yapan, hatırlayıcı kuran ve aile bireylerinin ilaçlarını yöneten kapsamlı bir mobil sağlık
 asistanı uygulaması.
 
 ---
@@ -24,12 +24,12 @@ asistanı uygulaması.
 │  │  📷 Kamera  │ 🔍 Arama │ 📊 Barkod│   │
 │  ├──────────────────────────────────┤    │
 │  │  💊 İlaç Bilgi  │ ⚠️ Etkileşim   │    │
-│  │  ⏰ Hatırlatıcı  │ 👨‍👩‍👧 Aile Profil│    │
+│  │  ⏰ Hatırlayıcı  │ 👨‍👩‍👧 Aile Profil│    │
 │  │  🏥 Nöbetçi Eczane│ 🆘 Acil Kart  │    │
 │  │  🎤 Sesli Sorgu   │ 📝 Sağlık Notu│    │
 │  └──────────────────────────────────┘    │
 │  Local: SQLite + Hive (offline veri)     │
-└──────────────────┬───────────────────────┘
+└──────────────────┤───────────────────────┘
                    │ HTTPS
                    ▼
 ┌──────────────────────────────────────────┐
@@ -108,13 +108,13 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 
 ---
 
-## FAZ 2 — Kamera ile Tanıma + Prospektüs Tarama (1-2 hafta)
+## FAZ 2 — Kamera ile Tanıma + Prospüktüs Tarama (1-2 hafta)
 
 **Durum:** 🟢 Tamamlandı
 
 ### Backend
 - [x] `POST /api/drug/analyze-image` — multipart image → Gemini multimodal
-- [x] `POST /api/drug/prospectus` — Prospektüs fotoğrafı → Gemini ile özetleme
+- [x] `POST /api/drug/prospectus` — Prospüktüs fotoğrafı → Gemini ile özetleme
 - [x] Mobil istemcide yükleme öncesi görsel yeniden boyutlandırma ve sıkıştırma eklendi
 - [x] Backend tarafında ek maliyet optimizasyonları ve çoklu görsel stratejisi
 
@@ -123,7 +123,7 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 - [x] Mevcut arama ekranına kamera / galeri tabanlı görsel seçme akışı eklendi
 - [x] Fotoğraf Önizleme: "Analiz Et" / "Görseli Kaldır" butonları
 - [x] Çoklu Sonuç: Reçetede birden fazla ilaç → liste + detay
-- [x] Prospektüs Özet: Kategorize edilmiş, okunabilir özet
+- [x] Prospüktüs Özet: Kategorize edilmiş, okunabilir özet
 
 ### Flutter Paketleri
 - `camera` — kamera kontrolü
@@ -131,7 +131,7 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 - `image` — fotoğraf sıkıştırma
 
 ### Çıktı
-Fotoğraf çekip ilaç tanıma, çoklu aday seçimi ve prospektüs özetleme çalışıyor.
+Fotoğraf çekip ilaç tanıma, çoklu aday seçimi ve prospüktüs özetleme çalışıyor.
 
 ---
 
@@ -141,7 +141,7 @@ Fotoğraf çekip ilaç tanıma, çoklu aday seçimi ve prospektüs özetleme ça
 
 ### Flutter
 - [x] Arama geçmişi ekranı eklendi, geçmiş sorgudan otomatik yeniden arama destekleniyor
-- [x] Tarama geçmişi ekranı eklendi; ilaç tanıma ve prospektüs özetleri yerel olarak saklanıyor
+- [x] Tarama geçmişi ekranı eklendi; ilaç tanıma ve prospüktüs özetleri yerel olarak saklanıyor
 - [x] Profil sekmesindeki kısayollar gerçek geçmiş ekranlarına bağlandı
 - [x] Arama/tarama geçmişi için ortak yerel repository katmanı oluşturuldu
 - [x] Boş durum, tek silme ve tümünü temizleme aksiyonları eklendi
@@ -188,15 +188,15 @@ Kullanıcı aile bireylerinin ilaçlarını ayrı ayrı yönetebiliyor.
 
 ---
 
-## FAZ 4 — Hatırlatıcı & Stok Takibi (1-2 hafta)
+## FAZ 4 — Hatırlayıcı & Stok Takibi (1-2 hafta)
 
 **Durum:** 🟢 Tamamlandı
 
 ### Flutter Ekranları
-- [x] Hatırlatıcı Ekle: İlaç seç → saat + günlük sıklık + stok bilgisi
-- [x] Hatırlatıcı Listesi: Aktif hatırlatıcılar + açma/kapama toggle
+- [x] Hatırlayıcı Ekle: İlaç seç → saat + günlük sıklık + stok bilgisi
+- [x] Hatırlayıcı Listesi: Aktif hatırlayıcılar + açma/kapama toggle
 - [x] Stok Giriş: Kutuda kaç tablet + günlük doz → otomatik bitiş hesabı
-- [x] Stok Dashboard: Kalan miktar progress bar + "X gün sonra bitecek" uyarısı
+- [x] Stok Dashboard: Kalan miktar progress bar + "X gün sonra bitecek" uyardı
 - [x] Bildirim: "💊 Aspirin alma zamanı!" — local notification
 
 ### Flutter Paketleri
@@ -215,7 +215,7 @@ uyarı_tarihi = bugün + kalan_gün - 3  // 3 gün önceden uyar
 - [x] Bildirimler tamamen offline çalışmalı (local notification)
 
 ### Çıktı
-Yerel çalışan ilaç hatırlatıcı, stok takibi ve offline bildirim akışı hazır.
+Yerel çalışan ilaç hatırlayıcı, stok takibi ve offline bildirim akışı hazır.
 
 ---
 
@@ -249,7 +249,7 @@ Yerel çalışan ilaç hatırlatıcı, stok takibi ve offline bildirim akışı 
 ### Flutter Ekranları
 - [ ] Eczane Harita: Google Maps/OpenStreetMap üzerinde pinler
 - [x] Eczane Liste: Liste, telefon, adres ve temel aksiyonlar
-- [ ] Sesli Arama: Mikrofon butonu → STT → ilaç arama
+- [x] Sesli Arama: Mikrofon butonu → STT → ilaç arama (speech_to_text ^7.0.0)
 - [ ] Konum izinleri ve yayın seviyesi kullanıcı akışı polish
 
 ### Flutter Paketleri
@@ -273,7 +273,7 @@ Nöbetçi eczane bulma + sesle ilaç sorgulama çalışıyor.
 - [ ] Paylaş: PDF olarak dışa aktar
 - [x] Sağlık Notu Ekle: Tarih, kategori, metin, emoji mood
 - [x] Not Geçmişi: Liste + kategori filtreleme
-- [ ] Takvim görünümü ve doktor raporu özeti
+- [x] Takvim görünümü ve doktor raporu özeti (DraggableScrollableSheet + share_plus)
 
 ### Çıktı
 Acil durum kartı + sağlık günlüğü çalışıyor.
@@ -290,7 +290,7 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 - [ ] Hata yönetimi: Her ekranda yükleniyor/hata/boş/başarılı durumları
 - [ ] Performans: Lazy loading, image caching, API response caching
 - [ ] Güvenlik: HTTPS zorunlu, API key gizleme, input sanitization, CORS sertleştirme
-- [ ] Test: Widget testleri + API testleri (Pytest)
+- [x] Test: HealthNote + EmergencyCard model birim testleri eklendi (pure Dart)
 - [ ] Play Store: App icon, screenshots, açıklama, privacy policy
 - [ ] Backend Deploy: Railway / Render / VPS
 - [ ] Dokümantasyon senkronizasyonu: README, PLAN, CHANGELOG, release checklist
@@ -300,13 +300,13 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 ## Özet Timeline
 
 | Faz | İçerik | Süre | Durum |
-|-----|--------|------|-------|
+|-----|--------|------|------|
 | 0 | Altyapı & Kurulum | 3-4 gün | 🟢 |
 | 1 | MVP — İlaç Sorgulama | 1-2 hafta | 🟢 |
-| 2 | Kamera + Prospektüs | 1-2 hafta | 🟢 |
+| 2 | Kamera + Prospüktüs | 1-2 hafta | 🟢 |
 | Ara Faz | Geçmiş Merkezi | 2-3 gün | 🟢 |
 | 3 | Kullanıcı + Aile Profili | 1-2 hafta | 🟡 |
-| 4 | Hatırlatıcı + Stok Takibi | 1-2 hafta | 🟢 |
+| 4 | Hatırlayıcı + Stok Takibi | 1-2 hafta | 🟢 |
 | 5 | Etkileşim + Doğal Alternatif | 1-2 hafta | 🟢 |
 | 6 | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | 🟡 |
 | 7 | Acil Kart + Sağlık Notları | 1 hafta | 🟡 |
