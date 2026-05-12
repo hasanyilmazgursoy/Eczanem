@@ -454,6 +454,28 @@
     },
     "shared": {
         "get_started": "Başla",
-        "try_again": "Tekrar Dene"
+        "try_again": "Tekrar Dene",
+        "cancel": "İptal"
+    },
+    "errors": {
+        "network_timeout": "Bağlantı zaman aşımına uğradı. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.",
+        "no_connection": "İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edin.",
+        "session_expired": "Oturumunuzun süresi doldu. Lütfen tekrar giriş yapın.",
+        "server_error": "Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin."
+    },
+    "account_settings": {
+        "title": "Hesap Ayarları",
+        "change_password": "Şifre Değiştir",
+        "current_password": "Mevcut Şifre",
+        "new_password": "Yeni Şifre",
+        "confirm_password": "Yeni Şifre Tekrar",
+        "save": "Kaydet",
+        "password_changed": "Şifreniz başarıyla güncellendi.",
+        "logout": "Çıkış Yap",
+        "logout_confirm_title": "Çıkış Yap",
+        "logout_confirm_message": "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
+        "field_required": "Bu alan zorunludur.",
+        "password_min_length": "Şifre en az 6 karakter olmalıdır.",
+        "passwords_mismatch": "Şifreler eşleşmiyor."
     }
 }

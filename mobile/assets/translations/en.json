@@ -454,6 +454,28 @@
   },
   "shared": {
     "get_started": "Get Started",
-    "try_again": "Try Again"
+    "try_again": "Try Again",
+    "cancel": "Cancel"
+  },
+  "errors": {
+    "network_timeout": "Connection timed out. Please check your internet connection and try again.",
+    "no_connection": "No internet connection. Please check your connection.",
+    "session_expired": "Your session has expired. Please sign in again.",
+    "server_error": "A server error occurred. Please try again later."
+  },
+  "account_settings": {
+    "title": "Account Settings",
+    "change_password": "Change Password",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm New Password",
+    "save": "Save",
+    "password_changed": "Your password has been updated successfully.",
+    "logout": "Sign Out",
+    "logout_confirm_title": "Sign Out",
+    "logout_confirm_message": "Are you sure you want to sign out of your account?",
+    "field_required": "This field is required.",
+    "password_min_length": "Password must be at least 6 characters.",
+    "passwords_mismatch": "Passwords do not match."
   }
 }

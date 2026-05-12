@@ -22,17 +22,29 @@ class _OnboardingPageState extends State<OnboardingPage> {
       {
         'title': 'onboarding.onboarding_title_1'.tr(),
         'subtitle': 'onboarding.onboarding_subtitle_1'.tr(),
-        'pageWidget': const FlutterLogo(size: 200),
+        'pageWidget': Icon(
+          Icons.medication_rounded,
+          size: 140,
+          color: Theme.of(context).colorScheme.primary,
+        ),
       },
       {
         'title': 'onboarding.onboarding_title_2'.tr(),
         'subtitle': 'onboarding.onboarding_subtitle_2'.tr(),
-        'pageWidget': const FlutterLogo(size: 200),
+        'pageWidget': Icon(
+          Icons.family_restroom_rounded,
+          size: 140,
+          color: Theme.of(context).colorScheme.primary,
+        ),
       },
       {
         'title': 'onboarding.onboarding_title_3'.tr(),
         'subtitle': 'onboarding.onboarding_subtitle_3'.tr(),
-        'pageWidget': const FlutterLogo(size: 200),
+        'pageWidget': Icon(
+          Icons.emergency_rounded,
+          size: 140,
+          color: Theme.of(context).colorScheme.primary,
+        ),
       },
     ];
   }
