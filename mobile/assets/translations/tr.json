@@ -175,7 +175,7 @@
         "voice_search": "Sesli ara",
         "voice_listening": "Dinleniyor... Konuşun",
         "voice_stop": "Dinlemeyi durdur",
-        "voice_unavailable": "Sesli arama bu cihazda kullanılamaz."
+        "voice_unavailable": "Sesli arama bu cihazda kullanılamıyor."
     },
     "drug_detail": {
         "title": "İlaç Bilgisi",
