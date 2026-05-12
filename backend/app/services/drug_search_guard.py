@@ -60,8 +60,10 @@ def _get_redis_client() -> redis_async.Redis | None:
 
     with _redis_lock:
         if _redis_client is None:
+            # Settings'te redis_host/port/db ayrı tutulduğundan URL burada üretilir
+            redis_url = f"redis://{settings.redis_host}:{settings.redis_port}/{settings.redis_db}"
             _redis_client = redis_async.from_url(
-                settings.redis_url,
+                redis_url,
                 encoding="utf-8",
                 decode_responses=True,
             )
