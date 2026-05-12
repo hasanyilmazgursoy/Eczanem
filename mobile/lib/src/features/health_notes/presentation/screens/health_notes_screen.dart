@@ -292,7 +292,7 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
   }
 }
 
-// ════════════════════════ KATEGORİ FİLTRE ÇUBUĞU ═══════════════════════
+// ════════════════════════ KATEGÖRİ FİLTRE ÇUBUĞU ═══════════════════════
 
 class _CategoryFilterBar extends StatelessWidget {
   const _CategoryFilterBar({
@@ -348,7 +348,7 @@ class _CategoryFilterBar extends StatelessWidget {
   }
 }
 
-// ═════════════════════════════ NOT KARTI ════════════════════════════
+// ═════════════════════════ NOT KARTI ════════════════════════
 
 class _NoteCard extends StatelessWidget {
   const _NoteCard({
@@ -442,7 +442,7 @@ class _NoteCard extends StatelessWidget {
   }
 }
 
-// ════════════════════════ NOT EDİTÖR BOTTOM SHEET ══════════════════════════
+// ══════════════════════ NOT EDİTÖR BOTTOM SHEET ══════════════════════
 
 class _NoteEditorSheet extends StatefulWidget {
   const _NoteEditorSheet({this.existing});
@@ -652,7 +652,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
   }
 }
 
-// ══════════════════════════════ BOŞ DURUM ════════════════════════════════
+// ═══════════════════════════ BOŞ DURUM ════════════════════════
 
 class _EmptyNotesState extends StatelessWidget {
   const _EmptyNotesState({
@@ -707,7 +707,7 @@ class _EmptyNotesState extends StatelessWidget {
   }
 }
 
-// ══════════════════════════ SAĞLIK RAPORU SAYFASI ════════════════════════
+// ════════════════════════ SAĞLIK RAPORU SAYFASI ════════════════
 
 /// Tüm sağlık notlarından özet istatistik üreten bottom sheet.
 ///
@@ -765,7 +765,7 @@ class _HealthReportSheet extends StatelessWidget {
     final last7 = _last7DaysNotes();
     buf.writeln('${'health_notes.report_last7'.tr()}:');
     if (last7.isEmpty) {
-      buf.writeln('  ${\'health_notes.report_last7_empty\'.tr()}');
+      buf.writeln('  ${'health_notes.report_last7_empty'.tr()}');
     } else {
       for (final n in last7.take(5)) {
         final dateStr =
