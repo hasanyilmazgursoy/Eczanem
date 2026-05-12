@@ -534,7 +534,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
     final textTheme = context.textTheme;
     final isEdit = widget.existing != null;
 
-    return Padding(
+    return SingleChildScrollView(
       padding: EdgeInsets.only(
         left: AppSpacing.xl,
         right: AppSpacing.xl,

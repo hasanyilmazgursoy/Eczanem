@@ -149,25 +149,30 @@ async def get_nearby_pharmacies(
     lon: float,
     il: str = "",
     ilce: str = "",
-) -> list[dict[str, Any]]:
+) -> dict[str, Any]:
     """eczaneler.gen.tr'den il/ilçe bazlı nöbetçi eczaneleri çeker.
 
     `il` boşsa ancak lat/lon sıfır değilse Nominatim ile reverse geocoding
     yapılır ve otomatik il/ilçe tespit edilir.
     İlçe belirtilmezse tüm il listelenir.
+
+    Döner: {"pharmacies": [...], "detected_il": str, "detected_ilce": str}
     """
     # Koordinat verildi ama il girilmedi → otomatik tespit
     if not il.strip() and (lat != 0.0 or lon != 0.0):
         il, ilce_auto = await _reverse_geocode(lat, lon)
         if not ilce.strip():
             ilce = ilce_auto
-        logger.info("Reverse geocoding sonucu: il=%s, ilçe=%s", il, ilce)
+        logger.warning("Reverse geocoding sonucu: il=%s, ilçe=%s", il, ilce)
 
-    if not il.strip():
-        return []
+    detected_il = il.strip()
+    detected_ilce = ilce.strip()
 
-    il_slug = _to_slug(il.strip())
-    ilce_slug = _to_slug(ilce.strip()) if ilce.strip() else ""
+    if not detected_il:
+        return {"pharmacies": [], "detected_il": "", "detected_ilce": ""}
+
+    il_slug = _to_slug(detected_il)
+    ilce_slug = _to_slug(detected_ilce) if detected_ilce else ""
 
     url = f"{_BASE_URL}/nobetci-{il_slug}"
     if ilce_slug:
@@ -182,9 +187,21 @@ async def get_nearby_pharmacies(
             html = resp.text
     except httpx.HTTPStatusError as exc:
         logger.warning("eczaneler.gen.tr HTTP hatası: %s", exc)
-        return []
+        return {
+            "pharmacies": [],
+            "detected_il": detected_il,
+            "detected_ilce": detected_ilce,
+        }
     except Exception as exc:  # noqa: BLE001
         logger.warning("eczaneler.gen.tr erişim hatası: %s", exc)
-        return []
+        return {
+            "pharmacies": [],
+            "detected_il": detected_il,
+            "detected_ilce": detected_ilce,
+        }
 
-    return _parse_pharmacies(html)
+    return {
+        "pharmacies": _parse_pharmacies(html),
+        "detected_il": detected_il,
+        "detected_ilce": detected_ilce,
+    }

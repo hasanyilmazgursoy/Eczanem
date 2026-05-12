@@ -128,12 +128,22 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
           _status = AppStatus.failure;
           _errorMessage = failure.message;
         }),
-        (response) => setState(() {
-          _status = AppStatus.success;
-          _pharmacies = response.pharmacies;
-          _apiAvailable = response.apiAvailable;
-          _showMap = true;
-        }),
+        (response) {
+          // Tespit edilen il/ilçe adlarını text alanlara yaz
+          if (response.detectedIl.isNotEmpty) {
+            _ilCtrl.text = response.detectedIl;
+          }
+          if (response.detectedIlce.isNotEmpty) {
+            _ilceCtrl.text = response.detectedIlce;
+          }
+          setState(() {
+            _status = AppStatus.success;
+            _pharmacies = response.pharmacies;
+            _apiAvailable = response.apiAvailable;
+            // eczaneler.gen.tr lat/lon vermiyor → marker olmaz → liste göster
+            _showMap = false;
+          });
+        },
       );
     } catch (e) {
       if (!mounted) return;

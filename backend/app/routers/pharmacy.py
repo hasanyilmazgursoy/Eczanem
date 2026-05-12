@@ -24,6 +24,9 @@ class NearbyPharmaciesResponse(BaseModel):
     pharmacies: list[PharmacyItem]
     count: int
     api_available: bool
+    # Nominatim ile tespit edilen il/ilçe (konum butonu kullanıldığında dolu olur)
+    detected_il: str = ""
+    detected_ilce: str = ""
 
 
 @router.get("/nearby", response_model=NearbyPharmaciesResponse)
@@ -37,9 +40,12 @@ async def nearby_pharmacies(
 
     eczaneler.gen.tr'den HTML scrape ile veri çeker; API anahtarı gerekmez.
     """
-    pharmacies = await get_nearby_pharmacies(lat=lat, lon=lon, il=il, ilce=ilce)
+    result = await get_nearby_pharmacies(lat=lat, lon=lon, il=il, ilce=ilce)
+    pharmacies = result["pharmacies"]
     return NearbyPharmaciesResponse(
         pharmacies=pharmacies,
         count=len(pharmacies),
         api_available=bool(pharmacies),
+        detected_il=result["detected_il"],
+        detected_ilce=result["detected_ilce"],
     )

@@ -37,11 +37,19 @@ class NearbyPharmaciesResponse {
     required this.pharmacies,
     required this.count,
     required this.apiAvailable,
+    this.detectedIl = '',
+    this.detectedIlce = '',
   });
 
   final List<PharmacyItem> pharmacies;
   final int count;
   final bool apiAvailable;
+
+  /// Nominatim ile tespit edilen il (konum butonu kullanıldığında dolu olur)
+  final String detectedIl;
+
+  /// Nominatim ile tespit edilen ilçe
+  final String detectedIlce;
 
   factory NearbyPharmaciesResponse.fromJson(Map<String, dynamic> json) {
     final rawList = json['pharmacies'] as List<dynamic>? ?? [];
@@ -52,6 +60,8 @@ class NearbyPharmaciesResponse {
           .toList(),
       count: json['count'] as int? ?? 0,
       apiAvailable: json['api_available'] as bool? ?? false,
+      detectedIl: json['detected_il'] as String? ?? '',
+      detectedIlce: json['detected_ilce'] as String? ?? '',
     );
   }
 }
