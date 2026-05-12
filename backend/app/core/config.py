@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     api_port: int = 8000
     debug: bool = True
 
+    # CORS — virgülle ayrılmış domain listesi; prod'da .env'den override edilmeli
+    # Örnek: ALLOWED_ORIGINS=http://localhost:3000,https://eczanem.app
+    allowed_origins: list[str] = ["*"]
+
     @field_validator("debug", mode="before")
     @classmethod
     def _normalize_debug_value(cls, value: object) -> object:

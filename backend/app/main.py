@@ -21,7 +21,7 @@ def create_app() -> FastAPI:
     # Flutter'dan gelen isteklere izin ver
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # Prod'da kısıtlanacak
+        allow_origins=settings.allowed_origins,  # Prod'da .env ile kısıtlanır
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

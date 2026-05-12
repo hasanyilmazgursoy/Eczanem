@@ -1,11 +1,16 @@
 """Auth endpoint'leri."""
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from collections import deque
+from threading import Lock
+from time import time
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
 
 from app.services.auth_service import (
     authenticate_user,
+    change_password as change_password_service,
     create_access_token,
     create_user,
     get_current_user,
@@ -13,6 +18,35 @@ from app.services.auth_service import (
 
 router = APIRouter()
 security = HTTPBearer(auto_error=False)
+
+# ---------------------------------------------------------------------------
+# Auth endpoint'leri için kayan pencere (sliding window) rate limiter.
+# Ayrı bir servis dosyası gerektirmeyecek kadar küçük olduğundan burada tutulur.
+# ---------------------------------------------------------------------------
+_auth_rate_limit_lock = Lock()
+_auth_rate_limit_buckets: dict[str, deque[float]] = {}
+_AUTH_WINDOW_SECONDS = 60
+_AUTH_MAX_REQUESTS = 20
+
+
+def _enforce_auth_rate_limit(client_key: str) -> None:
+    now = time()
+    window_start = now - _AUTH_WINDOW_SECONDS
+
+    with _auth_rate_limit_lock:
+        bucket = _auth_rate_limit_buckets.setdefault(client_key, deque())
+
+        # Pencere dışına çıkmış kayıtları temizle
+        while bucket and bucket[0] <= window_start:
+            bucket.popleft()
+
+        if len(bucket) >= _AUTH_MAX_REQUESTS:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Çok fazla istek gönderildi. Lütfen bir süre bekleyin.",
+            )
+
+        bucket.append(now)
 
 
 class SignupRequest(BaseModel):
@@ -28,6 +62,11 @@ class LoginRequest(BaseModel):
 
 class ForgotPasswordRequest(BaseModel):
     email: str = Field(min_length=3, max_length=255)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(min_length=1, max_length=255)
+    new_password: str = Field(min_length=6, max_length=255)
 
 
 class UserResponse(BaseModel):
@@ -59,20 +98,22 @@ def _resolve_token(
 
 
 @router.post("/signup", response_model=AuthResponse)
-async def signup(request: SignupRequest):
+async def signup(request: SignupRequest, http_request: Request):
+    _enforce_auth_rate_limit(http_request.client.host or "unknown")
     user = create_user(request.name, request.email, request.password)
     access_token = create_access_token(user["id"])
     return AuthResponse(access_token=access_token, user=UserResponse(**user))
 
 
 @router.post("/register", response_model=AuthResponse)
-async def register(request: SignupRequest):
+async def register(request: SignupRequest, http_request: Request):
     """FAZ 3 planındaki endpoint ismini şimdiden destekle."""
-    return await signup(request)
+    return await signup(request, http_request)
 
 
 @router.post("/login", response_model=AuthResponse)
-async def login(request: LoginRequest):
+async def login(request: LoginRequest, http_request: Request):
+    _enforce_auth_rate_limit(http_request.client.host or "unknown")
     user = authenticate_user(request.email, request.password)
     access_token = create_access_token(user["id"])
     return AuthResponse(access_token=access_token, user=UserResponse(**user))
@@ -94,3 +135,14 @@ async def logout(_: str = Depends(_resolve_token)):
 async def forgot_password(_: ForgotPasswordRequest):
     # Şimdilik stub. FAZ 3'te e-posta sağlayıcısı ile gerçek akış bağlanacak.
     return MessageResponse(message="Şifre sıfırlama bağlantısı gönderildi.")
+
+
+@router.put("/change-password", response_model=MessageResponse)
+async def change_password(
+    request: ChangePasswordRequest,
+    token: str = Depends(_resolve_token),
+):
+    """Giriş yapmış kullanıcının şifresini değiştirir."""
+    user = get_current_user(token)
+    change_password_service(user["id"], request.current_password, request.new_password)
+    return MessageResponse(message="Şifre başarıyla güncellendi.")

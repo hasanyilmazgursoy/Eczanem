@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from threading import Lock
+from threading import Lock, RLock
 from uuid import uuid4
 
 from fastapi import HTTPException, status
@@ -20,7 +20,8 @@ from app.core.config import get_settings
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-_store_lock = Lock()
+# RLock, change_password gibi iç çağrı zincirinde re-entrant kullanımı destekler
+_store_lock = RLock()
 _users_file = Path(__file__).resolve().parent.parent.parent / "data" / "users.json"
 
 
@@ -132,6 +133,45 @@ def create_access_token(user_id: str) -> str:
     return jwt.encode(
         payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm
     )
+
+
+def change_password(user_id: str, current_password: str, new_password: str) -> None:
+    """Mevcut şifreyi doğrular, yeni şifreyi hash'leyerek günceller.
+
+    İşlem _store_lock ile atomik tutulur; aynı lock içinde yükleme ve kayıt
+    yapıldığından race condition oluşmaz.
+    """
+    if len(new_password) < 6:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Yeni şifre en az 6 karakter olmalıdır.",
+        )
+
+    _ensure_user_store()
+    with _store_lock:
+        try:
+            users: list[dict] = json.loads(_users_file.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            users = []
+
+        idx = next((i for i, u in enumerate(users) if u["id"] == user_id), -1)
+        if idx == -1:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Kullanıcı bulunamadı.",
+            )
+
+        if not pwd_context.verify(current_password, users[idx]["password_hash"]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Mevcut şifre hatalı.",
+            )
+
+        users[idx] = {**users[idx], "password_hash": pwd_context.hash(new_password)}
+        _users_file.write_text(
+            json.dumps(users, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
 
 
 def get_current_user(token: str) -> dict:
