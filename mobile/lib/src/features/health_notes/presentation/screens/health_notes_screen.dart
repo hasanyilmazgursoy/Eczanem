@@ -1,3 +1,4 @@
+import 'package:share_plus/share_plus.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../imports/imports.dart';
@@ -62,6 +63,26 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
     if (result == true) _load();
   }
 
+  void _showReportSheet() {
+    if (_notes.isEmpty) {
+      context.showTypedSnackBar(
+        'health_notes.report_no_notes'.tr(),
+        type: SnackBarType.info,
+      );
+      return;
+    }
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (_) => _HealthReportSheet(notes: _notes),
+    );
+  }
+
   Future<void> _deleteNote(HealthNote note) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -121,6 +142,12 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
           ),
         ),
         actions: [
+          // Rapor oluşturma butonu
+          IconButton(
+            onPressed: _showReportSheet,
+            icon: const Icon(Icons.summarize_outlined, color: Colors.white),
+            tooltip: 'health_notes.report_button'.tr(),
+          ),
           // Liste / Takvim toggle
           IconButton(
             onPressed: () => setState(() {
@@ -675,6 +702,357 @@ class _EmptyNotesState extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ══════════════════════════ SAĞLIK RAPORU SAYFASI ════════════════════════
+
+/// Tüm sağlık notlarından özet istatistik üreten bottom sheet.
+///
+/// Kategori dağılımı, mood trendi ve son 7 gün özetini gösterir.
+/// Oluşturulan rapor share_plus ile paylaşılabilir.
+class _HealthReportSheet extends StatelessWidget {
+  const _HealthReportSheet({required this.notes});
+
+  final List<HealthNote> notes;
+
+  /// Notları kategoriye göre gruplar.
+  Map<String, int> _categoryCounts() {
+    final counts = <String, int>{};
+    for (final n in notes) {
+      counts[n.category] = (counts[n.category] ?? 0) + 1;
+    }
+    return counts;
+  }
+
+  /// Notları mood'a göre gruplar.
+  Map<String, int> _moodCounts() {
+    final counts = <String, int>{};
+    for (final n in notes) {
+      if (n.mood.isNotEmpty) {
+        counts[n.mood] = (counts[n.mood] ?? 0) + 1;
+      }
+    }
+    return counts;
+  }
+
+  /// Son 7 günün notlarını döner, tarih azalan sırada.
+  List<HealthNote> _last7DaysNotes() {
+    final cutoff = DateTime.now().subtract(const Duration(days: 7));
+    return notes
+        .where((n) => n.date.isAfter(cutoff))
+        .toList()
+      ..sort((a, b) => b.date.compareTo(a.date));
+  }
+
+  /// Paylaşım için metin raporu oluşturur.
+  String _buildShareText(BuildContext context) {
+    final buf = StringBuffer();
+    buf.writeln('health_notes.report_share_text'.tr());
+    buf.writeln('─' * 30);
+    buf.writeln('${'health_notes.report_total'.tr()}: ${notes.length}');
+    buf.writeln();
+    buf.writeln('${'health_notes.report_by_category'.tr()}:');
+    for (final entry in _categoryCounts().entries) {
+      final icon = HealthNoteCategory.iconFor(entry.key);
+      final label = 'health_notes.category_${entry.key}'.tr();
+      buf.writeln('  $icon $label: ${entry.value}');
+    }
+    buf.writeln();
+
+    final last7 = _last7DaysNotes();
+    buf.writeln('${'health_notes.report_last7'.tr()}:');
+    if (last7.isEmpty) {
+      buf.writeln('  ${\'health_notes.report_last7_empty\'.tr()}');
+    } else {
+      for (final n in last7.take(5)) {
+        final dateStr =
+            '${n.date.day.toString().padLeft(2, '0')}.${n.date.month.toString().padLeft(2, '0')}.${n.date.year}';
+        buf.writeln('  [$dateStr] ${n.mood.isNotEmpty ? '${n.mood} ' : ''}${n.text}');
+      }
+    }
+    return buf.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = context.textTheme;
+    final colorScheme = context.colors;
+    final catCounts = _categoryCounts();
+    final moodCounts = _moodCounts();
+    final last7 = _last7DaysNotes();
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.7,
+      maxChildSize: 0.95,
+      minChildSize: 0.4,
+      builder: (_, scrollCtrl) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          children: [
+            // Tutma kolu
+            Center(
+              child: Container(
+                margin: EdgeInsets.only(top: AppSpacing.sm),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            // Başlık + paylaş butonu
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+                vertical: AppSpacing.md,
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.summarize_outlined, size: 28),
+                  SizedBox(width: AppSpacing.sm),
+                  Text(
+                    'health_notes.report_title'.tr(),
+                    style: textTheme.titleLarge
+                        ?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const Spacer(),
+                  IconButton.filled(
+                    onPressed: () => Share.share(_buildShareText(context)),
+                    icon: const Icon(Icons.share_outlined),
+                    tooltip: 'health_notes.report_share'.tr(),
+                    style: IconButton.styleFrom(
+                      backgroundColor: const Color(0xFF1565C0),
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView(
+                controller: scrollCtrl,
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.xl,
+                  AppSpacing.md,
+                  AppSpacing.xl,
+                  AppSpacing.xxl,
+                ),
+                children: [
+                  // Toplam not sayısı
+                  _ReportStatCard(
+                    icon: Icons.note_outlined,
+                    label: 'health_notes.report_total'.tr(),
+                    value: '${notes.length}',
+                    color: const Color(0xFF1565C0),
+                  ),
+                  SizedBox(height: AppSpacing.lg),
+
+                  // Kategoriye göre dağılım
+                  Text(
+                    'health_notes.report_by_category'.tr(),
+                    style: textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  ...catCounts.entries.map((entry) {
+                    final pct = notes.isEmpty ? 0.0 : entry.value / notes.length;
+                    return _CategoryProgressRow(
+                      icon: HealthNoteCategory.iconFor(entry.key),
+                      label: 'health_notes.category_${entry.key}'.tr(),
+                      count: entry.value,
+                      fraction: pct,
+                    );
+                  }),
+                  SizedBox(height: AppSpacing.lg),
+
+                  // Mood dağılımı
+                  if (moodCounts.isNotEmpty) ...[
+                    Text(
+                      'health_notes.report_mood_title'.tr(),
+                      style: textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    SizedBox(height: AppSpacing.sm),
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: moodCounts.entries
+                          .map(
+                            (e) => Chip(
+                              label: Text('${e.key}  ×${e.value}'),
+                              labelStyle:
+                                  const TextStyle(fontSize: 16),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    SizedBox(height: AppSpacing.lg),
+                  ],
+
+                  // Son 7 gün özeti
+                  Text(
+                    'health_notes.report_last7'.tr(),
+                    style: textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  if (last7.isEmpty)
+                    Text(
+                      'health_notes.report_last7_empty'.tr(),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    )
+                  else
+                    ...last7.take(5).map((n) {
+                      final dateStr =
+                          '${n.date.day.toString().padLeft(2, '0')}.${n.date.month.toString().padLeft(2, '0')}';
+                      return Padding(
+                        padding:
+                            EdgeInsets.only(bottom: AppSpacing.sm),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              n.mood.isNotEmpty ? n.mood : HealthNoteCategory.iconFor(n.category),
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                            SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    dateStr,
+                                    style: textTheme.labelSmall?.copyWith(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                  Text(
+                                    n.text,
+                                    style: textTheme.bodyMedium,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Tek satırlık istatistik kartı (toplam not vb.).
+class _ReportStatCard extends StatelessWidget {
+  const _ReportStatCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 36),
+          SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(
+              label,
+              style: context.textTheme.bodyLarge
+                  ?.copyWith(color: color, fontWeight: FontWeight.w600),
+            ),
+          ),
+          Text(
+            value,
+            style: context.textTheme.headlineMedium
+                ?.copyWith(color: color, fontWeight: FontWeight.w800),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Kategori dağılım satırı — ikon + etiket + progress bar + sayı.
+class _CategoryProgressRow extends StatelessWidget {
+  const _CategoryProgressRow({
+    required this.icon,
+    required this.label,
+    required this.count,
+    required this.fraction,
+  });
+
+  final String icon;
+  final String label;
+  final int count;
+  final double fraction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Row(
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 18)),
+          SizedBox(width: AppSpacing.sm),
+          SizedBox(
+            width: 90,
+            child: Text(
+              label,
+              style: context.textTheme.bodySmall,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: LinearProgressIndicator(
+              value: fraction,
+              backgroundColor:
+                  context.colors.onSurface.withValues(alpha: 0.1),
+              color: const Color(0xFF1565C0),
+              borderRadius: BorderRadius.circular(4),
+              minHeight: 8,
+            ),
+          ),
+          SizedBox(width: AppSpacing.sm),
+          Text(
+            '$count',
+            style: context.textTheme.labelMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
     );
   }
