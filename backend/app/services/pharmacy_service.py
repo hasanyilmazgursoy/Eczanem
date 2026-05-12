@@ -1,38 +1,147 @@
-"""Nöbetçi eczane servisi (FAZ 6).
+"""Nöbetçi eczane servisi.
 
-CollectAPI entegrasyonu — API anahtarı yoksa veya servis erişilemezse
-boş liste döner; frontend "yakında aktif olacak" mesajını gösterir.
-
-API anahtarı .env dosyasına COLLECT_API_KEY olarak eklenir.
+eczaneler.gen.tr sitesini HTML olarak çekip parse eder; herhangi bir
+API anahtarı gerektirmez.
 """
 
 from __future__ import annotations
 
-import asyncio
 import logging
-from datetime import datetime, timezone
-from math import atan2, cos, radians, sin, sqrt
+import re
 from typing import Any
 
 import httpx
-
-from app.core.config import get_settings
+from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
-_COLLECT_API_URL = "https://api.collectapi.com/health/dutyPharmacy"
+# Türkçe özel karakterlerin ASCII karşılıkları (URL slug için)
+_TR_MAP: dict[str, str] = {
+    "ç": "c",
+    "Ç": "c",
+    "ğ": "g",
+    "Ğ": "g",
+    "ı": "i",
+    "İ": "i",
+    "ö": "o",
+    "Ö": "o",
+    "ş": "s",
+    "Ş": "s",
+    "ü": "u",
+    "Ü": "u",
+}
+
+_BASE_URL = "https://www.eczaneler.gen.tr"
+_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept-Language": "tr-TR,tr;q=0.9",
+}
 
 
-def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """İki koordinat arasındaki mesafeyi kilometre cinsinden hesaplar."""
-    R = 6371.0
-    dlat = radians(lat2 - lat1)
-    dlon = radians(lon2 - lon1)
-    a = (
-        sin(dlat / 2) ** 2
-        + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) ** 2
-    )
-    return R * 2 * atan2(sqrt(a), sqrt(1 - a))
+def _to_slug(text: str) -> str:
+    """Türkçe il/ilçe adını URL slug'ına dönüştürür.
+
+    Örn: "Afyonkarahisar" → "afyonkarahisar", "Çanakkale" → "canakkale"
+    """
+    for tr_char, ascii_char in _TR_MAP.items():
+        text = text.replace(tr_char, ascii_char)
+    # Küçük harfe al, boşlukları tire yap, ardışık tireleri tekle
+    slug = re.sub(r"-{2,}", "-", text.lower().replace(" ", "-").strip())
+    return slug
+
+
+def _parse_pharmacies(html: str) -> list[dict[str, Any]]:
+    """HTML kaynağından eczane listesini ayrıştırır."""
+    soup = BeautifulSoup(html, "html.parser")
+    pharmacies: list[dict[str, Any]] = []
+
+    for row in soup.find_all("tr"):
+        name_tag = row.find("span", class_="isim")
+        if not name_tag:
+            continue
+
+        name: str = name_tag.get_text(strip=True)
+
+        # Adres bloğu: col-lg-6 div'inin <br> öncesi kısmı
+        addr_div = row.find("div", class_="col-lg-6")
+        address = ""
+        if addr_div:
+            # <br> öncesindeki saf metin düğümlerini birleştir
+            for content in addr_div.contents:
+                tag_name = getattr(content, "name", None)
+                if tag_name == "br":
+                    break
+                if tag_name is None:  # NavigableString
+                    address += str(content)
+                # İsim/anchor gibi inline etiketlerin içini ekle
+                elif tag_name in ("a", "strong", "b"):
+                    address += content.get_text()
+            address = address.strip()
+
+        # İlçe: bg-info renkli badge (ilk olanı al)
+        dist_badge = addr_div and addr_div.find(
+            "span", class_=lambda c: c and "bg-info" in c
+        )
+        district: str = dist_badge.get_text(strip=True) if dist_badge else ""
+
+        # Telefon: py-lg-2 class'ına sahip div (sadece telefon div'inde mevcut)
+        phone_div = row.find("div", class_="py-lg-2")
+        phone: str = phone_div.get_text(strip=True) if phone_div else ""
+
+        pharmacies.append(
+            {
+                "name": name,
+                "address": address,
+                "phone": phone,
+                "district": district,
+                "lat": None,
+                "lon": None,
+                "distance_km": None,
+            }
+        )
+
+    return pharmacies
+
+
+async def _reverse_geocode(lat: float, lon: float) -> tuple[str, str]:
+    """Nominatim ile koordinatları Türkiye'deki il/ilçe adına çevirir.
+
+    Dönen tuple: (il, ilçe). Hata ya da sonuç bulunamazsa ("", "") döner.
+    """
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            resp = await client.get(
+                "https://nominatim.openstreetmap.org/reverse",
+                params={
+                    "lat": lat,
+                    "lon": lon,
+                    "format": "json",
+                    "accept-language": "tr",
+                },
+                # Nominatim kullanım politikası: User-Agent zorunlu
+                headers={"User-Agent": "EczanemApp/1.0 (personal-use)"},
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        address = data.get("address", {})
+        # Türkiye idari yapısı: state/province = il, county = ilçe
+        il_name: str = (
+            address.get("province") or address.get("state") or address.get("city") or ""
+        )
+        ilce_name: str = (
+            address.get("county")
+            or address.get("city_district")
+            or address.get("town")
+            or ""
+        )
+        return il_name.strip(), ilce_name.strip()
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Reverse geocoding hatası: %s", exc)
+        return "", ""
 
 
 async def get_nearby_pharmacies(
@@ -41,68 +150,41 @@ async def get_nearby_pharmacies(
     il: str = "",
     ilce: str = "",
 ) -> list[dict[str, Any]]:
-    """En yakın nöbetçi eczaneleri döndürür.
+    """eczaneler.gen.tr'den il/ilçe bazlı nöbetçi eczaneleri çeker.
 
-    CollectAPI üzerinden il/ilçe bazlı eczane listesi çeker ve mesafeye
-    göre sıralar. API anahtarı yoksa boş liste döner.
+    `il` boşsa ancak lat/lon sıfır değilse Nominatim ile reverse geocoding
+    yapılır ve otomatik il/ilçe tespit edilir.
+    İlçe belirtilmezse tüm il listelenir.
     """
-    settings = get_settings()
-    api_key: str = getattr(settings, "collect_api_key", "")
+    # Koordinat verildi ama il girilmedi → otomatik tespit
+    if not il.strip() and (lat != 0.0 or lon != 0.0):
+        il, ilce_auto = await _reverse_geocode(lat, lon)
+        if not ilce.strip():
+            ilce = ilce_auto
+        logger.info("Reverse geocoding sonucu: il=%s, ilçe=%s", il, ilce)
 
-    if not api_key:
-        logger.info(
-            "COLLECT_API_KEY yapılandırılmamış; nöbetçi eczane listesi boş döndü."
-        )
+    if not il.strip():
         return []
+
+    il_slug = _to_slug(il.strip())
+    ilce_slug = _to_slug(ilce.strip()) if ilce.strip() else ""
+
+    url = f"{_BASE_URL}/nobetci-{il_slug}"
+    if ilce_slug:
+        url += f"-{ilce_slug}"
+
+    logger.info("eczaneler.gen.tr isteği: %s", url)
 
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.get(
-                _COLLECT_API_URL,
-                params={"il": il, "ilce": ilce},
-                headers={
-                    "authorization": f"apikey {api_key}",
-                    "content-type": "application/json",
-                },
-            )
+        async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+            resp = await client.get(url, headers=_HEADERS)
             resp.raise_for_status()
-            payload = resp.json()
+            html = resp.text
     except httpx.HTTPStatusError as exc:
-        logger.warning("CollectAPI HTTP hatası: %s", exc)
+        logger.warning("eczaneler.gen.tr HTTP hatası: %s", exc)
         return []
     except Exception as exc:  # noqa: BLE001
-        logger.warning("CollectAPI erişim hatası: %s", exc)
+        logger.warning("eczaneler.gen.tr erişim hatası: %s", exc)
         return []
 
-    raw_list: list[dict] = payload.get("result", [])
-    pharmacies: list[dict] = []
-
-    for item in raw_list:
-        # CollectAPI koordinat alanları her zaman dolu olmayabilir
-        try:
-            p_lat = float(item.get("lat") or 0)
-            p_lon = float(item.get("lng") or 0)
-        except (TypeError, ValueError):
-            p_lat = p_lon = 0.0
-
-        distance_km = _haversine_km(lat, lon, p_lat, p_lon) if p_lat and p_lon else None
-
-        pharmacies.append(
-            {
-                "name": item.get("name", ""),
-                "address": item.get("address", ""),
-                "phone": item.get("phone", ""),
-                "district": item.get("dist", ""),
-                "lat": p_lat or None,
-                "lon": p_lon or None,
-                "distance_km": round(distance_km, 2)
-                if distance_km is not None
-                else None,
-            }
-        )
-
-    # Mesafesi bilinenleri öne al, geri kalanlar sona
-    pharmacies.sort(
-        key=lambda p: p["distance_km"] if p["distance_km"] is not None else float("inf")
-    )
-    return pharmacies
+    return _parse_pharmacies(html)

@@ -28,15 +28,14 @@ class NearbyPharmaciesResponse(BaseModel):
 
 @router.get("/nearby", response_model=NearbyPharmaciesResponse)
 async def nearby_pharmacies(
-    lat: float = Query(..., description="Kullanıcı enlemi"),
-    lon: float = Query(..., description="Kullanıcı boyilamı"),
     il: str = Query(default="", description="İl adı (örn: Istanbul)"),
     ilce: str = Query(default="", description="İlçe adı (örn: Kadikoy)"),
+    lat: float = Query(default=0.0, description="Kullanıcı enlemi (opsiyonel)"),
+    lon: float = Query(default=0.0, description="Kullanıcı boyilamı (opsiyonel)"),
 ):
     """Koordinat ve il/ilçe bilgisine göre nöbetçi eczaneleri listeler.
 
-    CollectAPI anahtarı yapılandırılmamışsa `api_available: false` ve boş
-    liste döner; bu durumda frontend uygun bir mesaj gösterebilir.
+    eczaneler.gen.tr'den HTML scrape ile veri çeker; API anahtarı gerekmez.
     """
     pharmacies = await get_nearby_pharmacies(lat=lat, lon=lon, il=il, ilce=ilce)
     return NearbyPharmaciesResponse(
