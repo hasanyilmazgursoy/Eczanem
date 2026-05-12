@@ -77,6 +77,17 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     await launchUrl(uri);
   }
 
+  /// Eczane adresini Google Maps'te açar (yol tarifi).
+  Future<void> _openDirections(PharmacyItem pharmacy) async {
+    final query = Uri.encodeComponent(
+      '${pharmacy.name} ${pharmacy.address}'.trim(),
+    );
+    final uri = Uri.parse(
+      'https://www.google.com/maps/dir/?api=1&destination=$query',
+    );
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
   /// Cihaz konumunu alır; backend Nominatim ile il/ilçe adını tespit eder ve
   /// otomatik arama başlatır.
   Future<void> _getLocation() async {
@@ -98,18 +109,22 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium,
-        ),
-      );
+      // Önce önbellekteki konum → anında gelir, GPS kilidi gerektirmez
+      // Closure içinde null promotion kaybolmaz diye final non-null değişken kullan
+      final Position position;
+      final lastKnown = await Geolocator.getLastKnownPosition();
+      if (lastKnown != null) {
+        position = lastKnown;
+      } else {
+        // Önbellekte yoksa ağ/WiFi tabanlı (low) iste — GPS uydu kilidi beklemez
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.low,
+          ),
+        ).timeout(const Duration(seconds: 15));
+      }
 
       // Eski metin alanı kalıntısını temizle; harita merkezini kaydet.
-      _ilCtrl.clear();
-      _ilceCtrl.clear();
-
-      // Koordinatları backend'e gönder; backend Nominatim reverse geocoding
-      // ile il/ilçe adını otomatik tespit eder.
       setState(() {
         _status = AppStatus.loading;
         _errorMessage = null;
@@ -448,6 +463,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
         onCall: _pharmacies[i].phone.isNotEmpty
             ? () => _callPharmacy(_pharmacies[i].phone)
             : null,
+        onDirections: () => _openDirections(_pharmacies[i]),
       ),
     );
   }
@@ -526,10 +542,15 @@ class _ApiUnavailableState extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _PharmacyTile extends StatelessWidget {
-  const _PharmacyTile({required this.pharmacy, this.onCall});
+  const _PharmacyTile({
+    required this.pharmacy,
+    this.onCall,
+    this.onDirections,
+  });
 
   final PharmacyItem pharmacy;
   final VoidCallback? onCall;
+  final VoidCallback? onDirections;
 
   @override
   Widget build(BuildContext context) {
@@ -594,14 +615,26 @@ class _PharmacyTile extends StatelessWidget {
               ),
           ],
         ),
-        trailing: onCall != null
-            ? IconButton(
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Yol tarifi butonu (her zaman göster — adresle Google Maps açar)
+            if (onDirections != null)
+              IconButton(
+                icon: const Icon(Icons.directions_rounded),
+                color: colorScheme.tertiary,
+                tooltip: 'pharmacy.directions'.tr(),
+                onPressed: onDirections,
+              ),
+            if (onCall != null)
+              IconButton(
                 icon: const Icon(Icons.call_rounded),
                 color: colorScheme.primary,
                 tooltip: 'pharmacy.call'.tr(),
                 onPressed: onCall,
-              )
-            : null,
+              ),
+          ],
+        ),
       ),
     );
   }
