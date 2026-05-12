@@ -52,7 +52,8 @@ class MedicationReminderRepository {
   }
 
   FutureEither<void> takeDose(String id) async {
-    final updated = getReminders().map((item) {
+    final reminders = getReminders();
+    final updated = reminders.map((item) {
       if (item.id != id) return item;
 
       final nextStock = item.hasStockTracking
@@ -68,7 +69,18 @@ class MedicationReminderRepository {
     }).toList();
 
     updated.sort(_sortByPriority);
-    return _persist(updated);
+    final result = await _persist(updated);
+
+    // Doz alındıktan sonra stok 3 güne veya daha aza düştüyse uyarı planla
+    final takenReminder =
+        updated.firstWhere((r) => r.id == id, orElse: () => reminders.first);
+    if (takenReminder.hasStockTracking && takenReminder.isLowStock) {
+      Future<void>.microtask(
+        () => NotificationService.instance.scheduleLowStockAlert(takenReminder),
+      );
+    }
+
+    return result;
   }
 
   int getActiveCount() => getReminders().where((item) => item.isActive).length;

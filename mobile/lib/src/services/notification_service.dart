@@ -106,6 +106,43 @@ class NotificationService {
     });
   }
 
+  /// Stok azalan ilaç için o güne saat 09:00'da tek seferlik bildirim zamanlar.
+  ///
+  /// Servis başlatılmamışsa sessizce çıkar. Aynı ID tekrar zamanlanırsa
+  /// eski bildirim üzerine yazılır.
+  Future<void> scheduleLowStockAlert(MedicationReminder reminder) async {
+    if (!_initialized) {
+      final initResult = await init();
+      if (initResult.isLeft()) return;
+    }
+
+    final notificationId = _buildLowStockNotificationId(reminder.id);
+    final body = _currentLanguageCode == 'tr'
+        ? '${reminder.drugName} için stok 3 gün veya daha az kaldı.'
+        : '${reminder.drugName} stock is running low (3 days or less).';
+    final title = _currentLanguageCode == 'tr' ? 'Stok Uyarısı ⚠️' : 'Low Stock Alert ⚠️';
+
+    await _plugin.zonedSchedule(
+      notificationId,
+      title,
+      body,
+      _nextInstanceOf(const TimeOfDay(hour: 9, minute: 0)),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          _androidChannelId,
+          'Medication reminders',
+          channelDescription: 'Daily reminders for scheduled medication doses',
+          importance: Importance.high,
+          priority: Priority.high,
+          category: AndroidNotificationCategory.reminder,
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      payload: 'low_stock:${reminder.id}',
+    );
+  }
+
   FutureEither<void> syncMedicationReminders(
     List<MedicationReminder> reminders,
   ) async {
@@ -208,6 +245,16 @@ class NotificationService {
     }
 
     return hash;
+  }
+
+  /// Stok uyarı bildirimleri için günlük bildirim ID aralığıyla çakışmayan ID.
+  /// 0x40000000 offset ile ayrı bir aralık kullanılır.
+  int _buildLowStockNotificationId(String reminderId) {
+    var hash = 0;
+    for (final codeUnit in reminderId.codeUnits) {
+      hash = ((hash * 31) + codeUnit) & 0x3fffffff;
+    }
+    return 0x40000000 + hash;
   }
 
   tz.TZDateTime _nextInstanceOf(TimeOfDay time) {
