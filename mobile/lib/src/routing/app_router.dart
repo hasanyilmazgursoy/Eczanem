@@ -21,6 +21,7 @@ import 'package:eczanem/src/features/drug/presentation/screens/drug_search_histo
 import 'package:eczanem/src/features/reminder/presentation/screens/medication_reminders_screen.dart';
 import 'package:eczanem/src/features/profile/presentation/screens/family_screen.dart';
 import 'package:eczanem/src/features/profile/presentation/screens/family_member_detail_screen.dart';
+import 'package:eczanem/src/features/profile/presentation/screens/account_settings_screen.dart';
 import 'package:eczanem/src/features/profile/data/models/family_member.dart';
 import 'package:eczanem/src/features/pharmacy/presentation/screens/pharmacy_screen.dart';
 import 'package:eczanem/src/features/emergency/presentation/screens/emergency_card_screen.dart';
@@ -160,6 +161,11 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.healthNotes,
       name: 'healthNotes',
       builder: (context, state) => const HealthNotesScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.accountSettings,
+      name: 'accountSettings',
+      builder: (context, state) => const AccountSettingsScreen(),
     ),
   ],
 );

@@ -27,4 +27,5 @@ abstract final class AppRoutes {
   static const String pharmacyNearby = '/pharmacy-nearby';
   static const String emergencyCard = '/emergency-card';
   static const String healthNotes = '/health-notes';
+  static const String accountSettings = '/account-settings';
 }

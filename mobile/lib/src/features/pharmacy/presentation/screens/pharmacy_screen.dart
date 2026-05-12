@@ -32,6 +32,22 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
   final _ilceCtrl = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // İzin daha önce verilmişse ekran açıldığında konumu otomatik al.
+    _autoDetectLocationIfGranted();
+  }
+
+  /// Konum izni zaten varsa `_getLocation()` çağırır; izin yoksa bekler.
+  Future<void> _autoDetectLocationIfGranted() async {
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse) {
+      if (mounted) await _getLocation();
+    }
+  }
+
+  @override
   void dispose() {
     _ilCtrl.dispose();
     _ilceCtrl.dispose();

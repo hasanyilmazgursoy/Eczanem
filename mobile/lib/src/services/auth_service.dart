@@ -126,6 +126,30 @@ class AuthService {
     });
   }
 
+  /// Mevcut şifreyi doğrulayarak yeni şifreyle değiştirir.
+  FutureEither<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    return runTask(() async {
+      final token = await _readAccessToken();
+      if (token == null || token.isEmpty) {
+        throw Exception('Oturumunuz sona ermiş. Lütfen tekrar giriş yapın.');
+      }
+
+      await _dio.put<dynamic>(
+        '/auth/change-password',
+        data: {
+          'current_password': currentPassword,
+          'new_password': newPassword,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+    }, requiresNetwork: true);
+  }
+
   void dispose() {
     _authStateController.close();
   }

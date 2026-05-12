@@ -97,6 +97,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                     context.push(AppRoutes.familyMembers);
                   },
                 ),
+                const Divider(),
+                ListTile(
+                  leading: Icon(Icons.manage_accounts_rounded,
+                      color: colorScheme.primary, size: 28),
+                  title: Text('account_settings.title'.tr(),
+                      style: textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  onTap: () {
+                    context.pop();
+                    context.push(AppRoutes.accountSettings);
+                  },
+                ),
                 SizedBox(height: AppSpacing.lg),
                 OutlinedButton.icon(
                   onPressed: () {
