@@ -29,9 +29,9 @@ asistanı uygulaması.
 │  │  🎤 Sesli Sorgu   │ 📝 Sağlık Notu│    │
 │  └──────────────────────────────────┘    │
 │  Local: SQLite + Hive (offline veri)     │
-└──────────────────┤───────────────────────┘
+└──────────────────┌──────────────────────┘
                    │ HTTPS
-                   ▼
+                   ↓
 ┌──────────────────────────────────────────┐
 │         FastAPI Backend (Python)          │
 │  /api/drug/analyze-image   → OpenRouter  │
@@ -89,7 +89,7 @@ Aşağıdaki bilgileri Türkçe olarak JSON formatında döndür:
 - ilac_adi, etken_madde, ne_icin_kullanilir
 - dozaj_bilgisi, kullanim_sekli (aç/tok karnına, sabah/akşam)
 - yan_etkiler (liste), uyarilar (liste), kimler_kullanmamali (liste)
-ÖNEMLİ: Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz.
+ÖNEMLİ: Bu bilgiler genel bilgilendirme amacıyla sunulmaktadır. Tıbbi tavsiye niteliği taşımaz.
 ```
 
 ### Flutter Ekranları
@@ -207,7 +207,7 @@ Kullanıcı aile bireylerinin ilaçlarını ayrı ayrı yönetebiliyor.
 ### Stok Hesaplama
 ```
 kalan_gün = kalan_tablet / (günlük_doz × günlük_tekrar)
-uyarı_tarihi = bugün + kalan_gün - 3  // 3 gün önceden uyar
+uya rı_tarihi = bugün + kalan_gün - 3  // 3 gün önceden uyar
 ```
 
 ### Önemli
@@ -247,7 +247,7 @@ Yerel çalışan ilaç hatırlayıcı, stok takibi ve offline bildirim akışı 
 - [ ] Cache: 6 saat ve prod sertliği
 
 ### Flutter Ekranları
-- [ ] Eczane Harita: Google Maps/OpenStreetMap üzerinde pinler
+- [ ] Eczane Harita: Google Maps/OpenStreetMap üzerine pinler
 - [x] Eczane Liste: Liste, telefon, adres ve temel aksiyonlar
 - [x] Sesli Arama: Mikrofon butonu → STT → ilaç arama (speech_to_text ^7.0.0)
 - [ ] Konum izinleri ve yayın seviyesi kullanıcı akışı polish
@@ -289,7 +289,7 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 - [x] Onboarding: İlk açılışta temel onboarding akışı
 - [ ] Hata yönetimi: Her ekranda yükleniyor/hata/boş/başarılı durumları
 - [ ] Performans: Lazy loading, image caching, API response caching
-- [ ] Güvenlik: HTTPS zorunlu, API key gizleme, input sanitization, CORS sertleştirme
+- [ ] Güvenlik: HTTPS zorunlu, API key gizleme, input sanitization, CORS sertl eştirme
 - [x] Test: HealthNote + EmergencyCard model birim testleri eklendi (pure Dart)
 - [ ] Play Store: App icon, screenshots, açıklama, privacy policy
 - [ ] Backend Deploy: Railway / Render / VPS
