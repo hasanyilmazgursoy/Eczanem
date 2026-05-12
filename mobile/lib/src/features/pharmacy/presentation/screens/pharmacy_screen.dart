@@ -116,12 +116,14 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
       if (lastKnown != null) {
         position = lastKnown;
       } else {
-        // Önbellekte yoksa ağ/WiFi tabanlı (low) iste — GPS uydu kilidi beklemez
+        // Dart .timeout() Android native çağrısında güvenilmez; AndroidSettings
+        // içindeki timeLimit native katmanda uygulanır → gerçek zaman aşımı
         position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.low,
+          locationSettings: AndroidSettings(
+            accuracy: LocationAccuracy.low, // ağ/WiFi tabanlı, GPS beklemiyor
+            timeLimit: const Duration(seconds: 8),
           ),
-        ).timeout(const Duration(seconds: 15));
+        );
       }
 
       // Eski metin alanı kalıntısını temizle; harita merkezini kaydet.
