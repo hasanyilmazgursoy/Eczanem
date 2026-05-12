@@ -63,6 +63,7 @@
   },
   "auth": {
     "log_in": "Log In",
+    "login": "Log In",
     "log_in_subtitle": "Enter your email and password",
     "email": "Email",
     "email_required": "Email is required",
@@ -358,7 +359,16 @@
     "location_error": "Could not get location. Please try again.",
     "map_view": "Map View",
     "list_view": "List View",
-    "directions": "Directions"
+    "directions": "Directions",
+    "il_label": "Province",
+    "il_hint": "e.g. Malatya",
+    "il_required": "Province name is required.",
+    "ilce_label": "District",
+    "ilce_hint": "e.g. Merkez",
+    "search_button": "Search",
+    "no_results_title": "No Pharmacy Found",
+    "no_results_subtitle": "No on-duty pharmacy found in this area. Check the province/district and try again.",
+    "error_generic": "Could not retrieve pharmacy info. Please try again."
   },
   "emergency_card": {
     "title": "My Emergency Card",
@@ -433,5 +443,17 @@
     "report_no_notes": "At least one note is required to generate a report.",
     "report_share_text": "My Health Notes Report",
     "report_share": "Share Report"
+  },
+  "onboarding": {
+    "onboarding_title_1": "Medicine Info Anytime",
+    "onboarding_subtitle_1": "Get detailed medicine information in seconds by typing the name or taking a box photo.",
+    "onboarding_title_2": "Manage Family Health",
+    "onboarding_subtitle_2": "Track medicines, doses, and reminders for all family members in one place.",
+    "onboarding_title_3": "Be Ready for Emergencies",
+    "onboarding_subtitle_3": "Store blood type, allergies, and emergency contacts; find on-duty pharmacies instantly."
+  },
+  "shared": {
+    "get_started": "Get Started",
+    "try_again": "Try Again"
   }
 }

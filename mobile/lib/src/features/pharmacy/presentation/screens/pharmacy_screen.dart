@@ -25,6 +25,9 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
   bool _showMap = false; // liste / harita toggle
   bool _locationLoading = false;
 
+  /// Kullanıcının cihaz konumu — harita merkezini belirlemek için saklanır.
+  LatLng? _userLocation;
+
   final _ilCtrl = TextEditingController();
   final _ilceCtrl = TextEditingController();
 
@@ -74,7 +77,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     await launchUrl(uri);
   }
 
-  /// Cihaz konumunu alır, il/ilçe alanlarını doldurur ve arama yapar.
+  /// Cihaz konumunu alır; backend Nominatim ile il/ilçe adını tespit eder ve
+  /// otomatik arama başlatır.
   Future<void> _getLocation() async {
     setState(() => _locationLoading = true);
 
@@ -100,17 +104,37 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
         ),
       );
 
-      // Koordinatları il/ilçe alanına doldurmak yerine, direkt backend'e
-      // konum koordinatlarıyla istek atılabilir. Şimdilik kullanıcıya
-      // koordinatları gösteriyoruz ve arama tetikliyoruz.
-      // Eğer il/ilçe alanları boşsa otomatik doldurmak için Geocoding
-      // paketi gerekir; şimdilik sadece konumu alıp haritayı açıyoruz.
-      if (_ilCtrl.text.trim().isEmpty) {
-        _ilCtrl.text =
-            '${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}';
-      }
+      // Eski metin alanı kalıntısını temizle; harita merkezini kaydet.
+      _ilCtrl.clear();
+      _ilceCtrl.clear();
 
-      setState(() => _showMap = true);
+      // Koordinatları backend'e gönder; backend Nominatim reverse geocoding
+      // ile il/ilçe adını otomatik tespit eder.
+      setState(() {
+        _status = AppStatus.loading;
+        _errorMessage = null;
+        _userLocation = LatLng(position.latitude, position.longitude);
+      });
+
+      final result = await PharmacyRepository.instance.getNearbyPharmacies(
+        lat: position.latitude,
+        lon: position.longitude,
+      );
+
+      if (!mounted) return;
+
+      result.fold(
+        (failure) => setState(() {
+          _status = AppStatus.failure;
+          _errorMessage = failure.message;
+        }),
+        (response) => setState(() {
+          _status = AppStatus.success;
+          _pharmacies = response.pharmacies;
+          _apiAvailable = response.apiAvailable;
+          _showMap = true;
+        }),
+      );
     } catch (e) {
       if (!mounted) return;
       context.showTypedSnackBar(
@@ -129,6 +153,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
+      // Klavye açıldığında form+liste layout'u sıkışmasın
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
@@ -243,15 +269,17 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     final mappable =
         _pharmacies.where((p) => p.lat != null && p.lon != null).toList();
 
-    // Merkez: ilk eczane veya İstanbul varsayılanı
+    // Merkez önceliği: eczane konumu > kullanıcı konumu > Türkiye genel görünüm
     final center = mappable.isNotEmpty
         ? LatLng(mappable.first.lat!, mappable.first.lon!)
-        : const LatLng(41.0082, 28.9784);
+        : _userLocation ?? const LatLng(39.0, 35.0);
+    final zoom =
+        mappable.isNotEmpty ? 13.0 : (_userLocation != null ? 11.0 : 5.5);
 
     return FlutterMap(
       options: MapOptions(
         initialCenter: center,
-        initialZoom: mappable.isNotEmpty ? 13.0 : 6.0,
+        initialZoom: zoom,
       ),
       children: [
         // OpenStreetMap karo katmanı
@@ -259,6 +287,24 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           userAgentPackageName: 'com.example.eczanem',
         ),
+        // Kullanıcı konumu markeri (varsa)
+        if (_userLocation != null)
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: _userLocation!,
+                width: 20,
+                height: 20,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                ),
+              ),
+            ],
+          ),
         // Eczane markerları
         MarkerLayer(
           markers: mappable.map((p) {

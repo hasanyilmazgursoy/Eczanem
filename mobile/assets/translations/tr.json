@@ -63,6 +63,7 @@
     },
     "auth": {
         "log_in": "Giriş Yap",
+        "login": "Giriş Yap",
         "log_in_subtitle": "E-posta ve şifrenizi girin",
         "email": "E-posta",
         "email_required": "E-posta gerekli",
@@ -358,7 +359,16 @@
         "location_error": "Konum alınamadı. Lütfen tekrar deneyin.",
         "map_view": "Harita Görünümü",
         "list_view": "Liste Görünümü",
-        "directions": "Yol Tarifi"
+        "directions": "Yol Tarifi",
+        "il_label": "İl",
+        "il_hint": "örn: Malatya",
+        "il_required": "İl adı zorunludur.",
+        "ilce_label": "İlçe",
+        "ilce_hint": "örn: Merkez",
+        "search_button": "Ara",
+        "no_results_title": "Eczane Bulunamadı",
+        "no_results_subtitle": "Bu bölgede nöbetçi eczane bilgisi bulunamadı. İl/ilçe bilgisini kontrol edip tekrar deneyin.",
+        "error_generic": "Eczane bilgisi alınamadı. Lütfen tekrar deneyin."
     },
     "emergency_card": {
         "title": "Acil Durum Kartım",
@@ -433,5 +443,17 @@
         "report_no_notes": "Rapor oluşturmak için en az bir not gereklidir.",
         "report_share_text": "Sağlık Notlarım Raporu",
         "report_share": "Raporu Paylaş"
+    },
+    "onboarding": {
+        "onboarding_title_1": "İlaç Bilgisi Her An",
+        "onboarding_subtitle_1": "İlaç adını yazarak ya da kutu fotoğrafı çekerek saniyeler içinde detaylı bilgiye ulaşın.",
+        "onboarding_title_2": "Aile Sağlığını Yönet",
+        "onboarding_subtitle_2": "Tüm aile bireylerinin ilaçlarını, dozlarını ve hatırlatıcılarını tek yerden takip edin.",
+        "onboarding_title_3": "Acil Duruma Hazır Ol",
+        "onboarding_subtitle_3": "Kan grubu, alerjiler ve acil iletişim bilgilerinizi kaydedin; nöbetçi eczaneleri anında bulun."
+    },
+    "shared": {
+        "get_started": "Başla",
+        "try_again": "Tekrar Dene"
     }
 }
