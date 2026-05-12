@@ -35,7 +35,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
       ),
       builder: (_) => _MemberEditorSheet(existing: existing),
     );
-    if (result == true) _load();
+    if (result ?? false) _load();
   }
 
   Future<void> _deleteMember(FamilyMember member) async {
@@ -107,15 +107,17 @@ class _FamilyScreenState extends State<FamilyScreen> {
           SizedBox(width: AppSpacing.sm),
         ],
       ),
-      body: _members.isEmpty ? _EmptyState(onAdd: _openAddMemberSheet) : _MemberGrid(
-        members: _members,
-        onTap: (member) => context.push(
-          AppRoutes.familyMemberDetail,
-          extra: member,
-        ),
-        onEdit: (member) => _openAddMemberSheet(existing: member),
-        onDelete: _deleteMember,
-      ),
+      body: _members.isEmpty
+          ? _EmptyState(onAdd: _openAddMemberSheet)
+          : _MemberGrid(
+              members: _members,
+              onTap: (member) => context.push(
+                AppRoutes.familyMemberDetail,
+                extra: member,
+              ),
+              onEdit: (member) => _openAddMemberSheet(existing: member),
+              onDelete: _deleteMember,
+            ),
       floatingActionButton: _members.isNotEmpty
           ? FloatingActionButton.extended(
               onPressed: _openAddMemberSheet,
@@ -154,7 +156,8 @@ class _MemberGrid extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: AppSpacing.md,
         mainAxisSpacing: AppSpacing.md,
-        childAspectRatio: 0.9,
+        // 0.9 → 0.85: kart içeriği küçük ekranlarda ~1 px taşıyordu
+        childAspectRatio: 0.78,
       ),
       itemCount: members.length,
       itemBuilder: (context, i) => _MemberCard(
@@ -389,8 +392,20 @@ class _MemberEditorSheetState extends State<_MemberEditorSheet> {
   bool _saving = false;
 
   static const _emojiOptions = [
-    '\u{1F464}', '\u{1F468}', '\u{1F469}', '\u{1F466}', '\u{1F467}', '\u{1F474}', '\u{1F475}',
-    '\u{1F9D1}', '\u{1F476}', '\u{1F9D2}', '\u{1F9D3}', '\u{1F9D1}\u200D\u{1F9B3}', '\u{1F9D1}\u200D\u{1F9B1}', '\u{1F9D1}\u200D\u{1F9B2}',
+    '\u{1F464}',
+    '\u{1F468}',
+    '\u{1F469}',
+    '\u{1F466}',
+    '\u{1F467}',
+    '\u{1F474}',
+    '\u{1F475}',
+    '\u{1F9D1}',
+    '\u{1F476}',
+    '\u{1F9D2}',
+    '\u{1F9D3}',
+    '\u{1F9D1}\u200D\u{1F9B3}',
+    '\u{1F9D1}\u200D\u{1F9B1}',
+    '\u{1F9D1}\u200D\u{1F9B2}',
   ];
 
   @override
@@ -476,13 +491,12 @@ class _MemberEditorSheetState extends State<_MemberEditorSheet> {
                 isEditing
                     ? 'family.edit_member'.tr()
                     : 'family.add_member'.tr(),
-                style: textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w800),
+                style:
+                    textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
               ),
               SizedBox(height: AppSpacing.lg),
               // Emoji seçici
-              Text('family.emoji_label'.tr(),
-                  style: textTheme.labelLarge),
+              Text('family.emoji_label'.tr(), style: textTheme.labelLarge),
               SizedBox(height: AppSpacing.sm),
               Wrap(
                 spacing: AppSpacing.sm,

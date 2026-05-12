@@ -236,7 +236,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
 
   Widget _buildSearchField() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextField(
         controller: _searchController,
         focusNode: FocusNode(),

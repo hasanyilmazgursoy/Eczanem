@@ -60,7 +60,7 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
       ),
       builder: (_) => _NoteEditorSheet(existing: existing),
     );
-    if (result == true) _load();
+    if (result ?? false) _load();
   }
 
   void _showReportSheet() {
@@ -741,9 +741,7 @@ class _HealthReportSheet extends StatelessWidget {
   /// Son 7 günün notlarını döner, tarih azalan sırada.
   List<HealthNote> _last7DaysNotes() {
     final cutoff = DateTime.now().subtract(const Duration(days: 7));
-    return notes
-        .where((n) => n.date.isAfter(cutoff))
-        .toList()
+    return notes.where((n) => n.date.isAfter(cutoff)).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
   }
 
@@ -770,7 +768,8 @@ class _HealthReportSheet extends StatelessWidget {
       for (final n in last7.take(5)) {
         final dateStr =
             '${n.date.day.toString().padLeft(2, '0')}.${n.date.month.toString().padLeft(2, '0')}.${n.date.year}';
-        buf.writeln('  [$dateStr] ${n.mood.isNotEmpty ? '${n.mood} ' : ''}${n.text}');
+        buf.writeln(
+            '  [$dateStr] ${n.mood.isNotEmpty ? '${n.mood} ' : ''}${n.text}');
       }
     }
     return buf.toString();
@@ -863,7 +862,8 @@ class _HealthReportSheet extends StatelessWidget {
                   ),
                   SizedBox(height: AppSpacing.sm),
                   ...catCounts.entries.map((entry) {
-                    final pct = notes.isEmpty ? 0.0 : entry.value / notes.length;
+                    final pct =
+                        notes.isEmpty ? 0.0 : entry.value / notes.length;
                     return _CategoryProgressRow(
                       icon: HealthNoteCategory.iconFor(entry.key),
                       label: 'health_notes.category_${entry.key}'.tr(),
@@ -888,8 +888,7 @@ class _HealthReportSheet extends StatelessWidget {
                           .map(
                             (e) => Chip(
                               label: Text('${e.key}  ×${e.value}'),
-                              labelStyle:
-                                  const TextStyle(fontSize: 16),
+                              labelStyle: const TextStyle(fontSize: 16),
                             ),
                           )
                           .toList(),
@@ -916,20 +915,20 @@ class _HealthReportSheet extends StatelessWidget {
                       final dateStr =
                           '${n.date.day.toString().padLeft(2, '0')}.${n.date.month.toString().padLeft(2, '0')}';
                       return Padding(
-                        padding:
-                            EdgeInsets.only(bottom: AppSpacing.sm),
+                        padding: EdgeInsets.only(bottom: AppSpacing.sm),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              n.mood.isNotEmpty ? n.mood : HealthNoteCategory.iconFor(n.category),
+                              n.mood.isNotEmpty
+                                  ? n.mood
+                                  : HealthNoteCategory.iconFor(n.category),
                               style: const TextStyle(fontSize: 20),
                             ),
                             SizedBox(width: AppSpacing.sm),
                             Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     dateStr,
@@ -1039,8 +1038,7 @@ class _CategoryProgressRow extends StatelessWidget {
           Expanded(
             child: LinearProgressIndicator(
               value: fraction,
-              backgroundColor:
-                  context.colors.onSurface.withValues(alpha: 0.1),
+              backgroundColor: context.colors.onSurface.withValues(alpha: 0.1),
               color: const Color(0xFF1565C0),
               borderRadius: BorderRadius.circular(4),
               minHeight: 8,

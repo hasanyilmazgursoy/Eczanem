@@ -14,8 +14,7 @@ class FamilyMemberDetailScreen extends StatefulWidget {
       _FamilyMemberDetailScreenState();
 }
 
-class _FamilyMemberDetailScreenState
-    extends State<FamilyMemberDetailScreen> {
+class _FamilyMemberDetailScreenState extends State<FamilyMemberDetailScreen> {
   late FamilyMember _member;
 
   @override
@@ -44,7 +43,7 @@ class _FamilyMemberDetailScreenState
       ),
       builder: (_) => _AddDrugSheet(memberId: _member.id),
     );
-    if (result == true) _reload();
+    if (result ?? false) _reload();
   }
 
   Future<void> _removeDrug(FamilyMemberDrug drug) async {
@@ -125,8 +124,7 @@ class _FamilyMemberDetailScreenState
               ),
               child: Row(
                 children: [
-                  Icon(Icons.medication_rounded,
-                      color: colorScheme.primary),
+                  Icon(Icons.medication_rounded, color: colorScheme.primary),
                   SizedBox(width: AppSpacing.sm),
                   Text(
                     'family.drugs_title'.tr(),
@@ -311,12 +309,12 @@ class _DrugTile extends StatelessWidget {
           children: [
             if (drug.dosage.isNotEmpty)
               Text(drug.dosage,
-                  style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant)),
+                  style: textTheme.bodySmall
+                      ?.copyWith(color: colorScheme.onSurfaceVariant)),
             if (drug.frequency.isNotEmpty)
               Text(drug.frequency,
-                  style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant)),
+                  style: textTheme.bodySmall
+                      ?.copyWith(color: colorScheme.onSurfaceVariant)),
           ],
         ),
         trailing: Row(
@@ -328,8 +326,8 @@ class _DrugTile extends StatelessWidget {
               onPressed: onSearch,
             ),
             IconButton(
-              icon: Icon(Icons.delete_outline_rounded,
-                  color: colorScheme.error),
+              icon:
+                  Icon(Icons.delete_outline_rounded, color: colorScheme.error),
               tooltip: 'family.remove_drug_title'.tr(),
               onPressed: onRemove,
             ),
@@ -367,8 +365,8 @@ class _EmptyDrugsState extends StatelessWidget {
             SizedBox(height: AppSpacing.md),
             Text(
               'family.no_drugs_title'.tr(),
-              style: textTheme.titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style:
+                  textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: AppSpacing.sm),
@@ -467,8 +465,8 @@ class _AddDrugSheetState extends State<_AddDrugSheet> {
             children: [
               Text(
                 'family.add_drug'.tr(),
-                style: textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w800),
+                style:
+                    textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
               ),
               SizedBox(height: AppSpacing.lg),
               TextFormField(

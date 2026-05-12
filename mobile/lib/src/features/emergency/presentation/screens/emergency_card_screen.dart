@@ -209,7 +209,7 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
         ),
         actions: [
           // Görüntüleme modunda paylaş butonu
-          if (!_isEditing && _card != null && !_card!.isEmpty)
+          if (!_isEditing && _card != null && _card!.isNotEmpty)
             IconButton(
               onPressed: _shareCard,
               icon: const Icon(Icons.share_outlined, color: Colors.white),

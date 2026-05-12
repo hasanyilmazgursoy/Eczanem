@@ -264,9 +264,9 @@ class _HugeActionCard extends StatelessWidget {
     final borderColor = isDarkMode
         ? color.withValues(alpha: 0.3)
         : color.withValues(alpha: 0.5);
-    final titleColor = isDarkMode ? color : color.withValues(alpha: 1.0);
+    final titleColor = isDarkMode ? color : color.withValues(alpha: 1);
     final iconContainerColor = color;
-    final iconColor = Colors.white;
+    const iconColor = Colors.white;
     final chevronColor = isDarkMode ? color : color;
 
     // Ensure subtitle contrast

@@ -223,8 +223,8 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                         }),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          padding: EdgeInsets.symmetric(
-                              vertical: AppSpacing.md),
+                          padding:
+                              EdgeInsets.symmetric(vertical: AppSpacing.md),
                           decoration: BoxDecoration(
                             color: !isProspectusMode
                                 ? colorScheme.primary
@@ -255,8 +255,8 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                         }),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          padding: EdgeInsets.symmetric(
-                              vertical: AppSpacing.md),
+                          padding:
+                              EdgeInsets.symmetric(vertical: AppSpacing.md),
                           decoration: BoxDecoration(
                             color: isProspectusMode
                                 ? colorScheme.primary
@@ -382,98 +382,6 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _SelectedImagePreview extends StatelessWidget {
-  const _SelectedImagePreview({required this.selectedImage});
-
-  final File selectedImage;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'drug_search.image_preview_title'.tr(),
-          style: context.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(height: AppSpacing.sm),
-        ClipRRect(
-          borderRadius: AppBorders.card,
-          child: Image.file(
-            selectedImage,
-            height: 240.h,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _FlowStepCard extends StatelessWidget {
-  const _FlowStepCard({
-    required this.stepNumber,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-  });
-
-  final String stepNumber;
-  final String title;
-  final String subtitle;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: context.colors.surfaceContainerHighest,
-        borderRadius: AppBorders.card,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 14,
-                backgroundColor: context.colors.primary,
-                child: Text(
-                  stepNumber,
-                  style: context.textTheme.labelMedium?.copyWith(
-                    color: context.colors.onPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Icon(icon, color: context.colors.primary),
-            ],
-          ),
-          SizedBox(height: AppSpacing.sm),
-          Text(
-            title,
-            style: context.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          SizedBox(height: AppSpacing.xs),
-          Text(
-            subtitle,
-            style: context.textTheme.bodySmall?.copyWith(
-              color: context.colors.onSurfaceVariant,
-            ),
-          ),
-        ],
       ),
     );
   }

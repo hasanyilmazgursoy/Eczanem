@@ -1,6 +1,5 @@
 ﻿import '../../../../imports/imports.dart';
 
-
 /// Ä°laÃ§ bilgi detay ekranÄ± â€” API'den dÃ¶nen veriyi gÃ¶sterir
 class DrugDetailScreen extends StatelessWidget {
   final Map<String, dynamic> drugData;
@@ -48,7 +47,10 @@ class DrugDetailScreen extends StatelessWidget {
                   prefixIcon: const Icon(Icons.compare_arrows_rounded),
                 ),
                 SizedBox(height: AppSpacing.sm),
-                _InlineNaturalAlternatives(drugName: drugName, alternatives: (drugData['alternatifler'] as List?)?.cast<Map<String, dynamic>>()),
+                _InlineNaturalAlternatives(
+                    drugName: drugName,
+                    alternatives: (drugData['alternatifler'] as List?)
+                        ?.cast<Map<String, dynamic>>()),
               ],
             ),
           ),
@@ -354,12 +356,14 @@ class _InlineNaturalAlternatives extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.eco_outlined, color: Colors.green),
-              SizedBox(width: 8),
-              Text('drug_detail.natural_alternatives_cta'.tr(), style: context.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+              const Icon(Icons.eco_outlined, color: Colors.green),
+              const SizedBox(width: 8),
+              Text('drug_detail.natural_alternatives_cta'.tr(),
+                  style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold, color: Colors.green)),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ...altList.map((item) {
             final mapItem = Map<String, dynamic>.from(item as Map);
             return Padding(
@@ -367,7 +371,9 @@ class _InlineNaturalAlternatives extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(mapItem['ad']?.toString() ?? '-', style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(mapItem['ad']?.toString() ?? '-',
+                      style: context.textTheme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.bold)),
                   Text(mapItem['aciklama']?.toString() ?? '-'),
                 ],
               ),
@@ -378,12 +384,3 @@ class _InlineNaturalAlternatives extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
