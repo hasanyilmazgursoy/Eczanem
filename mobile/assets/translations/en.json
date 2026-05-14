@@ -340,7 +340,15 @@
     "remove_drug_message": "Medicine record {} will be deleted.",
     "no_drugs_title": "No medicines added yet",
     "no_drugs_subtitle": "Track this family member's medicines from here.",
-    "search_drug": "Search in medicines"
+    "search_drug": "Search in medicines",
+    "check_interactions": "AI Interaction Check",
+    "interaction_title": "Drug Interaction Analysis",
+    "interaction_loading": "AI is analyzing interactions...",
+    "risk_level": "Risk Level",
+    "interaction_summary": "General Assessment",
+    "interactions_title": "Detected Interactions",
+    "recommendations_title": "Recommendations",
+    "interaction_disclaimer": "This analysis is for general informational purposes. Consult your doctor or pharmacist."
   },
   "pharmacy": {
     "title": "On-Duty Pharmacy",

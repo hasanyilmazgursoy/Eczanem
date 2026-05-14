@@ -115,10 +115,10 @@ class _AiChatScreenState extends State<AiChatScreen> {
             color: const Color(0xFF6750A4).withValues(alpha: 0.08),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.auto_awesome_rounded,
                   size: 16,
-                  color: const Color(0xFF6750A4),
+                  color: Color(0xFF6750A4),
                 ),
                 SizedBox(width: AppSpacing.xs),
                 Expanded(
@@ -143,7 +143,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     itemBuilder: (context, index) {
                       if (index == _messages.length) {
                         // Yükleniyor göstergesi (typing indicator)
-                        return _TypingIndicator(color: const Color(0xFF6750A4));
+                        return const _TypingIndicator(color: Color(0xFF6750A4));
                       }
                       final msg = _messages[index];
                       return _ChatBubble(
@@ -246,10 +246,10 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.chat_bubble_outline_rounded,
                           size: 18,
-                          color: const Color(0xFF6750A4),
+                          color: Color(0xFF6750A4),
                         ),
                         SizedBox(width: AppSpacing.sm),
                         Expanded(

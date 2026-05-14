@@ -157,7 +157,7 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.psychology_rounded, color: const Color(0xFF00897B)),
+              const Icon(Icons.psychology_rounded, color: Color(0xFF00897B)),
               SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(

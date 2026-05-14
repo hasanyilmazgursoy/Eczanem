@@ -1,4 +1,5 @@
 import '../../../../imports/imports.dart';
+import '../../../drug/data/drug_repository.dart';
 import '../../data/family_repository.dart';
 import '../../data/models/family_member.dart';
 
@@ -44,6 +45,22 @@ class _FamilyMemberDetailScreenState extends State<FamilyMemberDetailScreen> {
       builder: (_) => _AddDrugSheet(memberId: _member.id),
     );
     if (result ?? false) _reload();
+  }
+
+  /// ≥2 ilaç varsa AI etkileşim analizini bottom sheet olarak gösterir.
+  Future<void> _checkInteractions() async {
+    if (_member.drugs.length < 2) return;
+    final drugNames = _member.drugs.map((d) => d.drugName).toList();
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (_) => _InteractionCheckSheet(drugNames: drugNames),
+    );
   }
 
   Future<void> _removeDrug(FamilyMemberDrug drug) async {
@@ -133,6 +150,14 @@ class _FamilyMemberDetailScreenState extends State<FamilyMemberDetailScreen> {
                     ),
                   ),
                   const Spacer(),
+                  // Etkileşim kontrolü butonu — en az 2 ilaç varsa göster
+                  if (_member.drugs.length >= 2)
+                    IconButton(
+                      icon: const Icon(Icons.smart_toy_rounded),
+                      color: const Color(0xFF6750A4),
+                      tooltip: 'family.check_interactions'.tr(),
+                      onPressed: _checkInteractions,
+                    ),
                   TextButton.icon(
                     onPressed: _openAddDrugSheet,
                     icon: const Icon(Icons.add_rounded, size: 18),
@@ -528,6 +553,253 @@ class _AddDrugSheetState extends State<_AddDrugSheet> {
           ),
         ),
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// AI Etkileşim Kontrolü bottom sheet
+// ---------------------------------------------------------------------------
+
+/// Aile üyesinin ilaçlarını Gemini AI'a göndererek etkileşim analizi yapar.
+/// risk_seviyesi değerine göre kırmızı / sarı / yeşil renk kodu gösterir.
+class _InteractionCheckSheet extends StatefulWidget {
+  const _InteractionCheckSheet({required this.drugNames});
+  final List<String> drugNames;
+
+  @override
+  State<_InteractionCheckSheet> createState() => _InteractionCheckSheetState();
+}
+
+class _InteractionCheckSheetState extends State<_InteractionCheckSheet> {
+  bool _loading = true;
+  String? _errorMessage;
+  Map<String, dynamic>? _result;
+
+  @override
+  void initState() {
+    super.initState();
+    _analyze();
+  }
+
+  Future<void> _analyze() async {
+    final result =
+        await DrugRepository.instance.analyzeDrugInteraction(widget.drugNames);
+    if (!mounted) return;
+    result.fold(
+      (failure) => setState(() {
+        _loading = false;
+        _errorMessage = failure.message;
+      }),
+      (data) => setState(() {
+        _loading = false;
+        _result = data;
+      }),
+    );
+  }
+
+  /// risk_seviyesi metnine göre renk döndürür (yüksek=kırmızı, orta=turuncu, düşük=yeşil).
+  Color _riskColor(String? risk) {
+    final r = risk?.toLowerCase() ?? '';
+    if (r.contains('yüksek') || r.contains('high') || r.contains('ciddi')) {
+      return const Color(0xFFD32F2F);
+    } else if (r.contains('orta') || r.contains('moderate') ||
+        r.contains('medium')) {
+      return const Color(0xFFF57C00);
+    }
+    return const Color(0xFF388E3C);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = context.textTheme;
+    final colorScheme = context.colors;
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.65,
+      maxChildSize: 0.92,
+      builder: (_, scrollCtrl) => Padding(
+        padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Sürükleme çubuğu
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: EdgeInsets.symmetric(vertical: AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: colorScheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            // Başlık satırı
+            Row(
+              children: [
+                const Icon(Icons.smart_toy_rounded,
+                    color: Color(0xFF6750A4), size: 24),
+                SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'family.interaction_title'.tr(),
+                    style: textTheme.titleLarge
+                        ?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: AppSpacing.xs),
+            // Analiz edilen ilaç adları
+            Text(
+              widget.drugNames.join(' · '),
+              style: textTheme.bodySmall
+                  ?.copyWith(color: colorScheme.onSurfaceVariant),
+            ),
+            SizedBox(height: AppSpacing.lg),
+            Expanded(
+              child: _loading
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CircularProgressIndicator(),
+                          SizedBox(height: AppSpacing.md),
+                          Text('family.interaction_loading'.tr()),
+                        ],
+                      ),
+                    )
+                  : _errorMessage != null
+                      ? Center(child: Text(_errorMessage!))
+                      : _buildResult(scrollCtrl, textTheme, colorScheme),
+            ),
+            SizedBox(height: AppSpacing.xl),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResult(
+    ScrollController scrollCtrl,
+    TextTheme textTheme,
+    ColorScheme colorScheme,
+  ) {
+    if (_result == null) return const SizedBox.shrink();
+
+    final risk = _result!['risk_seviyesi']?.toString() ??
+        _result!['risk_level']?.toString() ??
+        '';
+    final riskColor = _riskColor(risk);
+    final summary =
+        _result!['ozet']?.toString() ?? _result!['summary']?.toString() ?? '';
+    final interactions = _result!['etkilesimler'] as List<dynamic>? ??
+        _result!['interactions'] as List<dynamic>? ??
+        [];
+    final recommendations = _result!['tavsiyeler'] as List<dynamic>? ??
+        _result!['recommendations'] as List<dynamic>? ??
+        [];
+
+    return ListView(
+      controller: scrollCtrl,
+      children: [
+        // Risk seviyesi kartı
+        Container(
+          padding: EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: riskColor.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: riskColor.withValues(alpha: 0.4)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: riskColor, size: 28),
+              SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'family.risk_level'.tr(),
+                      style: textTheme.labelSmall
+                          ?.copyWith(color: colorScheme.onSurfaceVariant),
+                    ),
+                    Text(
+                      risk,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: riskColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (summary.isNotEmpty) ...[
+          SizedBox(height: AppSpacing.md),
+          Text(
+            'family.interaction_summary'.tr(),
+            style:
+                textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          SizedBox(height: AppSpacing.xs),
+          Text(summary, style: textTheme.bodyMedium),
+        ],
+        if (interactions.isNotEmpty) ...[
+          SizedBox(height: AppSpacing.md),
+          Text(
+            'family.interactions_title'.tr(),
+            style:
+                textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          SizedBox(height: AppSpacing.xs),
+          ...interactions.map(
+            (item) => Padding(
+              padding: EdgeInsets.only(bottom: AppSpacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('• '),
+                  Expanded(child: Text(item.toString())),
+                ],
+              ),
+            ),
+          ),
+        ],
+        if (recommendations.isNotEmpty) ...[
+          SizedBox(height: AppSpacing.md),
+          Text(
+            'family.recommendations_title'.tr(),
+            style:
+                textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          SizedBox(height: AppSpacing.xs),
+          ...recommendations.map(
+            (item) => Padding(
+              padding: EdgeInsets.only(bottom: AppSpacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('• '),
+                  Expanded(child: Text(item.toString())),
+                ],
+              ),
+            ),
+          ),
+        ],
+        SizedBox(height: AppSpacing.md),
+        // Sorumluluk reddi
+        Text(
+          'family.interaction_disclaimer'.tr(),
+          style: textTheme.bodySmall
+              ?.copyWith(color: colorScheme.onSurfaceVariant),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

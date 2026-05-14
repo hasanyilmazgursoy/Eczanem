@@ -340,7 +340,15 @@
         "remove_drug_message": "{} adlı ilaç kaydı silinecek.",
         "no_drugs_title": "Henüz ilaç eklenmedi",
         "no_drugs_subtitle": "Bu aile üyesinin ilaçlarını buradan takip edin.",
-        "search_drug": "İlaçta Ara"
+        "search_drug": "İlaçta Ara",
+        "check_interactions": "AI Etkileşim Kontrolü",
+        "interaction_title": "İlaç Etkileşim Analizi",
+        "interaction_loading": "AI etkileşimleri analiz ediyor...",
+        "risk_level": "Risk Seviyesi",
+        "interaction_summary": "Genel Değerlendirme",
+        "interactions_title": "Tespit Edilen Etkileşimler",
+        "recommendations_title": "Tavsiyeler",
+        "interaction_disclaimer": "Bu analiz genel bilgilendirme amaçlıdır. Doktorunuza veya eczacınıza danışın."
     },
     "pharmacy": {
         "title": "Nöbetçi Eczane",
