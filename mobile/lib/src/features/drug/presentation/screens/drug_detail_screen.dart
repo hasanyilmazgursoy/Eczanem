@@ -21,6 +21,58 @@ class DrugDetailScreen extends StatelessWidget {
             drugName: drugName,
             activeIngredient: activeIngredient,
           ),
+          SizedBox(height: AppSpacing.sm),
+          // Gemini AI rozeti — bu bilgilerin yapay zeka tarafından üretildiğini vurgular
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF6750A4), Color(0xFF9C27B0)],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'drug_detail.ai_badge'.tr(),
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Gemini AI',
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: AppSpacing.md),
           AppCard(
             showShadow: true,
