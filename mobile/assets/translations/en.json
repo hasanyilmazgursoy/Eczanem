@@ -89,7 +89,8 @@
     "or_continue_with": "Or Continue With",
     "forgot_password_title": "Forgot Password",
     "forgot_password_subtitle": "Enter your email address to receive\na password reset link.",
-    "reset_link_sent": "Password reset link has been sent to your email."
+    "reset_link_sent": "Password reset link has been sent to your email.",
+    "back_to_login": "Back to login"
   },
   "drug_search": {
     "title": "Search Medicine",

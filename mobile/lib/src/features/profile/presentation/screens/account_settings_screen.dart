@@ -9,8 +9,7 @@ class AccountSettingsScreen extends ConsumerStatefulWidget {
       _AccountSettingsScreenState();
 }
 
-class _AccountSettingsScreenState
-    extends ConsumerState<AccountSettingsScreen> {
+class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
   final _currentPasswordCtrl = TextEditingController();
   final _newPasswordCtrl = TextEditingController();

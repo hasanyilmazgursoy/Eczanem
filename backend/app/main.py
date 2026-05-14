@@ -30,7 +30,6 @@ def create_app() -> FastAPI:
     # Router'ları bağla
     app.include_router(health.router, tags=["Health"])
     app.include_router(auth.router, prefix="/auth", tags=["Auth"])
-    app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
     app.include_router(drug.router, prefix="/api/drug", tags=["Drug"])
     app.include_router(profile.router, prefix="/api/profile", tags=["Profile"])
     app.include_router(pharmacy.router, prefix="/api/pharmacy", tags=["Pharmacy"])

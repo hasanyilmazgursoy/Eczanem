@@ -89,7 +89,8 @@
         "or_continue_with": "Veya Şununla Devam Et",
         "forgot_password_title": "Şifremi Unuttum",
         "forgot_password_subtitle": "şifre sıfırlama bağlantısı almak için\ne-posta adresinizi girin.",
-        "reset_link_sent": "şifre sıfırlama bağlantısı e-postana gönderildi."
+        "reset_link_sent": "şifre sıfırlama bağlantısı e-postana gönderildi.",
+        "back_to_login": "Giriş ekranına dön"
     },
     "drug_search": {
         "title": "İlaç Ara",

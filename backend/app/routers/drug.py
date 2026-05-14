@@ -1,4 +1,4 @@
-﻿"""Ä°laÃ§ sorgulama endpoint'leri."""
+﻿"""İlaç sorgulama endpoint'leri."""
 
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from pydantic import BaseModel
@@ -43,7 +43,7 @@ class DrugSearchResponse(BaseModel):
     kimler_kullanmamali: list[str]
     alternatifler: list[NaturalAlternativeItem] = []
     disclaimer: str = (
-        "Bu bilgiler genel bilgilendirme amaÃ§lÄ±dÄ±r. TÄ±bbi tavsiye niteliÄŸi taÅŸÄ±maz."
+        "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
     )
 
 
@@ -61,7 +61,7 @@ class ProspectusSummaryResponse(BaseModel):
     saklama_kosullari: list[str]
     ne_zaman_doktora_basvurulmali: list[str]
     disclaimer: str = (
-        "Bu bilgiler genel bilgilendirme amaÃ§lÄ±dÄ±r. TÄ±bbi tavsiye niteliÄŸi taÅŸÄ±maz."
+        "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
     )
 
 
@@ -78,9 +78,8 @@ class DrugInteractionResponse(BaseModel):
     dikkat_edilmesi_gerekenler: list[str]
     etkilesimler: list[DrugInteractionItem]
     disclaimer: str = (
-        "Bu bilgiler genel bilgilendirme amaÃ§lÄ±dÄ±r. TÄ±bbi tavsiye niteliÄŸi taÅŸÄ±maz."
+        "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
     )
-
 
 
 class NaturalAlternativesResponse(BaseModel):
@@ -94,7 +93,7 @@ def _validate_image_upload(file: UploadFile) -> None:
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(
             status_code=400,
-            detail="YalnÄ±zca gÃ¶rsel dosyalarÄ± analiz edilebilir.",
+            detail="Yalnızca görsel dosyaları analiz edilebilir.",
         )
 
 
@@ -108,9 +107,9 @@ def _resolve_client_key(request: Request) -> str:
 
 @router.post("/search", response_model=DrugSearchResponse)
 async def search_drug(request: DrugSearchRequest, http_request: Request):
-    """Ä°laÃ§ adÄ±yla arama yapÄ±p detaylÄ± bilgi dÃ¶ndÃ¼rÃ¼r."""
+    """İlaç adıyla arama yapıp detaylı bilgi döndürür."""
     if not request.query.strip():
-        raise HTTPException(status_code=400, detail="Ä°laÃ§ adÄ± boÅŸ olamaz.")
+        raise HTTPException(status_code=400, detail="İlaç adı boş olamaz.")
 
     result = await query_drug_info_with_guard(
         request.query.strip(),
@@ -121,12 +120,12 @@ async def search_drug(request: DrugSearchRequest, http_request: Request):
 
 @router.post("/analyze-image", response_model=DrugImageAnalyzeResponse)
 async def analyze_drug_image(file: UploadFile = File(...)):
-    """Ä°laÃ§ fotoÄŸrafÄ±nÄ± Gemini ile analiz ederek muhtemel ilaÃ§ bilgisini dÃ¶ndÃ¼rÃ¼r."""
+    """İlaç fotoğrafını Gemini ile analiz ederek muhtemel ilaç bilgisini döndürür."""
     _validate_image_upload(file)
 
     image_bytes = await file.read()
     if not image_bytes:
-        raise HTTPException(status_code=400, detail="YÃ¼klenen gÃ¶rsel boÅŸ olamaz.")
+        raise HTTPException(status_code=400, detail="Yüklenen görsel boş olamaz.")
 
     result = await query_drug_info_from_image(
         image_bytes=image_bytes,
@@ -137,12 +136,12 @@ async def analyze_drug_image(file: UploadFile = File(...)):
 
 @router.post("/prospectus", response_model=ProspectusSummaryResponse)
 async def summarize_prospectus_image(file: UploadFile = File(...)):
-    """ProspektÃ¼s veya kutu gÃ¶rselinden kÄ±sa Ã¶zet Ã§Ä±karÄ±r."""
+    """Prospektüs veya kutu görselinden kısa özet çıkarır."""
     _validate_image_upload(file)
 
     image_bytes = await file.read()
     if not image_bytes:
-        raise HTTPException(status_code=400, detail="YÃ¼klenen gÃ¶rsel boÅŸ olamaz.")
+        raise HTTPException(status_code=400, detail="Yüklenen görsel boş olamaz.")
 
     result = await query_prospectus_summary_from_image(
         image_bytes=image_bytes,
@@ -153,14 +152,14 @@ async def summarize_prospectus_image(file: UploadFile = File(...)):
 
 @router.post("/interaction", response_model=DrugInteractionResponse)
 async def analyze_drug_interactions(request: DrugInteractionRequest):
-    """Ä°laÃ§ listesi iÃ§in olasÄ± etkileÅŸimleri Ã¶zetler."""
+    """İlaç listesi için olası etkileşimleri özetler."""
     normalized_drugs = [drug.strip() for drug in request.drugs if drug.strip()]
     unique_drugs = list(dict.fromkeys(normalized_drugs))
 
     if len(unique_drugs) < 2:
         raise HTTPException(
             status_code=400,
-            detail="EtkileÅŸim analizi iÃ§in en az iki ilaÃ§ gereklidir.",
+            detail="Etkileşim analizi için en az iki ilaç gereklidir.",
         )
 
     result = await query_drug_interactions(unique_drugs)
@@ -169,10 +168,10 @@ async def analyze_drug_interactions(request: DrugInteractionRequest):
 
 @router.post("/natural-alternatives", response_model=NaturalAlternativesResponse)
 async def get_natural_alternatives(request: NaturalAlternativesRequest):
-    """Ä°laÃ§la iliÅŸkili doÄŸal destek seÃ§eneklerini Ã¶zetler."""
+    """İlaçla ilişkili doğal destek seçeneklerini özetler."""
     drug_name = request.drug_name.strip()
     if not drug_name:
-        raise HTTPException(status_code=400, detail="Ä°laÃ§ adÄ± boÅŸ olamaz.")
+        raise HTTPException(status_code=400, detail="İlaç adı boş olamaz.")
 
     result = await query_natural_alternatives(drug_name)
     return result

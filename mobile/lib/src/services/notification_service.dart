@@ -120,7 +120,8 @@ class NotificationService {
     final body = _currentLanguageCode == 'tr'
         ? '${reminder.drugName} için stok 3 gün veya daha az kaldı.'
         : '${reminder.drugName} stock is running low (3 days or less).';
-    final title = _currentLanguageCode == 'tr' ? 'Stok Uyarısı ⚠️' : 'Low Stock Alert ⚠️';
+    final title =
+        _currentLanguageCode == 'tr' ? 'Stok Uyarısı ⚠️' : 'Low Stock Alert ⚠️';
 
     await _plugin.zonedSchedule(
       notificationId,

@@ -82,14 +82,17 @@ class FamilyRepository {
         .toList();
 
     final result = await _persist(members);
-    if (result.isLeft()) return result.fold(left, (_) => right(updatedWithTime));
+    if (result.isLeft()) {
+      return result.fold(left, (_) => right(updatedWithTime));
+    }
 
     // Arka planda backend'e gönder
     Future<void>.microtask(() async {
       final apiResult =
           await FamilyApiService.instance.updateMember(updatedWithTime);
       apiResult.fold(
-        (f) => AppLogger.warning('Backend üye güncelleme başarısız: ${f.message}'),
+        (f) =>
+            AppLogger.warning('Backend üye güncelleme başarısız: ${f.message}'),
         (_) {},
       );
     });

@@ -38,7 +38,8 @@ class FamilyApiService {
         '/api/profile/family/',
         options: options,
       );
-      final list = (response.data as List<dynamic>).cast<Map<String, dynamic>>();
+      final list =
+          (response.data as List<dynamic>).cast<Map<String, dynamic>>();
       return list.map(FamilyMember.fromJson).toList();
     });
   }

@@ -315,9 +315,9 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     // Merkez önceliği: eczane konumu > kullanıcı konumu > Türkiye genel görünüm
     final center = mappable.isNotEmpty
         ? LatLng(mappable.first.lat!, mappable.first.lon!)
-        : _userLocation ?? const LatLng(39.0, 35.0);
-    final zoom =
-        mappable.isNotEmpty ? 13.0 : (_userLocation != null ? 11.0 : 5.5);
+        : _userLocation ?? const LatLng(39, 35);
+    final double zoom =
+        mappable.isNotEmpty ? 13 : (_userLocation != null ? 11 : 5.5);
 
     return FlutterMap(
       options: MapOptions(
