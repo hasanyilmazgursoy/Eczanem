@@ -112,8 +112,7 @@ class DrugRepository {
   }
 
   /// Kullanıcının semptom açıklamasını analiz ederek olası nedenleri döndürür.
-  FutureEither<Map<String, dynamic>> analyzeSymptoms(
-      String description) async {
+  FutureEither<Map<String, dynamic>> analyzeSymptoms(String description) async {
     final response = await _dio.post(
       '/api/drug/symptom-check',
       data: {'description': description},

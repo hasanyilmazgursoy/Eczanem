@@ -360,9 +360,7 @@ async def query_natural_alternatives(drug_name: str) -> dict:
     return _extract_json_payload(response)
 
 
-async def query_pharmacist_chat(
-    message: str, history: list[dict]
-) -> str:
+async def query_pharmacist_chat(message: str, history: list[dict]) -> str:
     """Eczacı asistanıyla çok turlu sohbet — geçmişi dahil ederek yanıt üretir."""
     # Önceki turları Gemini'nin beklediği contents formatına dönüştür.
     contents = [
@@ -412,7 +410,3 @@ async def query_symptom_analysis(description: str) -> dict:
         }
     )
     return _extract_json_payload(response)
-
-
-
-

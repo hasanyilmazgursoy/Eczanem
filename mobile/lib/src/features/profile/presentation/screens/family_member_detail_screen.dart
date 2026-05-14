@@ -603,7 +603,8 @@ class _InteractionCheckSheetState extends State<_InteractionCheckSheet> {
     final r = risk?.toLowerCase() ?? '';
     if (r.contains('yüksek') || r.contains('high') || r.contains('ciddi')) {
       return const Color(0xFFD32F2F);
-    } else if (r.contains('orta') || r.contains('moderate') ||
+    } else if (r.contains('orta') ||
+        r.contains('moderate') ||
         r.contains('medium')) {
       return const Color(0xFFF57C00);
     }
@@ -743,8 +744,7 @@ class _InteractionCheckSheetState extends State<_InteractionCheckSheet> {
           SizedBox(height: AppSpacing.md),
           Text(
             'family.interaction_summary'.tr(),
-            style:
-                textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           SizedBox(height: AppSpacing.xs),
           Text(summary, style: textTheme.bodyMedium),
@@ -753,8 +753,7 @@ class _InteractionCheckSheetState extends State<_InteractionCheckSheet> {
           SizedBox(height: AppSpacing.md),
           Text(
             'family.interactions_title'.tr(),
-            style:
-                textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           SizedBox(height: AppSpacing.xs),
           ...interactions.map(
@@ -774,8 +773,7 @@ class _InteractionCheckSheetState extends State<_InteractionCheckSheet> {
           SizedBox(height: AppSpacing.md),
           Text(
             'family.recommendations_title'.tr(),
-            style:
-                textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           SizedBox(height: AppSpacing.xs),
           ...recommendations.map(

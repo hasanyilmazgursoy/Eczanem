@@ -56,9 +56,7 @@ class SymptomAnalysisResponse(BaseModel):
     tavsiyeler: list[str]
     doktora_ne_zaman: str
     dikkat: str
-    disclaimer: str = (
-        "Bu analiz tıbbi teşhis değildir. Kesin tanı için doktora veya eczacıya başvurun."
-    )
+    disclaimer: str = "Bu analiz tıbbi teşhis değildir. Kesin tanı için doktora veya eczacıya başvurun."
 
 
 class NaturalAlternativeItem(BaseModel):
