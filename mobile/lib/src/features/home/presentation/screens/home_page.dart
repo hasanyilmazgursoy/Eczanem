@@ -185,6 +185,22 @@ class _HomePageState extends ConsumerState<HomePage> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: AppSpacing.xxl),
+              // AI özellikler en üstte — görünürlüğü artırmak için öne alındı
+              _AiFeaturedCard(
+                icon: Icons.smart_toy_rounded,
+                title: 'home.action_ai_chat'.tr(),
+                subtitle: 'home.action_ai_chat_subtitle'.tr(),
+                onTap: () => context.push(AppRoutes.aiChat),
+              ),
+              SizedBox(height: AppSpacing.xl),
+              _HugeActionCard(
+                icon: Icons.health_and_safety_rounded,
+                title: 'home.action_symptom_analysis'.tr(),
+                subtitle: 'home.action_symptom_analysis_subtitle'.tr(),
+                color: const Color(0xFF00897B),
+                onTap: () => context.push(AppRoutes.symptomAnalysis),
+              ),
+              SizedBox(height: AppSpacing.xl),
               _HugeActionCard(
                 icon: Icons.search_rounded,
                 title: 'home.action_search'.tr(),
@@ -241,6 +257,127 @@ class _HomePageState extends ConsumerState<HomePage> {
                 onTap: () => context.push(AppRoutes.healthNotes),
               ),
               SizedBox(height: AppSpacing.xl),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// AI özelliğini ön plana çıkarmak için gradient şeritli özel kart.
+/// Gemini marka rengi olan koyu mor / indigo gradyanıyla dikkat çekicidir.
+class _AiFeaturedCard extends StatelessWidget {
+  const _AiFeaturedCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  static const _primaryColor = Color(0xFF6750A4);
+  static const _secondaryColor = Color(0xFF9C27B0);
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = context.textTheme;
+
+    return Material(
+      borderRadius: BorderRadius.circular(28),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: Colors.white24,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: AppSpacing.xl,
+            horizontal: AppSpacing.lg,
+          ),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [_primaryColor, _secondaryColor],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(28)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Icon(icon, color: Colors.white, size: 40),
+              ),
+              SizedBox(width: AppSpacing.lg),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // "AI Destekli" rozeti
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: 2,
+                      ),
+                      margin: EdgeInsets.only(bottom: AppSpacing.xs),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.auto_awesome_rounded,
+                            color: Colors.white,
+                            size: 12,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Gemini AI',
+                            style: textTheme.labelSmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      title,
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.xs),
+                    Text(
+                      subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: Colors.white,
+                size: 36,
+              ),
             ],
           ),
         ),

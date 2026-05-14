@@ -18,6 +18,8 @@ import 'package:eczanem/src/features/drug/presentation/screens/drug_interaction_
 import 'package:eczanem/src/features/drug/presentation/screens/drug_natural_alternatives_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_scan_history_screen.dart';
 import 'package:eczanem/src/features/drug/presentation/screens/drug_search_history_screen.dart';
+import 'package:eczanem/src/features/drug/presentation/screens/ai_chat_screen.dart';
+import 'package:eczanem/src/features/drug/presentation/screens/symptom_analysis_screen.dart';
 import 'package:eczanem/src/features/reminder/presentation/screens/medication_reminders_screen.dart';
 import 'package:eczanem/src/features/profile/presentation/screens/family_screen.dart';
 import 'package:eczanem/src/features/profile/presentation/screens/family_member_detail_screen.dart';
@@ -166,6 +168,16 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.accountSettings,
       name: 'accountSettings',
       builder: (context, state) => const AccountSettingsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.aiChat,
+      name: 'aiChat',
+      builder: (context, state) => const AiChatScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.symptomAnalysis,
+      name: 'symptomAnalysis',
+      builder: (context, state) => const SymptomAnalysisScreen(),
     ),
   ],
 );

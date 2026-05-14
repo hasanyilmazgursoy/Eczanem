@@ -120,6 +120,37 @@ Kurallar:
 - Riskli veya yanıltıcı öneri uydurma.
 - Alternatif yoksa bunu dürüstçe belirt ve listeyi boş döndür."""
 
+PHARMACIST_CHAT_PROMPT = """Sen Eczanem uygulamasının yapay zeka destekli eczacı asistanısın.
+Kullanıcıların ilaçlar, semptomlar, yan etkiler, dozaj, ilaç etkileşimleri
+ve genel sağlık soruları hakkındaki sorularını yanıtlarsın.
+
+Kurallar:
+- Her zaman Türkçe yanıt ver.
+- Kullanıcıya saygılı ve empatik ol.
+- Kesin tıbbi teşhis koyma; gerektiğinde doktor veya eczacıya yönlendir.
+- Yanıtlarını açık ve anlaşılır tut; gereksiz tekrar yapma.
+- Konuşma geçmişini dikkate al; tutarlı ol.
+- Tehlikeli veya acil durumlarda kullanıcıyı 112 Acil Servis'e yönlendir.
+- Yanıt sonuna disclaimer ekleme; uygulama zaten gösteriyor."""
+
+SYMPTOM_ANALYSIS_PROMPT = """Sen Eczanem uygulamasının yapay zeka destekli eczacı asistanısın.
+Kullanıcı sana yaşadığı semptomları anlatacak. Bu semptomları değerlendir ve aşağıdaki
+bilgileri SADECE JSON formatında döndür, başka hiçbir şey yazma:
+{
+    "semptomlar_ozeti": "Kullanıcının belirttiği semptomların kısa özeti",
+    "olasilik_nedenler": ["Olası neden 1", "Olası neden 2", "Olası neden 3"],
+    "acil_durum": false,
+    "tavsiyeler": ["Tavsiye 1", "Tavsiye 2"],
+    "doktora_ne_zaman": "Doktora ne zaman başvurulması gerektiğini açıkla",
+    "dikkat": "Bu analiz tıbbi teşhis değildir uyarısı"
+}
+
+Kurallar:
+- Türkçe yanıt ver.
+- `acil_durum` alanını yalnızca gerçekten acil olan durumlarda (göğüs ağrısı, nefes darlığı vb.) true yap.
+- Kesin ilaç adı önerme; genel tavsiyeyle sınırlı kal.
+- Uydurma; emin olmadığın durumları "belirsiz" veya "doktora danışın" şeklinde yaz."""
+
 MAX_IMAGE_DIMENSION = 1400
 OPTIMIZED_IMAGE_QUALITY = 82
 
@@ -142,6 +173,15 @@ def _extract_json_payload(response: httpx.Response) -> dict:
             content = content.split("\n", 1)[1].rsplit("```", 1)[0]
         return json.loads(content)
     except (json.JSONDecodeError, KeyError, IndexError) as exc:
+        raise HTTPException(status_code=502, detail=f"Gemini yanıtı işlenemedi: {exc}")
+
+
+def _extract_text_payload(response: httpx.Response) -> str:
+    """Gemini yanıtından düz metin çıkarır (JSON değil)."""
+    try:
+        data = response.json()
+        return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+    except (KeyError, IndexError) as exc:
         raise HTTPException(status_code=502, detail=f"Gemini yanıtı işlenemedi: {exc}")
 
 
@@ -306,6 +346,60 @@ async def query_natural_alternatives(drug_name: str) -> dict:
                             "text": (
                                 f"{NATURAL_ALTERNATIVES_PROMPT}\n\n"
                                 f"İlaç adı: {drug_name}"
+                            )
+                        }
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "temperature": 0.3,
+                "responseMimeType": "application/json",
+            },
+        }
+    )
+    return _extract_json_payload(response)
+
+
+async def query_pharmacist_chat(
+    message: str, history: list[dict]
+) -> str:
+    """Eczacı asistanıyla çok turlu sohbet — geçmişi dahil ederek yanıt üretir."""
+    # Önceki turları Gemini'nin beklediği contents formatına dönüştür.
+    contents = [
+        {
+            "role": turn["role"],
+            "parts": [{"text": turn["content"]}],
+        }
+        for turn in history
+    ]
+    # Yeni kullanıcı mesajını ekle.
+    contents.append({"role": "user", "parts": [{"text": message}]})
+
+    response = await _post_gemini_request(
+        {
+            "system_instruction": {
+                "parts": [{"text": PHARMACIST_CHAT_PROMPT}],
+            },
+            "contents": contents,
+            "generationConfig": {
+                "temperature": 0.4,
+            },
+        }
+    )
+    return _extract_text_payload(response)
+
+
+async def query_symptom_analysis(description: str) -> dict:
+    """Semptom açıklamasını analiz ederek olası nedenler ve tavsiyeler sunar."""
+    response = await _post_gemini_request(
+        {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": (
+                                f"{SYMPTOM_ANALYSIS_PROMPT}\n\n"
+                                f"Semptomlar: {description}"
                             )
                         }
                     ]

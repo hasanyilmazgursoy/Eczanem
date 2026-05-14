@@ -28,6 +28,10 @@
     "action_emergency_card_subtitle": "Store blood type, allergies, and emergency contacts.",
     "action_health_notes": "Health Notes",
     "action_health_notes_subtitle": "Record your daily health status.",
+    "action_ai_chat": "AI Pharmacist Assistant",
+    "action_ai_chat_subtitle": "Ask questions about medicines, symptoms, and health.",
+    "action_symptom_analysis": "Symptom Analysis",
+    "action_symptom_analysis_subtitle": "Describe your symptoms, AI will evaluate possible causes.",
     "on_duty_title": "On-Duty Pharmacy",
     "on_duty_subtitle": "Find the nearest on-duty pharmacies",
     "on_duty_coming": "On-duty pharmacy feature coming soon. It will show the nearest pharmacies based on your location.",
@@ -478,5 +482,35 @@
     "field_required": "This field is required.",
     "password_min_length": "Password must be at least 6 characters.",
     "passwords_mismatch": "Passwords do not match."
+  },
+  "ai_chat": {
+    "title": "AI Pharmacist Assistant",
+    "powered_by": "Powered by Gemini AI · For general information only",
+    "input_hint": "Type your question...",
+    "send": "Send",
+    "empty_title": "Ask Your Pharmacist Assistant",
+    "empty_subtitle": "Ask anything about medicines, side effects, dosage, or symptoms.",
+    "example_1": "What is Aspirin used for?",
+    "example_2": "Is it better to take medicine on a full stomach?",
+    "example_3": "What should I watch out for when taking antibiotics?",
+    "error": "Could not get a response. Please try again.",
+    "disclaimer": "This information is for general informational purposes only. It does not constitute medical advice."
+  },
+  "symptom_analysis": {
+    "title": "Symptom Analysis",
+    "input_title": "Describe Your Symptoms",
+    "input_subtitle": "Describe what you're experiencing; AI will evaluate possible causes and recommendations.",
+    "input_hint": "E.g. Headache, fever, and sore throat for the past two days...",
+    "button": "Analyze",
+    "loading": "Analyzing symptoms...",
+    "empty_error": "Please enter a description of your symptoms.",
+    "generic_error": "Symptom analysis could not be completed. Please try again.",
+    "emergency_title": "⚠️ Possible Emergency",
+    "emergency_subtitle": "Your symptoms may require urgent medical attention. Call 112 immediately.",
+    "summary_title": "Symptom Summary",
+    "causes_title": "Possible Causes",
+    "advice_title": "Recommendations",
+    "doctor_when_title": "When Should You See a Doctor?",
+    "disclaimer": "This is not a medical diagnosis. Consult a doctor or pharmacist for a definitive assessment."
   }
 }

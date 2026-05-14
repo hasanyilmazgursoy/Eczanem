@@ -9,6 +9,8 @@ from app.services.gemini_service import (
     query_natural_alternatives,
     query_drug_info_from_image,
     query_prospectus_summary_from_image,
+    query_pharmacist_chat,
+    query_symptom_analysis,
 )
 
 router = APIRouter()
@@ -26,11 +28,45 @@ class NaturalAlternativesRequest(BaseModel):
     drug_name: str
 
 
+class ChatMessage(BaseModel):
+    role: str  # "user" veya "model"
+    content: str
+
+
+class ChatRequest(BaseModel):
+    message: str
+    history: list[ChatMessage] = []
+
+
+class ChatResponse(BaseModel):
+    reply: str
+    disclaimer: str = (
+        "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
+    )
+
+
+class SymptomRequest(BaseModel):
+    description: str
+
+
+class SymptomAnalysisResponse(BaseModel):
+    semptomlar_ozeti: str
+    olasilik_nedenler: list[str]
+    acil_durum: bool
+    tavsiyeler: list[str]
+    doktora_ne_zaman: str
+    dikkat: str
+    disclaimer: str = (
+        "Bu analiz tıbbi teşhis değildir. Kesin tanı için doktora veya eczacıya başvurun."
+    )
+
+
 class NaturalAlternativeItem(BaseModel):
     ad: str
     tur: str
     aciklama: str
     dikkat: str
+
 
 class DrugSearchResponse(BaseModel):
     ilac_adi: str
@@ -177,3 +213,24 @@ async def get_natural_alternatives(request: NaturalAlternativesRequest):
     return result
 
 
+@router.post("/chat", response_model=ChatResponse)
+async def pharmacist_chat(request: ChatRequest):
+    """Eczacı asistanıyla çok turlu sohbet; geçmişi dahil ederek yanıt üretir."""
+    message = request.message.strip()
+    if not message:
+        raise HTTPException(status_code=400, detail="Mesaj boş olamaz.")
+
+    history = [{"role": m.role, "content": m.content} for m in request.history]
+    reply = await query_pharmacist_chat(message, history)
+    return ChatResponse(reply=reply)
+
+
+@router.post("/symptom-check", response_model=SymptomAnalysisResponse)
+async def check_symptoms(request: SymptomRequest):
+    """Kullanıcının semptomlarını analiz ederek olası nedenleri ve tavsiyeleri döndürür."""
+    description = request.description.strip()
+    if not description:
+        raise HTTPException(status_code=400, detail="Semptom açıklaması boş olamaz.")
+
+    result = await query_symptom_analysis(description)
+    return result

@@ -28,6 +28,10 @@
         "action_emergency_card_subtitle": "Kan grubu, alerjiler ve acil iletişim bilgilerini saklayın.",
         "action_health_notes": "Sağlık Notları",
         "action_health_notes_subtitle": "Günlük sağlık durumunuzu kayıt altına alın.",
+        "action_ai_chat": "AI Eczacı Asistanı",
+        "action_ai_chat_subtitle": "İlaç, semptom ve sağlık sorularınızı sorun.",
+        "action_symptom_analysis": "Semptom Analizi",
+        "action_symptom_analysis_subtitle": "Belirtilerinizi anlatın, AI olası nedenleri değerlendirsin.",
         "on_duty_title": "Nöbetçi Eczane",
         "on_duty_subtitle": "Size en yakın nöbetçi eczaneleri bulun",
         "on_duty_coming": "Nöbetçi eczane özelliği yakında aktif olacak. Konum bazlı en yakın eczaneleri gösterecek.",
@@ -478,5 +482,35 @@
         "field_required": "Bu alan zorunludur.",
         "password_min_length": "Şifre en az 6 karakter olmalıdır.",
         "passwords_mismatch": "Şifreler eşleşmiyor."
+    },
+    "ai_chat": {
+        "title": "AI Eczacı Asistanı",
+        "powered_by": "Gemini AI destekli · Genel bilgilendirme amaçlıdır",
+        "input_hint": "Sorunuzu yazın...",
+        "send": "Gönder",
+        "empty_title": "Eczacı Asistanınıza Sorun",
+        "empty_subtitle": "İlaçlar, yan etkiler, dozaj veya semptomlar hakkında her şeyi sorabilirsiniz.",
+        "example_1": "Aspirin hangi durumda kullanılır?",
+        "example_2": "İlaçları tok karnına mı almak daha iyidir?",
+        "example_3": "Antibiyotik kullanırken nelere dikkat etmeliyim?",
+        "error": "Yanıt alınamadı. Lütfen tekrar deneyin.",
+        "disclaimer": "Bu bilgiler genel bilgilendirme amaçlıdır. Tıbbi tavsiye niteliği taşımaz."
+    },
+    "symptom_analysis": {
+        "title": "Semptom Analizi",
+        "input_title": "Semptomlarınızı Anlatın",
+        "input_subtitle": "Yaşadığınız belirtileri açıklayın; AI olası nedenleri ve tavsiyeleri değerlendirsin.",
+        "input_hint": "Örn: Baş ağrısı, ateş ve boğaz ağrısı var, iki gündür devam ediyor...",
+        "button": "Analiz Et",
+        "loading": "Semptomlar analiz ediliyor...",
+        "empty_error": "Lütfen semptomlarınızı açıklayan bir metin girin.",
+        "generic_error": "Semptom analizi şu anda tamamlanamadı. Lütfen tekrar deneyin.",
+        "emergency_title": "⚠️ Acil Durum Olabilir",
+        "emergency_subtitle": "Belirtileriniz acil tıbbi yardım gerektirebilir. Hemen 112'yi arayın.",
+        "summary_title": "Semptom Özeti",
+        "causes_title": "Olası Nedenler",
+        "advice_title": "Tavsiyeler",
+        "doctor_when_title": "Doktora Ne Zaman Başvurmalısınız?",
+        "disclaimer": "Bu analiz tıbbi teşhis değildir. Kesin tanı için doktora veya eczacıya başvurun."
     }
 }

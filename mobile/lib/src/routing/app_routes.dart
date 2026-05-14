@@ -28,4 +28,6 @@ abstract final class AppRoutes {
   static const String emergencyCard = '/emergency-card';
   static const String healthNotes = '/health-notes';
   static const String accountSettings = '/account-settings';
+  static const String aiChat = '/ai-chat';
+  static const String symptomAnalysis = '/symptom-analysis';
 }

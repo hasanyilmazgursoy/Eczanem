@@ -92,6 +92,38 @@ class DrugRepository {
     );
   }
 
+  /// Eczacı asistanına mesaj gönderir; history ile çok turlu sohbet desteklenir.
+  FutureEither<String> sendChatMessage(
+    String message,
+    List<Map<String, String>> history,
+  ) async {
+    final response = await _dio.post(
+      '/api/drug/chat',
+      data: {
+        'message': message,
+        'history': history,
+      },
+    );
+    return response.fold(
+      (failure) => left(failure),
+      (response) =>
+          right((response.data as Map<String, dynamic>)['reply'] as String),
+    );
+  }
+
+  /// Kullanıcının semptom açıklamasını analiz ederek olası nedenleri döndürür.
+  FutureEither<Map<String, dynamic>> analyzeSymptoms(
+      String description) async {
+    final response = await _dio.post(
+      '/api/drug/symptom-check',
+      data: {'description': description},
+    );
+    return response.fold(
+      (failure) => left(failure),
+      (response) => right(response.data as Map<String, dynamic>),
+    );
+  }
+
   /// Backend'in `image/*` doğrulamasını stabil geçirmek için MIME türünü uzantıdan türetir.
   MediaType _resolveMediaType(String path) {
     final extension = path.split('.').last.toLowerCase();
