@@ -413,7 +413,10 @@
     "empty_title": "Your Emergency Card Is Not Ready",
     "empty_subtitle": "Fill in information that will help in emergencies.",
     "create_card": "Create Card",
-    "share": "Share"
+    "share": "Share",
+    "qr_title": "Share via QR Code",
+    "qr_subtitle": "Let emergency personnel scan this code to instantly access your information.",
+    "qr_tooltip": "Show QR Code"
   },
   "health_notes": {
     "title": "My Health Notes",
@@ -469,7 +472,8 @@
   "shared": {
     "get_started": "Get Started",
     "try_again": "Try Again",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "errors": {
     "network_timeout": "Connection timed out. Please check your internet connection and try again.",

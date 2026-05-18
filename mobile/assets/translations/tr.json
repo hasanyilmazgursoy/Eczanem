@@ -413,7 +413,10 @@
         "empty_title": "Acil Kartınız Hazır Değil",
         "empty_subtitle": "Acil durumlarda yardımcı olacak bilgileri doldurun.",
         "create_card": "Kart Oluştur",
-        "share": "Paylaş"
+        "share": "Paylaş",
+        "qr_title": "QR Kod ile Paylaş",
+        "qr_subtitle": "Bu kodu acil durum personeline okutarak bilgilerinizi anında iletin.",
+        "qr_tooltip": "QR Kod Göster"
     },
     "health_notes": {
         "title": "Sağlık Notlarım",
@@ -469,7 +472,8 @@
     "shared": {
         "get_started": "Başla",
         "try_again": "Tekrar Dene",
-        "cancel": "İptal"
+        "cancel": "İptal",
+        "close": "Kapat"
     },
     "errors": {
         "network_timeout": "Bağlantı zaman aşımına uğradı. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.",

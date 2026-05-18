@@ -1,3 +1,4 @@
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../imports/imports.dart';
@@ -126,6 +127,81 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
     setState(() => _isEditing = !_isEditing);
   }
 
+  /// Acil kart verilerini QR kod olarak gösterir.
+  ///
+  /// Birinci yardım personeli aklıllı telefonuyla kodu okutarak bilgilere
+  /// hızlıca erişebilir.
+  void _showQrDialog() {
+    final card = _card;
+    if (card == null || card.isEmpty) return;
+
+    // QR içeriği: okunabilir düz metin (JSON yapmak yerine basit format)
+    final buf = StringBuffer();
+    buf.writeln('ECZANEM ACIL KART');
+    if (card.bloodType.isNotEmpty) buf.writeln('KAN:${card.bloodType}');
+    for (final a in card.allergies) { buf.writeln('ALERJI:$a'); }
+    for (final c in card.chronicConditions) { buf.writeln('HASTALIK:$c'); }
+    for (final m in card.currentMedications) { buf.writeln('ILAC:$m'); }
+    if (card.emergencyContactName.isNotEmpty) {
+      buf.writeln('ILETISIM:${card.emergencyContactName}');
+    }
+    if (card.emergencyContactPhone.isNotEmpty) {
+      buf.writeln('TEL:${card.emergencyContactPhone}');
+    }
+    if (card.doctorName.isNotEmpty) buf.writeln('DOKTOR:${card.doctorName}');
+    if (card.doctorPhone.isNotEmpty) {
+      buf.writeln('DTEL:${card.doctorPhone}');
+    }
+    if (card.notes.isNotEmpty) buf.writeln('NOT:${card.notes}');
+
+    final qrData = buf.toString().trim();
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.qr_code_rounded, color: Color(0xFFB71C1C)),
+            const SizedBox(width: 8),
+            Text('emergency_card.qr_title'.tr()),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'emergency_card.qr_subtitle'.tr(),
+              style: ctx.textTheme.bodySmall?.copyWith(
+                color: ctx.colors.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            QrImageView(
+              data: qrData,
+              version: QrVersions.auto,
+              size: 220,
+              eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.square,
+                color: Color(0xFFB71C1C),
+              ),
+              dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.square,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('shared.close'.tr()),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Acil kart bilgilerini düz metin olarak paylaşır.
   void _shareCard() {
     final card = _card;
@@ -208,13 +284,19 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
           ),
         ),
         actions: [
-          // Görüntüleme modunda paylaş butonu
-          if (!_isEditing && _card != null && _card!.isNotEmpty)
+          // Görüntüleme modunda paylaş + QR butonları
+          if (!_isEditing && _card != null && _card!.isNotEmpty) ...[
+            IconButton(
+              onPressed: _showQrDialog,
+              icon: const Icon(Icons.qr_code_rounded, color: Colors.white),
+              tooltip: 'emergency_card.qr_tooltip'.tr(),
+            ),
             IconButton(
               onPressed: _shareCard,
               icon: const Icon(Icons.share_outlined, color: Colors.white),
               tooltip: 'emergency_card.share'.tr(),
             ),
+          ],
           // Düzenleme / İptal toggle
           TextButton.icon(
             onPressed: _toggleEdit,
