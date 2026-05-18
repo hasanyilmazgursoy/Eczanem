@@ -83,7 +83,7 @@ class AuthController extends StateNotifier<bool> {
           showToast(context, message: failure.message, status: 'error'),
       (success) {
         showToast(context,
-            message: 'Password reset link sent successfully',
+            message: 'auth.reset_link_sent'.tr(),
             status: 'success');
         if (context.mounted) {
           context.go(AppRoutes.login);

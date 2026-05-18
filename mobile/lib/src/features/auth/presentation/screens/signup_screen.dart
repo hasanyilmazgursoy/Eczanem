@@ -3,36 +3,50 @@ import 'package:eczanem/src/imports/packages_imports.dart';
 
 import 'package:eczanem/src/features/auth/presentation/providers/auth_provider.dart';
 
-class SignupScreen extends ConsumerWidget {
+// ConsumerStatefulWidget: Controller'lar build() içinde değil State'te tutulur;
+// böylece her rebuild'de kullanıcı girişi korunur ve dispose çağrılır.
+class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final formKey = GlobalKey<FormState>();
-    final nameController = TextEditingController();
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
-    const obscurePassword = true;
-    const obscureConfirmPassword = true;
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
+}
 
+class _SignupScreenState extends ConsumerState<SignupScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSignup() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    ref.read(authControllerProvider.notifier).signUp(
+          context: context,
+          name: _nameController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isLoading = ref.watch(authControllerProvider);
 
     final cs = context.theme.colorScheme;
     final tt = context.theme.textTheme;
-
-    Future<void> handleSignup() async {
-      if (!(formKey.currentState?.validate() ?? false)) {
-        return;
-      }
-
-      ref.read(authControllerProvider.notifier).signUp(
-            context: context,
-            name: nameController.text,
-            email: emailController.text,
-            password: passwordController.text,
-          );
-    }
 
     return Scaffold(
       body: SafeArea(
@@ -57,11 +71,11 @@ class SignupScreen extends ConsumerWidget {
                 SizedBox(height: AppSpacing.xxxl.h),
                 // Form Card
                 Form(
-                  key: formKey,
+                  key: _formKey,
                   child: Column(
                     children: [
                       AppTextField(
-                        controller: nameController,
+                        controller: _nameController,
                         enabled: !isLoading,
                         label: 'auth.name'.tr(),
                         prefixIcon: const Icon(Icons.person_outline),
@@ -71,7 +85,7 @@ class SignupScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: AppSpacing.md.h),
                       AppTextField(
-                        controller: emailController,
+                        controller: _emailController,
                         enabled: !isLoading,
                         keyboardType: TextInputType.emailAddress,
                         label: 'auth.email'.tr(),
@@ -88,14 +102,17 @@ class SignupScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: AppSpacing.md.h),
                       AppTextField(
-                        controller: passwordController,
+                        controller: _passwordController,
                         enabled: !isLoading,
                         label: 'auth.password'.tr(),
-                        obscureText: obscurePassword,
+                        obscureText: _obscurePassword,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
-                          icon: const Icon(Icons.visibility),
-                          onPressed: () {},
+                          icon: Icon(_obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () =>
+                              setState(() => _obscurePassword = !_obscurePassword),
                         ),
                         validator: (v) {
                           if (AppUtils.isBlank(v)) {
@@ -109,20 +126,24 @@ class SignupScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: AppSpacing.md.h),
                       AppTextField(
-                        controller: confirmPasswordController,
+                        controller: _confirmPasswordController,
                         enabled: !isLoading,
                         label: 'auth.confirm_password'.tr(),
-                        obscureText: obscureConfirmPassword,
+                        obscureText: _obscureConfirmPassword,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
-                          icon: const Icon(Icons.visibility),
-                          onPressed: () {},
+                          icon: Icon(_obscureConfirmPassword
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () => setState(() =>
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword),
                         ),
                         validator: (v) {
                           if (AppUtils.isBlank(v)) {
                             return 'auth.confirm_password_required'.tr();
                           }
-                          if (v != passwordController.text) {
+                          if (v != _passwordController.text) {
                             return 'auth.passwords_do_not_match'.tr();
                           }
                           return null;
@@ -132,7 +153,7 @@ class SignupScreen extends ConsumerWidget {
                       AppButton(
                         label: 'auth.create_account'.tr(),
                         isLoading: isLoading,
-                        onPressed: isLoading ? null : handleSignup,
+                        onPressed: isLoading ? null : _handleSignup,
                         width: ButtonSize.large,
                         isFullWidth: false,
                       ),

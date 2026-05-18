@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:eczanem/src/routing/global_navigator.dart';
 import 'package:eczanem/src/routing/app_routes.dart';
@@ -32,6 +33,24 @@ import 'package:eczanem/src/features/health_notes/presentation/screens/health_no
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: AppRoutes.onboarding,
+  // Kullanıcı zaten giriş yapmışsa auth sayfalarına gitmesini engelle
+  redirect: (context, state) async {
+    const storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'auth_access_token');
+    final isLoggedIn = token != null && token.isNotEmpty;
+
+    const authOnlyRoutes = {
+      AppRoutes.onboarding,
+      AppRoutes.login,
+      AppRoutes.signup,
+      AppRoutes.forgotPassword,
+    };
+
+    if (isLoggedIn && authOnlyRoutes.contains(state.matchedLocation)) {
+      return AppRoutes.home;
+    }
+    return null;
+  },
   routes: <RouteBase>[
     GoRoute(
       path: AppRoutes.onboarding,
