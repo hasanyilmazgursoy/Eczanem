@@ -3,7 +3,7 @@
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
 **Başlangıç Tarihi:** 9 Nisan 2026  
 **Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
-**Durum:** 🟢 FAZ 0, 1, 2, Ara Faz, 4 ve 5 tamamlandı · 🟡 FAZ 3 büyük ölçüde hazır · 🟡 FAZ 6 sesli arama tamamlandı · 🟡 FAZ 7 büyük ölçüde hazır · 🟡 FAZ 8 aktif odak
+**Durum:** 🟢 FAZ 0, 1, 2, Ara Faz, 4, 5 tamamlandı · 🟢 FAZ 6 tamamlandı · 🟢 FAZ 7 tamamlandı · 🟡 FAZ 3 büyük ölçüde hazır · 🟡 FAZ 8 aktif odak
 
 ---
 
@@ -239,7 +239,7 @@ Yerel çalışan ilaç hatırlayıcı, stok takibi ve offline bildirim akışı 
 
 ## FAZ 6 — Nöbetçi Eczane + Sesli Sorgulama (1-2 hafta)
 
-**Durum:** 🟡 Büyük ölçüde hazır
+**Durum:** � Tamamlandı
 
 ### Backend
 - [x] `GET /api/pharmacy/nearby?lat=X&lon=Y` — En yakın nöbetçi eczaneler
@@ -247,7 +247,7 @@ Yerel çalışan ilaç hatırlayıcı, stok takibi ve offline bildirim akışı 
 - [ ] Cache: 6 saat ve prod sertliği
 
 ### Flutter Ekranları
-- [ ] Eczane Harita: Google Maps/OpenStreetMap üzerine pinler
+- [x] Eczane Harita: OpenStreetMap + flutter_map tabanlı harita görünümü, kullanıcı konumu, eczane pin'leri, bottom sheet ve yol tarifi
 - [x] Eczane Liste: Liste, telefon, adres ve temel aksiyonlar
 - [x] Sesli Arama: Mikrofon butonu → STT → ilaç arama (speech_to_text ^7.0.0)
 - [ ] Konum izinleri ve yayın seviyesi kullanıcı akışı polish
@@ -265,12 +265,13 @@ Nöbetçi eczane bulma + sesle ilaç sorgulama çalışıyor.
 
 ## FAZ 7 — Acil Durum Kartı & Sağlık Notu (1 hafta)
 
-**Durum:** 🟡 Büyük ölçüde hazır
+**Durum:** � Tamamlandı
 
 ### Flutter Ekranları
 - [x] Acil Kart Düzenle: Kan grubu, alerjiler, kronik hastalıklar, acil kişi
 - [x] Acil Kart Görüntüle: Tek ekranda tüm bilgi, büyük font, yüksek kontrast
-- [ ] Paylaş: PDF olarak dışa aktar
+- [x] Paylaş: QR kod ile acil kart bilgilerini anında dışa aktar (qr_flutter ^4.1.0)
+- [ ] Paylaş: PDF olarak dışa aktar (gelecek iterasyon)
 - [x] Sağlık Notu Ekle: Tarih, kategori, metin, emoji mood
 - [x] Not Geçmişi: Liste + kategori filtreleme
 - [x] Takvim görünümü ve doktor raporu özeti (DraggableScrollableSheet + share_plus)
@@ -289,27 +290,28 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 - [x] Onboarding: İlk açılışta temel onboarding akışı
 - [ ] Hata yönetimi: Her ekranda yükleniyor/hata/boş/başarılı durumları
 - [ ] Performans: Lazy loading, image caching, API response caching
-- [ ] Güvenlik: HTTPS zorunlu, API key gizleme, input sanitization, CORS sertl eştirme
+- [x] Güvenlik (kısmi): input sanitization (Pydantic Field validation), debug=False production default, JWT key rotation, global exception handler (ham traceback sızmasını önler)
+- [ ] Güvenlik (kalan): HTTPS zorunlu, CORS sertleştirme, API key vault
 - [x] Test: HealthNote + EmergencyCard model birim testleri eklendi (pure Dart)
 - [ ] Play Store: App icon, screenshots, açıklama, privacy policy
 - [ ] Backend Deploy: Railway / Render / VPS
-- [ ] Dokümantasyon senkronizasyonu: README, PLAN, CHANGELOG, release checklist
+- [x] Dokümantasyon senkronizasyonu: CHANGELOG v1.2.0, RELEASE_CHECKLIST, README ve PLAN güncel
 
 ---
 
 ## Özet Timeline
 
-| Faz | İçerik | Süre | Durum |
-|-----|--------|------|------|
-| 0 | Altyapı & Kurulum | 3-4 gün | 🟢 |
-| 1 | MVP — İlaç Sorgulama | 1-2 hafta | 🟢 |
-| 2 | Kamera + Prospüktüs | 1-2 hafta | 🟢 |
-| Ara Faz | Geçmiş Merkezi | 2-3 gün | 🟢 |
-| 3 | Kullanıcı + Aile Profili | 1-2 hafta | 🟡 |
-| 4 | Hatırlayıcı + Stok Takibi | 1-2 hafta | 🟢 |
-| 5 | Etkileşim + Doğal Alternatif | 1-2 hafta | 🟢 |
-| 6 | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | 🟡 |
-| 7 | Acil Kart + Sağlık Notları | 1 hafta | 🟡 |
-| 8 | Test & Yayın | 1-2 hafta | 🟡 |
+| Faz     | İçerik                       | Süre      | Durum |
+| ------- | ---------------------------- | --------- | ----- |
+| 0       | Altyapı & Kurulum            | 3-4 gün   | 🟢     |
+| 1       | MVP — İlaç Sorgulama         | 1-2 hafta | 🟢     |
+| 2       | Kamera + Prospüktüs          | 1-2 hafta | 🟢     |
+| Ara Faz | Geçmiş Merkezi               | 2-3 gün   | 🟢     |
+| 3       | Kullanıcı + Aile Profili     | 1-2 hafta | 🟡     |
+| 4       | Hatırlayıcı + Stok Takibi    | 1-2 hafta | 🟢     |
+| 5       | Etkileşim + Doğal Alternatif | 1-2 hafta | 🟢     |
+| 6       | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | �     |
+| 7       | Acil Kart + Sağlık Notları   | 1 hafta   | 🟢     |
+| 8       | Test & Yayın                 | 1-2 hafta | 🟡     |
 
 **Toplam: ~8-14 hafta**

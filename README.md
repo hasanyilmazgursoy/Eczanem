@@ -12,6 +12,9 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - Arama geçmişi ve tarama geçmişi
 - İlaç etkileşim kontrolü
 - İlaç bazlı doğal alternatif önerileri
+- Offline ilaç hatırlatıcıları ve stok takibi
+- Nöbetçi eczane harita görünümü (OSM, kullanıcı konumu)
+- Acil durum kartı + QR kod ile hızlı paylaşım
 - JWT tabanlı kullanıcı oturumu
 - Hive tabanlı yerel depolama
 - Redis cache + rate limit korumaları
@@ -26,12 +29,14 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - **FAZ 4** — Hatırlatıcı, stok takibi ve offline bildirimler
 - **Ara Faz** — Geçmiş merkezi ve profil kısayolları
 - **FAZ 5** — İlaç etkileşim kontrolü + doğal alternatifler
+- **FAZ 6** — Nöbetçi eczane (liste + OSM harita) + sesli sorgu
+- **FAZ 7** — Acil durum kartı + QR paylaşım + sağlık notları
 
 ### Devam eden / eksik alanlar
 
 - **FAZ 3** — Aile profili ekranları ve yerel veri akışı hazır; backend senkronizasyonu ve son polish eksik
-- **FAZ 6** — Nöbetçi eczane ekranı ve backend endpoint'i hazır; sesli sorgu ve yayın seviyesinde doğrulama eksik
-- **FAZ 7** — Acil durum kartı ve sağlık notları modülleri hazır; dışa aktarma / ileri seviye özetleme gibi ekler eksik
+- **FAZ 6** — Tamamlandı: nöbetçi eczane listesi, OSM tabanlı harita görünümü ve sesli sorgu özelliği hazır
+- **FAZ 7** — Tamamlandı: acil durum kartı, QR kod paylaşımı ve sağlık notları modülü hazır; PDF dışa aktarma gelecek iterasyona ertelendi
 - **FAZ 8** — Test, yayın ve son polish aktif odak alanı
 
 ### Teknik özet
@@ -59,16 +64,18 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - Yerel ilaç hatırlatıcıları, stok dashboard'u ve offline bildirimler
 - Aile profili, aile bireyi detayları ve birey bazlı ilaç listeleri
 - Nöbetçi eczane ekranı ve backend sorgulama akışı
+- Nöbetçi eczane OSM tabanlı harita görünümü (flutter_map, kullanıcı konumu, pin'ler)
 - Acil durum kartı oluşturma / düzenleme
+- Acil durum kartı QR kod ile paylaşma
 - Sağlık notları ekleme, filtreleme ve düzenleme
+- Onboarding: ilk açılış sonrası tekrar gösterilmez, doğrudan login
 
 ### Yol haritasındaki sıradaki odaklar
 
 - FAZ 8 polish: empty state, error state ve dark mode tutarlılığı
 - Mobil ve backend test kapsamını genişletme
-- Backend production hazırlığı: CORS, secret/config yönetimi, temel logging
 - Release checklist, mağaza hazırlığı ve deploy planı
-- Sonraki faz için büyük işler: sesli ilaç sorgulama, veritabanı migration, backend senkronizasyonu
+- Sonraki faz için büyük işler: veritabanı migration, backend senkronizasyonu, PDF dışa aktarma, CORS sertleştirme
 
 ## Mimarinin kısa özeti
 
@@ -108,6 +115,7 @@ FastAPI Backend
 - Skeletonizer
 - Camera
 - Image Picker
+- qr_flutter
 
 ### Backend
 
@@ -271,11 +279,10 @@ Geliştirme sırasında kullanılan örnek hesap:
 ## Bilinen sınırlamalar
 
 - Aile profili, nöbetçi eczane, acil kart ve sağlık notları modülleri şu an ağırlıklı olarak local-first / kısmi backend entegrasyon yaklaşımıyla ilerliyor
-- Sesli ilaç sorgulama henüz eklenmedi
 - Release APK üretilebilir; ancak mağaza yayını için Android imzalama anahtarı (keystore), privacy policy ve store materyalleri henüz tamamlanmadı
 - Backend auth ve profil katmanı şu an dosya tabanlı store kullanıyor (`backend/data/users.json`, `backend/data/family_profiles.json`)
 - PostgreSQL hedef mimaride planlı olsa da aktif kalıcı veri katmanı olarak henüz devrede değil
-- Backend production güvenliği için CORS, secret yönetimi ve test kapsamı daha da sertleştirilmeli
+- Backend production güvenliğinde CORS sertleştirme ve HTTPS henüz tamamlanmadı; input validation, debug=False ve JWT key rotation bu oturumda uygulandı
 
 ## Yol haritası
 
