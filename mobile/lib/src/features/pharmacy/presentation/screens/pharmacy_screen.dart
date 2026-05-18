@@ -115,8 +115,32 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
-      if (permission == LocationPermission.deniedForever ||
-          permission == LocationPermission.denied) {
+      if (permission == LocationPermission.deniedForever) {
+        if (!mounted) return;
+        // Kalıcı red: dialog göster ve ayarlar ekranına yönlendir
+        await showDialog<void>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('pharmacy.location_denied_forever_title'.tr()),
+            content: Text('pharmacy.location_denied_forever_body'.tr()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text('shared.cancel'.tr()),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Geolocator.openAppSettings();
+                },
+                child: Text('pharmacy.location_open_settings'.tr()),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+      if (permission == LocationPermission.denied) {
         if (!mounted) return;
         context.showTypedSnackBar(
           'pharmacy.location_denied'.tr(),

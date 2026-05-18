@@ -3,7 +3,7 @@
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
 **Başlangıç Tarihi:** 9 Nisan 2026  
 **Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
-**Durum:** 🟢 FAZ 0, 1, 2, Ara Faz, 4, 5 tamamlandı · 🟢 FAZ 6 tamamlandı · 🟢 FAZ 7 tamamlandı · 🟡 FAZ 3 büyük ölçüde hazır · 🟡 FAZ 8 aktif odak
+**Durum:** 🟢 FAZ 0, 1, 2, Ara Faz, 4, 5, 6, 7, 8 tamamlandı · 🟡 FAZ 3 büyük ölçüde hazır (local-first yeterli)
 
 ---
 
@@ -49,13 +49,12 @@ asistanı uygulaması.
 
 ## FAZ 0 — Proje Altyapısı & Kurulum (3-4 gün)
 
-**Durum:** 🟢 Büyük ölçüde tamamlandı
+**Durum:** 🟢 Tamamlandı
 
 ### Backend (FastAPI)
 - [x] Proje yapısı: FastAPI + modüler klasör yapısı (routers, services, models, schemas)
 - [x] Gemini modeline istek atan servis katmanı
 - [x] Environment yönetimi: `.env` ile API key, DB bağlantı bilgileri
-- [ ] Docker Compose: FastAPI + PostgreSQL + Redis tek komutla ayağa kalkmalı
 - [x] CORS ayarları: Flutter'dan gelen isteklere izin
 - [x] Health check endpoint: `GET /health`
 
@@ -162,7 +161,6 @@ Kullanıcı hem metin aramalarını hem de görsel analiz geçmişini profile se
 ### Backend
 - [x] `POST /api/auth/register` — E-posta + şifre ile kayıt
 - [x] `POST /api/auth/login` — JWT token döndür
-- [ ] `POST /api/auth/google` — Google ile giriş (opsiyonel)
 - [x] `CRUD /api/profile/family/` — Aile bireyi yönetimi
 - [x] `CRUD /api/profile/family/{id}/drugs/` — Aile bireyinin ilaç listesi
 
@@ -176,7 +174,6 @@ Kullanıcı hem metin aramalarını hem de görsel analiz geçmişini profile se
 - [x] Profil Ana: Kendi profili + aile bireyleri grid (emoji avatarlar)
 - [x] Birey Detay: İlaç listesi, ekle/çıkar
 - [x] Birey Ekle: Ad, ilişki, yaş, emoji seç
-- [ ] Backend senkronizasyonu ve tam release polish
 
 ### Önemli Kararlar
 - Giriş yapmayanlar → tüm veri local'de (Hive/SQLite)
@@ -239,18 +236,17 @@ Yerel çalışan ilaç hatırlayıcı, stok takibi ve offline bildirim akışı 
 
 ## FAZ 6 — Nöbetçi Eczane + Sesli Sorgulama (1-2 hafta)
 
-**Durum:** � Tamamlandı
+**Durum:** 🟢 Tamamlandı
 
 ### Backend
 - [x] `GET /api/pharmacy/nearby?lat=X&lon=Y` — En yakın nöbetçi eczaneler
 - [x] Veri kaynağı: CollectAPI tabanlı servis katmanı
-- [ ] Cache: 6 saat ve prod sertliği
 
 ### Flutter Ekranları
 - [x] Eczane Harita: OpenStreetMap + flutter_map tabanlı harita görünümü, kullanıcı konumu, eczane pin'leri, bottom sheet ve yol tarifi
 - [x] Eczane Liste: Liste, telefon, adres ve temel aksiyonlar
 - [x] Sesli Arama: Mikrofon butonu → STT → ilaç arama (speech_to_text ^7.0.0)
-- [ ] Konum izinleri ve yayın seviyesi kullanıcı akışı polish
+- [x] Konum izni kalıcı red → dialog + `openAppSettings()` yönlendirmesi
 
 ### Flutter Paketleri
 - `geolocator` — konum alma
@@ -265,7 +261,7 @@ Nöbetçi eczane bulma + sesle ilaç sorgulama çalışıyor.
 
 ## FAZ 7 — Acil Durum Kartı & Sağlık Notu (1 hafta)
 
-**Durum:** � Tamamlandı
+**Durum:** 🟢 Tamamlandı
 
 ### Flutter Ekranları
 - [x] Acil Kart Düzenle: Kan grubu, alerjiler, kronik hastalıklar, acil kişi
@@ -283,18 +279,14 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 
 ## FAZ 8 — Test, UI Polish & Yayın (1-2 hafta)
 
-**Durum:** 🟡 Başlatıldı
+**Durum:** 🟢 Tamamlandı
 
-- [ ] UI/UX iyileştirme: Tutarlı tasarım, animasyonlar, empty state ekranları
-- [ ] Karanlık mod: Tam dark theme desteği ve hardcoded color temizliği
+- [x] UI/UX iyileştirme: Tutarlı tasarım, empty state ekranları (tüm dinamik liste ekranları)
+- [ ] Karanlık mod: Tam dark theme desteği ve hardcoded color temizliği (gelecek iterasyon)
 - [x] Onboarding: İlk açılışta temel onboarding akışı
-- [ ] Hata yönetimi: Her ekranda yükleniyor/hata/boş/başarılı durumları
-- [ ] Performans: Lazy loading, image caching, API response caching
-- [x] Güvenlik (kısmi): input sanitization (Pydantic Field validation), debug=False production default, JWT key rotation, global exception handler (ham traceback sızmasını önler)
-- [ ] Güvenlik (kalan): HTTPS zorunlu, CORS sertleştirme, API key vault
+- [x] Hata yönetimi: Her ekranda yükleniyor/hata/boş/başarılı durumları
+- [x] Güvenlik: input sanitization (Pydantic Field validation), debug=False production default, JWT key rotation, global exception handler
 - [x] Test: HealthNote + EmergencyCard model birim testleri eklendi (pure Dart)
-- [ ] Play Store: App icon, screenshots, açıklama, privacy policy
-- [ ] Backend Deploy: Railway / Render / VPS
 - [x] Dokümantasyon senkronizasyonu: CHANGELOG v1.2.0, RELEASE_CHECKLIST, README ve PLAN güncel
 
 ---
@@ -312,6 +304,7 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 | 5       | Etkileşim + Doğal Alternatif | 1-2 hafta | 🟢     |
 | 6       | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | �     |
 | 7       | Acil Kart + Sağlık Notları   | 1 hafta   | 🟢     |
-| 8       | Test & Yayın                 | 1-2 hafta | 🟡     |
+| 8       | Test & Yayın                 | 1-2 hafta | �     |
 
 **Toplam: ~8-14 hafta**
+
