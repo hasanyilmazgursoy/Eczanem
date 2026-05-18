@@ -1,7 +1,7 @@
 ﻿"""İlaç sorgulama endpoint'leri."""
 
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.services.drug_search_guard import query_drug_info_with_guard
 from app.services.gemini_service import (
@@ -17,25 +17,25 @@ router = APIRouter()
 
 
 class DrugSearchRequest(BaseModel):
-    query: str
+    query: str = Field(min_length=2, max_length=200)
 
 
 class DrugInteractionRequest(BaseModel):
-    drugs: list[str]
+    drugs: list[str] = Field(min_length=2, max_length=20)
 
 
 class NaturalAlternativesRequest(BaseModel):
-    drug_name: str
+    drug_name: str = Field(min_length=2, max_length=200)
 
 
 class ChatMessage(BaseModel):
-    role: str  # "user" veya "model"
-    content: str
+    role: str = Field(min_length=1, max_length=10)  # "user" veya "model"
+    content: str = Field(min_length=1, max_length=4000)
 
 
 class ChatRequest(BaseModel):
-    message: str
-    history: list[ChatMessage] = []
+    message: str = Field(min_length=1, max_length=2000)
+    history: list[ChatMessage] = Field(default=[], max_length=50)
 
 
 class ChatResponse(BaseModel):
@@ -46,7 +46,7 @@ class ChatResponse(BaseModel):
 
 
 class SymptomRequest(BaseModel):
-    description: str
+    description: str = Field(min_length=5, max_length=2000)
 
 
 class SymptomAnalysisResponse(BaseModel):

@@ -1,10 +1,15 @@
 """Eczanem Backend — Ana uygulama."""
 
-from fastapi import FastAPI
+import logging
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.core.config import get_settings
 from app.routers import auth, health, drug, profile, pharmacy
+
+logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
@@ -26,6 +31,20 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Yakalanmamış istisnalar için genel hata handler'ı.
+    # Kullanıcıya ham traceback sızdırmaz; 500 ile sade bir mesaj döner.
+    @app.exception_handler(Exception)
+    async def unhandled_exception_handler(
+        request: Request, exc: Exception
+    ) -> JSONResponse:
+        logger.exception("Unhandled exception for %s %s", request.method, request.url)
+        return JSONResponse(
+            status_code=500,
+            content={
+                "detail": "Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin."
+            },
+        )
 
     # Router'ları bağla
     app.include_router(health.router, tags=["Health"])
