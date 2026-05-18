@@ -111,8 +111,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           icon: Icon(_obscurePassword
                               ? Icons.visibility
                               : Icons.visibility_off),
-                          onPressed: () =>
-                              setState(() => _obscurePassword = !_obscurePassword),
+                          onPressed: () => setState(
+                              () => _obscurePassword = !_obscurePassword),
                         ),
                         validator: (v) {
                           if (AppUtils.isBlank(v)) {
@@ -246,4 +246,3 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     );
   }
 }
-
