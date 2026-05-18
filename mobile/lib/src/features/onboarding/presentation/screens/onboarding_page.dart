@@ -12,12 +12,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
   late final PageController _pageController;
   int _currentIndex = 0;
 
-  late final List<Map<String, dynamic>> _onboardingData;
+  // _onboardingData, Theme.of(context) gerektirdiğinden late (final değil) tanımlandı.
+  // didChangeDependencies'de ilk kez initialize edilir.
+  late List<Map<String, dynamic>> _onboardingData;
+  bool _dataInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+  }
+
+  // initState tamamlandıktan ve inherited widget'lar hazır olduktan sonra çağrılır.
+  // Dolayısıyla Theme.of(context) burada güvenle kullanılabilir.
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_dataInitialized) return;
+    _dataInitialized = true;
+    final primaryColor = Theme.of(context).colorScheme.primary;
     _onboardingData = [
       {
         'title': 'onboarding.onboarding_title_1'.tr(),
@@ -25,7 +38,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         'pageWidget': Icon(
           Icons.medication_rounded,
           size: 140,
-          color: Theme.of(context).colorScheme.primary,
+          color: primaryColor,
         ),
       },
       {
@@ -34,7 +47,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         'pageWidget': Icon(
           Icons.family_restroom_rounded,
           size: 140,
-          color: Theme.of(context).colorScheme.primary,
+          color: primaryColor,
         ),
       },
       {
@@ -43,7 +56,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         'pageWidget': Icon(
           Icons.emergency_rounded,
           size: 140,
-          color: Theme.of(context).colorScheme.primary,
+          color: primaryColor,
         ),
       },
     ];
