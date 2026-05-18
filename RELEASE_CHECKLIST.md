@@ -4,27 +4,27 @@ Bu liste, `Eczanem` projesini demo, jüri sunumu veya mağaza yayını öncesind
 
 ## 1. Kapsam dondurma
 
-- [ ] Yayına girecek modüller netleştirildi
-- [ ] Ertelenecek modüller ayrı backlog'a alındı
-- [ ] `README.md`, `PLAN.md`, `CHANGELOG.md` güncel
+- [x] Yayına girecek modüller netleştirildi
+- [x] Ertelenecek modüller ayrı backlog'a alındı
+- [x] `README.md`, `PLAN.md`, `CHANGELOG.md` güncel
 - [ ] Sürüm numarası ve release notu birbiriyle uyumlu
 
 ## 2. Mobil doğrulama
 
-- [ ] `flutter analyze --no-pub`
+- [x] `flutter analyze --no-pub` → 0 hata
 - [ ] Kritik testler çalıştı
 - [ ] `flutter test`
-- [ ] Boş durumlar, hata durumları ve loading durumları temel ekranlarda kontrol edildi
+- [x] Boş durumlar, hata durumları ve loading durumları temel ekranlarda kontrol edildi
 - [ ] Dark mode görünümü kritik ekranlarda kontrol edildi
-- [ ] `tr.json` ve `en.json` anahtarları kodla uyumlu
+- [x] `tr.json` ve `en.json` anahtarları kodla uyumlu
 
 ## 3. Backend doğrulama
 
-- [ ] `python -m compileall app`
+- [x] `python -m compileall app`
 - [ ] Kritik endpoint'ler smoke test ile doğrulandı
-- [ ] `.env` değişkenleri eksiksiz
-- [ ] CORS ve debug ayarları release hedefine uygun
-- [ ] Secret anahtarlar repoya gömülü değil
+- [x] `.env` değişkenleri eksiksiz
+- [x] CORS ve debug ayarları release hedefine uygun
+- [x] Secret anahtarlar repoya gömülü değil
 
 ## 4. Ürün ve UX kontrolleri
 
