@@ -1,5 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
+
+import '../routing/app_routes.dart';
+import '../routing/global_navigator.dart';
 import '../utils/logger.dart';
 
 class AppConfig {
@@ -33,9 +38,21 @@ class AppConfig {
               '✅ [DIO] RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
           return handler.next(response);
         },
-        onError: (DioException e, handler) {
+        // Token süresi dolmuş veya geçersizse oturumu kapat ve login'e yönlendir
+        onError: (DioException e, handler) async {
           AppLogger.error(
               '❌ [DIO] ERROR[${e.response?.statusCode}] => PATH: ${e.requestOptions.path}');
+
+          if (e.response?.statusCode == 401) {
+            await const FlutterSecureStorage()
+                .delete(key: 'auth_access_token');
+
+            final ctx = rootContext;
+            if (ctx != null && ctx.mounted) {
+              GoRouter.of(ctx).go(AppRoutes.login);
+            }
+          }
+
           return handler.next(e);
         },
       ),

@@ -68,9 +68,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
-  void _onGetStarted() {
-    // Navigate back or to home. For template purpose:
-    context.go(AppRoutes.login);
+  void _onGetStarted() async {
+    // Onboarding'in görüldüğünü kaydet; bir sonraki açılışta login'e yönlendir
+    await StorageService.instance.setBool('onboarding_seen', true);
+    if (mounted) context.go(AppRoutes.login);
   }
 
   @override

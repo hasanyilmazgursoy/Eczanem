@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:eczanem/src/routing/global_navigator.dart';
 import 'package:eczanem/src/routing/app_routes.dart';
+import 'package:eczanem/src/services/storage_service.dart';
 
 import 'package:eczanem/src/features/auth/presentation/screens/login_screen.dart';
 import 'package:eczanem/src/features/auth/presentation/screens/signup_screen.dart';
@@ -33,7 +34,7 @@ import 'package:eczanem/src/features/health_notes/presentation/screens/health_no
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: AppRoutes.onboarding,
-  // Kullanıcı zaten giriş yapmışsa auth sayfalarına gitmesini engelle
+  // Oturum + onboarding durumuna göre yönlendirme
   redirect: (context, state) async {
     const storage = FlutterSecureStorage();
     final token = await storage.read(key: 'auth_access_token');
@@ -46,9 +47,20 @@ final GoRouter appRouter = GoRouter(
       AppRoutes.forgotPassword,
     };
 
+    // Giriş yapılmışsa auth sayfalarından home'a yönlendir
     if (isLoggedIn && authOnlyRoutes.contains(state.matchedLocation)) {
       return AppRoutes.home;
     }
+
+    // Onboarding daha önce görüldüyse doğrudan login'e at (logout sonrası)
+    final hasSeenOnboarding =
+        StorageService.instance.getBool('onboarding_seen') ?? false;
+    if (!isLoggedIn &&
+        hasSeenOnboarding &&
+        state.matchedLocation == AppRoutes.onboarding) {
+      return AppRoutes.login;
+    }
+
     return null;
   },
   routes: <RouteBase>[

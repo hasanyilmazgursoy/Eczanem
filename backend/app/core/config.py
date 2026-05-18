@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     # Nöbetçi eczane (CollectAPI) — .env'e COLLECT_API_KEY=apikey <key> ekle
     collect_api_key: str = ""
 
-    # JWT (geliştirme varsayılanı; prod'da env ile override edilmeli)
+    # JWT — .env'de JWT_SECRET_KEY tanımlanmalı; bu fallback yalnızca geliştirme içindir
     jwt_secret_key: str = "eczanem-dev-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 60 * 24 * 7
@@ -44,7 +44,8 @@ class Settings(BaseSettings):
     # API
     api_host: str = "0.0.0.0"
     api_port: int = 8000
-    debug: bool = True
+    # Güvenli production varsayılanı; geliştirmede .env ile DEBUG=True override edilir
+    debug: bool = False
 
     # CORS — virgülle ayrılmış domain listesi; prod'da .env'den override edilmeli
     # Örnek: ALLOWED_ORIGINS=http://localhost:3000,https://eczanem.app
