@@ -139,9 +139,15 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
     final buf = StringBuffer();
     buf.writeln('ECZANEM ACIL KART');
     if (card.bloodType.isNotEmpty) buf.writeln('KAN:${card.bloodType}');
-    for (final a in card.allergies) { buf.writeln('ALERJI:$a'); }
-    for (final c in card.chronicConditions) { buf.writeln('HASTALIK:$c'); }
-    for (final m in card.currentMedications) { buf.writeln('ILAC:$m'); }
+    for (final a in card.allergies) {
+      buf.writeln('ALERJI:$a');
+    }
+    for (final c in card.chronicConditions) {
+      buf.writeln('HASTALIK:$c');
+    }
+    for (final m in card.currentMedications) {
+      buf.writeln('ILAC:$m');
+    }
     if (card.emergencyContactName.isNotEmpty) {
       buf.writeln('ILETISIM:${card.emergencyContactName}');
     }

@@ -44,8 +44,7 @@ class AppConfig {
               '❌ [DIO] ERROR[${e.response?.statusCode}] => PATH: ${e.requestOptions.path}');
 
           if (e.response?.statusCode == 401) {
-            await const FlutterSecureStorage()
-                .delete(key: 'auth_access_token');
+            await const FlutterSecureStorage().delete(key: 'auth_access_token');
 
             final ctx = rootContext;
             if (ctx != null && ctx.mounted) {
