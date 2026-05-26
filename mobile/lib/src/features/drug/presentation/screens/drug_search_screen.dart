@@ -34,6 +34,9 @@ class DrugSearchContent extends ConsumerStatefulWidget {
 
 class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   final _searchController = TextEditingController();
+  // FocusNode state'de tutulmazsa her build'de yenisi yaratılır;
+  // bu uzun basma (long-press backspace) bozulmasına yol açar.
+  final _focusNode = FocusNode();
   final _debouncer = Debouncer();
   bool _isLoading = false;
   bool _hasSearched = false;
@@ -132,6 +135,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   void dispose() {
     _debouncer.dispose();
     _searchController.dispose();
+    _focusNode.dispose();
     _speech.cancel();
     super.dispose();
   }
@@ -239,7 +243,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextField(
         controller: _searchController,
-        focusNode: FocusNode(),
+        focusNode: _focusNode,
         textInputAction: TextInputAction.search,
         style: context.textTheme.headlineMedium?.copyWith(
           fontWeight: FontWeight.bold,
@@ -360,22 +364,6 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
     );
   }
 
-  Widget _buildLoadingSkeleton() {
-    return Skeletonizer(
-      child: Column(
-        children: List.generate(
-          3,
-          (_) => Padding(
-            padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
-            child: AppCard(
-              child: SizedBox(height: 80.h),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildBodyHintCard({
     required IconData icon,
     required String title,
@@ -418,7 +406,12 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
 
   Widget _buildBodyState() {
     if (_isLoading) {
-      return _buildLoadingSkeleton();
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32),
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
 
     if (_error != null) {
@@ -427,6 +420,10 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
 
     final currentQuery = _searchController.text.trim();
     final hasTypedQuery = currentQuery.isNotEmpty;
+
+    // Metin yazılmış ama henüz arama yapılmamış → kutu gösterme
+    if (hasTypedQuery && !_hasSearched) return const SizedBox.shrink();
+
     final shouldSuggestRecent =
         !_hasSearched && !hasTypedQuery && _recentSearches.isNotEmpty;
 
