@@ -205,82 +205,99 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Mod Seçimi (Devasa Butonlar halinde)
-              Container(
-                decoration: BoxDecoration(
-                  color:
-                      colorScheme.surfaceContainerHigh.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                padding: const EdgeInsets.all(6),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() {
-                          _scanMode = _DrugPhotoScanMode.medicine;
-                          _imageError = null;
-                        }),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding:
-                              EdgeInsets.symmetric(vertical: AppSpacing.md),
-                          decoration: BoxDecoration(
-                            color: !isProspectusMode
-                                ? colorScheme.primary
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow:
-                                !isProspectusMode ? AppShadows.card : null,
-                          ),
-                          child: Center(
-                            child: Text(
+              // Mod Seçimi — İki bağımsız buton
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() {
+                        _scanMode = _DrugPhotoScanMode.medicine;
+                        _imageError = null;
+                      }),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: EdgeInsets.symmetric(
+                          vertical: AppSpacing.lg,
+                          horizontal: AppSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: !isProspectusMode
+                              ? colorScheme.primary
+                              : colorScheme.surfaceContainerHigh,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: !isProspectusMode ? AppShadows.card : null,
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.medication_rounded,
+                              size: 28,
+                              color: !isProspectusMode
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSurfaceVariant,
+                            ),
+                            SizedBox(height: AppSpacing.xs),
+                            Text(
                               'drug_search.scan_mode_medicine'.tr(),
-                              style: textTheme.titleMedium?.copyWith(
+                              textAlign: TextAlign.center,
+                              style: textTheme.titleSmall?.copyWith(
                                 color: !isProspectusMode
                                     ? colorScheme.onPrimary
                                     : colorScheme.onSurfaceVariant,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() {
-                          _scanMode = _DrugPhotoScanMode.prospectus;
-                          _imageError = null;
-                        }),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding:
-                              EdgeInsets.symmetric(vertical: AppSpacing.md),
-                          decoration: BoxDecoration(
-                            color: isProspectusMode
-                                ? colorScheme.primary
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow:
-                                isProspectusMode ? AppShadows.card : null,
-                          ),
-                          child: Center(
-                            child: Text(
+                  ),
+                  SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() {
+                        _scanMode = _DrugPhotoScanMode.prospectus;
+                        _imageError = null;
+                      }),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: EdgeInsets.symmetric(
+                          vertical: AppSpacing.lg,
+                          horizontal: AppSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isProspectusMode
+                              ? colorScheme.secondary
+                              : colorScheme.surfaceContainerHigh,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: isProspectusMode ? AppShadows.card : null,
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.description_rounded,
+                              size: 28,
+                              color: isProspectusMode
+                                  ? colorScheme.onSecondary
+                                  : colorScheme.onSurfaceVariant,
+                            ),
+                            SizedBox(height: AppSpacing.xs),
+                            Text(
                               'drug_search.scan_mode_prospectus'.tr(),
-                              style: textTheme.titleMedium?.copyWith(
+                              textAlign: TextAlign.center,
+                              style: textTheme.titleSmall?.copyWith(
                                 color: isProspectusMode
-                                    ? colorScheme.onPrimary
+                                    ? colorScheme.onSecondary
                                     : colorScheme.onSurfaceVariant,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               SizedBox(height: AppSpacing.xxl),
 
