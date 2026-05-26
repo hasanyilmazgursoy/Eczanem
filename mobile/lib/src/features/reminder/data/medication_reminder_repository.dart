@@ -150,6 +150,7 @@ class MedicationReminder extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? lastTakenAt;
+
   /// true ise DND/sessize bakmaksızın alarm kanalından çalar.
   final bool useAlarm;
 

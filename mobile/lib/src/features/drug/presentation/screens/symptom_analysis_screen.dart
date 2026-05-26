@@ -260,9 +260,8 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
                   style: const TextStyle(fontSize: 13),
                 ),
                 style: TextButton.styleFrom(
-                  foregroundColor: _isListening
-                      ? Colors.red
-                      : const Color(0xFF00897B),
+                  foregroundColor:
+                      _isListening ? Colors.red : const Color(0xFF00897B),
                 ),
               ),
             ),

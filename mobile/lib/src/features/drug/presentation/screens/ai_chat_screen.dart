@@ -588,9 +588,7 @@ class _MessageInputBarState extends State<_MessageInputBar> {
                 icon: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
-                    _isListening
-                        ? Icons.mic_rounded
-                        : Icons.mic_none_rounded,
+                    _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
                     key: ValueKey(_isListening),
                   ),
                 ),

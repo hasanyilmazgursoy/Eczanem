@@ -3,8 +3,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../../../imports/imports.dart';
-import '../../data/pharmacy_repository.dart';
 import '../../data/models/pharmacy_item.dart';
+import '../../data/pharmacy_repository.dart';
 
 /// Nöbetçi eczane listesi ekranı (FAZ 6).
 ///
