@@ -1,8 +1,8 @@
 # ECZANEM — Proje Yol Haritası
 
-**Proje:** Kişisel İlaç Asistanı Mobil Uygulaması  
-**Başlangıç Tarihi:** 9 Nisan 2026  
-**Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)  
+**Proje:** Kişisel İlaç Asistanı Mobil Uygulaması
+**Başlangıç Tarihi:** 9 Nisan 2026
+**Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)
 **Durum:** 🟢 FAZ 0, 1, 2, Ara Faz, 4, 5, 6, 7, 8 tamamlandı · 🟡 FAZ 3 büyük ölçüde hazır (local-first yeterli)
 
 ---
