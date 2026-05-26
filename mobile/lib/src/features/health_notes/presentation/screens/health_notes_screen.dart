@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -930,7 +931,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                 onChanged: (v) => setState(() => _medicationTaken = v),
                 title: Text('health_notes.medication_taken'.tr()),
                 subtitle: Text('health_notes.medication_taken_subtitle'.tr()),
-                activeColor: const Color(0xFF1565C0),
+                activeTrackColor: const Color(0xFF1565C0),
                 contentPadding: EdgeInsets.zero,
               ),
               SizedBox(height: AppSpacing.md),
@@ -1452,7 +1453,7 @@ class _HealthTrendChart extends StatelessWidget {
     final minY = allSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b) - 10;
     final maxY = allSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b) + 10;
 
-    LineChartBarData _line(List<FlSpot> s, Color c) => LineChartBarData(
+    LineChartBarData line(List<FlSpot> s, Color c) => LineChartBarData(
           spots: s,
           isCurved: true,
           color: c,
@@ -1514,8 +1515,8 @@ class _HealthTrendChart extends StatelessWidget {
                 const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
           lineBarsData: [
-            _line(spots, color),
-            if (spots2 != null && color2 != null) _line(spots2!, color2!),
+            line(spots, color),
+            if (spots2 != null && color2 != null) line(spots2!, color2!),
           ],
           lineTouchData: LineTouchData(
             touchTooltipData: LineTouchTooltipData(
@@ -1626,10 +1627,12 @@ class _DoctorViewSheet extends StatelessWidget {
     final bpDiaSpots = <FlSpot>[];
     for (var i = 0; i < tansiyon.length; i++) {
       final n = tansiyon[i];
-      if (n.systolic != null)
+      if (n.systolic != null) {
         bpSysSpots.add(FlSpot(i.toDouble(), n.systolic!.toDouble()));
-      if (n.diastolic != null)
+      }
+      if (n.diastolic != null) {
         bpDiaSpots.add(FlSpot(i.toDouble(), n.diastolic!.toDouble()));
+      }
     }
 
     final glucoseSpots = <FlSpot>[];
