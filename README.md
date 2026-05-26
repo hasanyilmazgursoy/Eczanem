@@ -15,6 +15,7 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - Offline ilaç hatırlatıcıları ve stok takibi
 - Nöbetçi eczane harita görünümü (OSM, kullanıcı konumu)
 - Acil durum kartı + QR kod ile hızlı paylaşım
+- Sağlık notları, klinik ölçüm takibi (tansiyon / şeker / ağrı) ve doktora göster modu
 - JWT tabanlı kullanıcı oturumu
 - Hive tabanlı yerel depolama
 - Redis cache + rate limit korumaları
@@ -68,6 +69,8 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - Acil durum kartı oluşturma / düzenleme
 - Acil durum kartı QR kod ile paylaşma
 - Sağlık notları ekleme, filtreleme ve düzenleme
+- Sağlık notu klinik ölçümleri: tansiyon, kan şekeri, ağrı seviyesi, semptom seçimi, ilaç alımı
+- Klinik trend grafikleri (fl_chart) ve "Doktora Göster" klinik özet modu
 - Onboarding: ilk açılış sonrası tekrar gösterilmez, doğrudan login
 
 ### Yol haritasındaki sıradaki odaklar
