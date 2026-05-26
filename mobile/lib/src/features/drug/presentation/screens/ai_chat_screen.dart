@@ -185,12 +185,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
   }
 
   Widget _buildEmptyState(ColorScheme colorScheme, TextTheme textTheme) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(AppSpacing.xxl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(AppSpacing.xxl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
             Container(
               width: 96,
               height: 96,
@@ -273,8 +272,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
 
