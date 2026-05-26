@@ -270,7 +270,7 @@ Nöbetçi eczane bulma + sesle ilaç sorgulama çalışıyor.
 - [ ] Paylaş: PDF olarak dışa aktar (gelecek iterasyon)
 - [x] Sağlık Notu Ekle: Tarih, kategori, metin, emoji mood
 - [x] Not Geçmişi: Liste + kategori filtreleme
-- [x] Takvim görünümü ve doktor raporu özeti (DraggableScrollableSheet + share_plus)
+- [~] Takvim görünümü ve doktor raporu özeti — kullanılabilirlik gerekçesiyle kaldırıldı (refactor: 739edb1)
 
 ### Çıktı
 Acil durum kartı + sağlık günlüğü çalışıyor.
