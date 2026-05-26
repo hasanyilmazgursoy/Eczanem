@@ -121,21 +121,7 @@ class _OnboardingView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Top branding
-            Padding(
-              padding: EdgeInsets.only(
-                top: AppSpacing.lg.h,
-                bottom: AppSpacing.md.h,
-              ),
-              child: Text(
-                'FlutterInit.',
-                style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: colorScheme.onSurface,
-                  fontSize: 22.sp,
-                ),
-              ),
-            ),
+            SizedBox(height: AppSpacing.lg.h),
 
             // PageView
             Expanded(
