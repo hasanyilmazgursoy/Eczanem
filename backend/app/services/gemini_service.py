@@ -198,6 +198,11 @@ async def _post_gemini_request(payload: dict) -> httpx.Response:
             json=payload,
         )
 
+    if response.status_code == 429:
+        raise HTTPException(
+            status_code=503,
+            detail="AI servisi şu an meşgul, lütfen biraz bekleyip tekrar deneyin.",
+        )
     if response.status_code != 200:
         raise HTTPException(
             status_code=502,
