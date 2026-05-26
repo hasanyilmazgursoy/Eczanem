@@ -1,4 +1,5 @@
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../../../imports/imports.dart';
 import '../../data/drug_repository.dart';
@@ -190,89 +191,89 @@ class _AiChatScreenState extends State<AiChatScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-            Container(
-              width: 96,
-              height: 96,
-              decoration: BoxDecoration(
-                color: const Color(0xFF6750A4).withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.smart_toy_rounded,
-                size: 52,
-                color: Color(0xFF6750A4),
-              ),
+          Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(
+              color: const Color(0xFF6750A4).withValues(alpha: 0.1),
+              shape: BoxShape.circle,
             ),
-            SizedBox(height: AppSpacing.xl),
-            Text(
-              'ai_chat.empty_title'.tr(),
-              style: textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: colorScheme.onSurface,
-              ),
-              textAlign: TextAlign.center,
+            child: const Icon(
+              Icons.smart_toy_rounded,
+              size: 52,
+              color: Color(0xFF6750A4),
             ),
-            SizedBox(height: AppSpacing.sm),
-            Text(
-              'ai_chat.empty_subtitle'.tr(),
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppSpacing.xl),
+          Text(
+            'ai_chat.empty_title'.tr(),
+            style: textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
             ),
-            SizedBox(height: AppSpacing.xl),
-            // Örnek sorular
-            ...[
-              'ai_chat.example_1',
-              'ai_chat.example_2',
-              'ai_chat.example_3',
-            ].map(
-              (key) => Padding(
-                padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                child: InkWell(
-                  onTap: () {
-                    _inputController.text = key.tr();
-                    _sendMessage();
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg,
-                      vertical: AppSpacing.sm,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppSpacing.sm),
+          Text(
+            'ai_chat.empty_subtitle'.tr(),
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppSpacing.xl),
+          // Örnek sorular
+          ...[
+            'ai_chat.example_1',
+            'ai_chat.example_2',
+            'ai_chat.example_3',
+          ].map(
+            (key) => Padding(
+              padding: EdgeInsets.only(bottom: AppSpacing.sm),
+              child: InkWell(
+                onTap: () {
+                  _inputController.text = key.tr();
+                  _sendMessage();
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.sm,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFF6750A4).withValues(alpha: 0.4),
                     ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color(0xFF6750A4).withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.chat_bubble_outline_rounded,
+                        size: 18,
+                        color: Color(0xFF6750A4),
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          size: 18,
-                          color: Color(0xFF6750A4),
-                        ),
-                        SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: Text(
-                            key.tr(),
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: const Color(0xFF6750A4),
-                              fontWeight: FontWeight.w500,
-                            ),
+                      SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          key.tr(),
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: const Color(0xFF6750A4),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -470,7 +471,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
 }
 
 /// Alt mesaj giriş çubuğu.
-class _MessageInputBar extends StatelessWidget {
+class _MessageInputBar extends StatefulWidget {
   const _MessageInputBar({
     required this.controller,
     required this.isLoading,
@@ -480,6 +481,56 @@ class _MessageInputBar extends StatelessWidget {
   final TextEditingController controller;
   final bool isLoading;
   final VoidCallback onSend;
+
+  @override
+  State<_MessageInputBar> createState() => _MessageInputBarState();
+}
+
+class _MessageInputBarState extends State<_MessageInputBar> {
+  final SpeechToText _speech = SpeechToText();
+  bool _isListening = false;
+  bool _speechEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  @override
+  void dispose() {
+    _speech.cancel();
+    super.dispose();
+  }
+
+  Future<void> _initSpeech() async {
+    _speechEnabled = await _speech.initialize(
+      onError: (_) {
+        if (mounted) setState(() => _isListening = false);
+      },
+    );
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _toggleListening() async {
+    if (_isListening) {
+      await _speech.stop();
+      setState(() => _isListening = false);
+    } else {
+      setState(() => _isListening = true);
+      await _speech.listen(
+        onResult: (result) {
+          widget.controller.text = result.recognizedWords;
+          // İmleci metnin sonuna taşı
+          widget.controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: widget.controller.text.length),
+          );
+        },
+        localeId: 'tr_TR',
+        listenOptions: SpeechListenOptions(partialResults: true),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -508,12 +559,12 @@ class _MessageInputBar extends StatelessWidget {
           children: [
             Expanded(
               child: TextField(
-                controller: controller,
-                enabled: !isLoading,
+                controller: widget.controller,
+                enabled: !widget.isLoading,
                 maxLines: 4,
                 minLines: 1,
                 textInputAction: TextInputAction.send,
-                onSubmitted: (_) => onSend(),
+                onSubmitted: (_) => widget.onSend(),
                 decoration: InputDecoration(
                   hintText: 'ai_chat.input_hint'.tr(),
                   filled: true,
@@ -529,10 +580,27 @@ class _MessageInputBar extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: AppSpacing.sm),
+            SizedBox(width: AppSpacing.xs),
+            // Mikrofon butonu — sadece cihaz ses tanımayı destekliyorsa gösterilir
+            if (_speechEnabled)
+              IconButton(
+                onPressed: widget.isLoading ? null : _toggleListening,
+                icon: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    _isListening
+                        ? Icons.mic_rounded
+                        : Icons.mic_none_rounded,
+                    key: ValueKey(_isListening),
+                  ),
+                ),
+                color: _isListening ? Colors.red : const Color(0xFF6750A4),
+                tooltip: _isListening ? 'Kaydı durdur' : 'Sesle yaz',
+              ),
+            SizedBox(width: AppSpacing.xs),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              child: isLoading
+              child: widget.isLoading
                   ? const SizedBox(
                       width: 48,
                       height: 48,
@@ -545,7 +613,7 @@ class _MessageInputBar extends StatelessWidget {
                       ),
                     )
                   : IconButton(
-                      onPressed: onSend,
+                      onPressed: widget.onSend,
                       icon: const Icon(Icons.send_rounded),
                       color: Colors.white,
                       style: IconButton.styleFrom(

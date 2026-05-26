@@ -1,3 +1,5 @@
+import 'package:speech_to_text/speech_to_text.dart';
+
 import '../../../../imports/imports.dart';
 import '../../data/drug_repository.dart';
 
@@ -12,13 +14,52 @@ class SymptomAnalysisScreen extends StatefulWidget {
 
 class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
   final TextEditingController _controller = TextEditingController();
+  final SpeechToText _speech = SpeechToText();
+  bool _isListening = false;
+  bool _speechEnabled = false;
   bool _isLoading = false;
   String? _error;
   Map<String, dynamic>? _result;
 
   @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  Future<void> _initSpeech() async {
+    _speechEnabled = await _speech.initialize(
+      onError: (_) {
+        if (mounted) setState(() => _isListening = false);
+      },
+    );
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _toggleListening() async {
+    if (_isListening) {
+      await _speech.stop();
+      setState(() => _isListening = false);
+    } else {
+      setState(() => _isListening = true);
+      await _speech.listen(
+        onResult: (result) {
+          _controller.text = result.recognizedWords;
+          // İmleci metnin sonuna taşı
+          _controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: _controller.text.length),
+          );
+        },
+        localeId: 'tr_TR',
+        listenOptions: SpeechListenOptions(partialResults: true),
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
+    _speech.cancel();
     super.dispose();
   }
 
@@ -203,7 +244,29 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
               ),
             ),
           ),
-          SizedBox(height: AppSpacing.lg),
+          SizedBox(height: AppSpacing.sm),
+          // Sesle yazma butonu
+          if (_speechEnabled)
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: _isLoading ? null : _toggleListening,
+                icon: Icon(
+                  _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
+                  size: 20,
+                ),
+                label: Text(
+                  _isListening ? 'Kaydı durdur' : 'Sesle yaz',
+                  style: const TextStyle(fontSize: 13),
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: _isListening
+                      ? Colors.red
+                      : const Color(0xFF00897B),
+                ),
+              ),
+            ),
+          SizedBox(height: AppSpacing.sm),
           ElevatedButton.icon(
             onPressed: _isLoading ? null : _analyze,
             icon: const Icon(Icons.search_rounded),
