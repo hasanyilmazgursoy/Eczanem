@@ -17,6 +17,8 @@ class NotificationService {
 
   static const _scheduledIdsKey = 'medication_reminder_notification_ids_v1';
   static const _androidChannelId = 'medication_reminders';
+  // Alarm modu için ayrı kanal — AudioAttributesUsage.alarm ile DND bypass
+  static const _androidAlarmChannelId = 'medication_alarms';
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
@@ -172,18 +174,35 @@ class NotificationService {
             _buildTitle(),
             _buildBody(reminder),
             _nextInstanceOf(reminderTime),
-            const NotificationDetails(
-              android: AndroidNotificationDetails(
-                _androidChannelId,
-                'Medication reminders',
-                channelDescription:
-                    'Daily reminders for scheduled medication doses',
-                importance: Importance.max,
-                priority: Priority.high,
-                category: AndroidNotificationCategory.reminder,
-              ),
-              iOS: DarwinNotificationDetails(),
-            ),
+            reminder.useAlarm
+                ? const NotificationDetails(
+                    android: AndroidNotificationDetails(
+                      _androidAlarmChannelId,
+                      'İlaç Alarmları',
+                      channelDescription:
+                          'Alarm tarzı ilaç hatırlayıcıları — sessiz modda da çalar',
+                      importance: Importance.max,
+                      priority: Priority.max,
+                      category: AndroidNotificationCategory.alarm,
+                      fullScreenIntent: true,
+                      audioAttributesUsage: AudioAttributesUsage.alarm,
+                    ),
+                    iOS: DarwinNotificationDetails(
+                      interruptionLevel: InterruptionLevel.timeSensitive,
+                    ),
+                  )
+                : const NotificationDetails(
+                    android: AndroidNotificationDetails(
+                      _androidChannelId,
+                      'Medication reminders',
+                      channelDescription:
+                          'Daily reminders for scheduled medication doses',
+                      importance: Importance.max,
+                      priority: Priority.high,
+                      category: AndroidNotificationCategory.reminder,
+                    ),
+                    iOS: DarwinNotificationDetails(),
+                  ),
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             matchDateTimeComponents: DateTimeComponents.time,
             payload: '${reminder.id}:$slotIndex',
@@ -227,6 +246,19 @@ class NotificationService {
         'Medication reminders',
         description: 'Daily reminders for scheduled medication doses',
         importance: Importance.max,
+      ),
+    );
+
+    // Alarm kanalı — DND'yi bypass eder, sistem alarm sesi çalar
+    await androidPlugin?.createNotificationChannel(
+      const AndroidNotificationChannel(
+        _androidAlarmChannelId,
+        'İlaç Alarmları',
+        description: 'Alarm tarzı ilaç hatırlayıcıları — sessiz modda da çalar',
+        importance: Importance.max,
+        playSound: true,
+        enableVibration: true,
+        audioAttributesUsage: AudioAttributesUsage.alarm,
       ),
     );
   }

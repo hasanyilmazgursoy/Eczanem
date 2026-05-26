@@ -711,6 +711,7 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
   late int _timesPerDay;
   late int _unitsPerDose;
   late bool _isActive;
+  late bool _useAlarm;
   String? _error;
 
   List<String> get _suggestions =>
@@ -731,6 +732,7 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
     _timesPerDay = existing?.timesPerDay ?? 1;
     _unitsPerDose = existing?.unitsPerDose ?? 1;
     _isActive = existing?.isActive ?? true;
+    _useAlarm = existing?.useAlarm ?? false;
   }
 
   @override
@@ -770,6 +772,7 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
               stockCount: stockCount,
               notes: _notesController.text,
               isActive: _isActive,
+              useAlarm: _useAlarm,
             ))
         .copyWith(
       drugName: drugName,
@@ -784,6 +787,7 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
       ),
       notes: _notesController.text,
       isActive: _isActive,
+      useAlarm: _useAlarm,
       updatedAt: DateTime.now(),
     );
 
@@ -1011,6 +1015,19 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
               title: Text('medication_reminder.status_switch'.tr()),
               subtitle: Text('medication_reminder.status_switch_subtitle'.tr()),
               onChanged: (value) => setState(() => _isActive = value),
+            ),
+            SwitchListTile.adaptive(
+              value: _useAlarm,
+              contentPadding: EdgeInsets.zero,
+              secondary: Icon(
+                Icons.alarm_rounded,
+                color: _useAlarm ? Colors.orange : null,
+              ),
+              title: const Text('Alarm olarak çalsın'),
+              subtitle: const Text(
+                'Telefon sessizde olsa bile çalar ve ekrana bildirim gelir',
+              ),
+              onChanged: (value) => setState(() => _useAlarm = value),
             ),
             SizedBox(height: AppSpacing.sm),
             TextFormField(

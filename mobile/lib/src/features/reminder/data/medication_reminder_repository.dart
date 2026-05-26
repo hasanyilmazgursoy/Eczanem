@@ -134,6 +134,7 @@ class MedicationReminder extends Equatable {
     required this.updatedAt,
     this.notes,
     this.lastTakenAt,
+    this.useAlarm = false,
   });
 
   final String id;
@@ -149,6 +150,8 @@ class MedicationReminder extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? lastTakenAt;
+  /// true ise DND/sessize bakmaksızın alarm kanalından çalar.
+  final bool useAlarm;
 
   factory MedicationReminder.create({
     required String drugName,
@@ -158,6 +161,7 @@ class MedicationReminder extends Equatable {
     required int stockCount,
     String? notes,
     bool isActive = true,
+    bool useAlarm = false,
   }) {
     final now = DateTime.now();
     return MedicationReminder(
@@ -170,6 +174,7 @@ class MedicationReminder extends Equatable {
       stockCount: math.max(stockCount, 0),
       initialStockCount: math.max(stockCount, 0),
       isActive: isActive,
+      useAlarm: useAlarm,
       notes: _normalizeNote(notes),
       createdAt: now,
       updatedAt: now,
@@ -186,6 +191,7 @@ class MedicationReminder extends Equatable {
     int? stockCount,
     int? initialStockCount,
     bool? isActive,
+    bool? useAlarm,
     String? notes,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -205,6 +211,7 @@ class MedicationReminder extends Equatable {
         stockCount ?? this.stockCount,
       ),
       isActive: isActive ?? this.isActive,
+      useAlarm: useAlarm ?? this.useAlarm,
       notes: _normalizeNote(notes ?? this.notes),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -270,6 +277,7 @@ class MedicationReminder extends Equatable {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'last_taken_at': lastTakenAt?.toIso8601String(),
+      'use_alarm': useAlarm,
     };
   }
 
@@ -305,6 +313,7 @@ class MedicationReminder extends Equatable {
         stockCount: stockCount,
         initialStockCount: initialStockCount,
         isActive: json['is_active'] is bool ? json['is_active'] as bool : true,
+        useAlarm: json['use_alarm'] is bool ? json['use_alarm'] as bool : false,
         notes: _normalizeNote(json['notes']?.toString()),
         createdAt: _readDateTime(json['created_at']) ?? DateTime.now(),
         updatedAt: _readDateTime(json['updated_at']) ?? DateTime.now(),
@@ -346,5 +355,6 @@ class MedicationReminder extends Equatable {
         createdAt,
         updatedAt,
         lastTakenAt,
+        useAlarm,
       ];
 }
