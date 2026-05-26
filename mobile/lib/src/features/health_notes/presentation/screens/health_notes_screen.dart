@@ -704,4 +704,3 @@ class _EmptyNotesState extends StatelessWidget {
     );
   }
 }
-
