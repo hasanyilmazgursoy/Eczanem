@@ -16,6 +16,7 @@ class AppEmptyState extends StatelessWidget {
   const AppEmptyState({
     super.key,
     this.icon = Icons.inbox_outlined,
+    this.imagePath,
     required this.title,
     this.subtitle,
     this.actionLabel,
@@ -23,6 +24,8 @@ class AppEmptyState extends StatelessWidget {
   });
 
   final IconData icon;
+  /// Varsa ikonun yerine gösterilecek asset resim yolu (ör: 'assets/images/search_empty.png')
+  final String? imagePath;
   final String title;
   final String? subtitle;
   final String? actionLabel;
@@ -39,8 +42,11 @@ class AppEmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon,
-                size: 64, color: cs.onSurfaceVariant.withValues(alpha: 0.5)),
+            if (imagePath != null)
+              Image.asset(imagePath!, height: 160, fit: BoxFit.contain)
+            else
+              Icon(icon,
+                  size: 64, color: cs.onSurfaceVariant.withValues(alpha: 0.5)),
             const SizedBox(height: 20),
             Text(
               title,

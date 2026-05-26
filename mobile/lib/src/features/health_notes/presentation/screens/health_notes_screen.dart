@@ -83,6 +83,25 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
     );
   }
 
+  void _showDoctorView() {
+    if (_notes.isEmpty) {
+      context.showTypedSnackBar(
+        'health_notes.report_no_notes'.tr(),
+        type: SnackBarType.info,
+      );
+      return;
+    }
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (_) => _DoctorViewSheet(notes: _notes),
+    );
+  }
+
   Future<void> _deleteNote(HealthNote note) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -142,6 +161,15 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
           ),
         ),
         actions: [
+          // Klinik özet (Doktora Göster) butonu
+          IconButton(
+            onPressed: _showDoctorView,
+            icon: const Icon(
+              Icons.medical_information_rounded,
+              color: Colors.white,
+            ),
+            tooltip: 'health_notes.doctor_view'.tr(),
+          ),
           // Rapor oluşturma butonu
           IconButton(
             onPressed: _showReportSheet,
@@ -427,6 +455,77 @@ class _NoteCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: AppSpacing.sm),
+              // Ölçüm değerleri (kategoriye göre)
+              if (note.bloodPressureDisplay != null)
+                _MeasurementBadge(
+                  icon: Icons.favorite_rounded,
+                  value: note.bloodPressureDisplay!,
+                  color: Colors.red.shade600,
+                ),
+              if (note.glucoseValue != null)
+                _MeasurementBadge(
+                  icon: Icons.water_drop_rounded,
+                  value: '${note.glucoseValue!.toStringAsFixed(1)} mg/dL',
+                  color: Colors.amber.shade700,
+                ),
+              if (note.painLevel != null)
+                _MeasurementBadge(
+                  icon: Icons.thermostat_rounded,
+                  value: 'Ağrı: ${note.painLevel}/10',
+                  color: Colors.orange.shade700,
+                ),
+              // Semptom chip'leri — en fazla 3 göster
+              if (note.symptoms.isNotEmpty) ...[
+                SizedBox(height: AppSpacing.xs),
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 2,
+                  children: [
+                    ...note.symptoms.take(3).map(
+                          (s) => Chip(
+                            label: Text(s),
+                            labelStyle: const TextStyle(fontSize: 11),
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            padding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        ),
+                    if (note.symptoms.length > 3)
+                      Chip(
+                        label: Text('+${note.symptoms.length - 3}'),
+                        labelStyle: const TextStyle(fontSize: 11),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        padding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                  ],
+                ),
+              ],
+              // İlaç alınmadı uyarısı
+              if (!note.medicationTaken) ...[
+                SizedBox(height: AppSpacing.xs),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.medication_outlined,
+                      size: 14,
+                      color: colorScheme.error,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'health_notes.medication_not_taken'.tr(),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: colorScheme.error,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              SizedBox(height: AppSpacing.sm),
               // Not metni — maksimum 4 satır
               Text(
                 note.text,
@@ -456,24 +555,61 @@ class _NoteEditorSheet extends StatefulWidget {
 
 class _NoteEditorSheetState extends State<_NoteEditorSheet> {
   late final TextEditingController _textCtrl;
+  late final TextEditingController _systolicCtrl;
+  late final TextEditingController _diastolicCtrl;
+  late final TextEditingController _glucoseCtrl;
   late DateTime _selectedDate;
   late String _selectedCategory;
   late String _selectedMood;
+  late double _painLevel;
+  late List<String> _selectedSymptoms;
+  late bool _medicationTaken;
   AppStatus _status = AppStatus.initial;
+
+  /// Hızlı semptom seçenekleri.
+  static const _kSymptoms = [
+    'Bulantı',
+    'Baş dönmesi',
+    'Yorgunluk',
+    'Baş ağrısı',
+    'Karın ağrısı',
+    'Nefes darlığı',
+    'Çarpıntı',
+    'Şişkinlik',
+    'İştahsızlık',
+    'Uyku sorunu',
+    'Titreme',
+    'Ateş',
+  ];
 
   @override
   void initState() {
     super.initState();
     final existing = widget.existing;
     _textCtrl = TextEditingController(text: existing?.text ?? '');
+    _systolicCtrl = TextEditingController(
+      text: existing?.systolic?.toString() ?? '',
+    );
+    _diastolicCtrl = TextEditingController(
+      text: existing?.diastolic?.toString() ?? '',
+    );
+    _glucoseCtrl = TextEditingController(
+      text: existing?.glucoseValue?.toString() ?? '',
+    );
     _selectedDate = existing?.date ?? DateTime.now();
     _selectedCategory = existing?.category ?? HealthNoteCategory.genel;
     _selectedMood = existing?.mood ?? HealthNoteMood.iyi;
+    _painLevel = existing?.painLevel?.toDouble() ?? 5.0;
+    _selectedSymptoms = List<String>.from(existing?.symptoms ?? const []);
+    _medicationTaken = existing?.medicationTaken ?? false;
   }
 
   @override
   void dispose() {
     _textCtrl.dispose();
+    _systolicCtrl.dispose();
+    _diastolicCtrl.dispose();
+    _glucoseCtrl.dispose();
     super.dispose();
   }
 
@@ -498,6 +634,20 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
 
     setState(() => _status = AppStatus.loading);
 
+    // Kategoriye göre ölçüm değerlerini parse et.
+    final int? systolic = _selectedCategory == HealthNoteCategory.tansiyon
+        ? int.tryParse(_systolicCtrl.text)
+        : null;
+    final int? diastolic = _selectedCategory == HealthNoteCategory.tansiyon
+        ? int.tryParse(_diastolicCtrl.text)
+        : null;
+    final double? glucose = _selectedCategory == HealthNoteCategory.seker
+        ? double.tryParse(_glucoseCtrl.text)
+        : null;
+    final int? pain = _selectedCategory == HealthNoteCategory.agri
+        ? _painLevel.round()
+        : null;
+
     final Either<Failure, HealthNote> result;
 
     if (widget.existing != null) {
@@ -506,6 +656,12 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
         category: _selectedCategory,
         text: _textCtrl.text,
         mood: _selectedMood,
+        systolic: systolic,
+        diastolic: diastolic,
+        glucoseValue: glucose,
+        painLevel: pain,
+        symptoms: _selectedSymptoms,
+        medicationTaken: _medicationTaken,
       );
       result = await HealthNotesRepository.instance.updateNote(updated);
     } else {
@@ -514,6 +670,12 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
         category: _selectedCategory,
         text: _textCtrl.text,
         mood: _selectedMood,
+        systolic: systolic,
+        diastolic: diastolic,
+        glucoseValue: glucose,
+        painLevel: pain,
+        symptoms: _selectedSymptoms,
+        medicationTaken: _medicationTaken,
       );
     }
 
@@ -534,121 +696,278 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
     final textTheme = context.textTheme;
     final isEdit = widget.existing != null;
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(
-        left: AppSpacing.xl,
-        right: AppSpacing.xl,
-        top: AppSpacing.lg,
-        bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpacing.xl,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Başlık
-          Text(
-            isEdit
-                ? 'health_notes.edit_title'.tr()
-                : 'health_notes.add_title'.tr(),
-            style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+    // Bug fix: SafeArea + dış Padding klavye yüksekliğini yönetir;
+    // iç scroll sabit padding kullanır.
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.xl,
+            AppSpacing.lg,
+            AppSpacing.xl,
+            AppSpacing.xl,
           ),
-          SizedBox(height: AppSpacing.xl),
-          // Tarih seçici
-          InkWell(
-            onTap: _pickDate,
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Başlık
+              Text(
+                isEdit
+                    ? 'health_notes.edit_title'.tr()
+                    : 'health_notes.add_title'.tr(),
+                style:
+                    textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
-              decoration: BoxDecoration(
-                border: Border.all(color: colorScheme.outline),
+              SizedBox(height: AppSpacing.xl),
+              // Tarih seçici
+              InkWell(
+                onTap: _pickDate,
                 borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.calendar_today_rounded,
-                      size: 20, color: colorScheme.primary),
-                  SizedBox(width: AppSpacing.sm),
-                  Text(
-                    '${_selectedDate.day.toString().padLeft(2, '0')}.${_selectedDate.month.toString().padLeft(2, '0')}.${_selectedDate.year}',
-                    style: textTheme.bodyLarge,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
                   ),
-                ],
+                  decoration: BoxDecoration(
+                    border: Border.all(color: colorScheme.outline),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_today_rounded,
+                          size: 20, color: colorScheme.primary),
+                      SizedBox(width: AppSpacing.sm),
+                      Text(
+                        '${_selectedDate.day.toString().padLeft(2, '0')}.${_selectedDate.month.toString().padLeft(2, '0')}.${_selectedDate.year}',
+                        style: textTheme.bodyLarge,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          SizedBox(height: AppSpacing.md),
-          // Kategori seçimi
-          Text(
-            'health_notes.category_label'.tr(),
-            style: textTheme.labelLarge,
-          ),
-          SizedBox(height: AppSpacing.xs),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.xs,
-            children: HealthNoteCategory.all.map((cat) {
-              final isSelected = _selectedCategory == cat;
-              return ChoiceChip(
-                label: Text(
-                  '${HealthNoteCategory.iconFor(cat)} ${"health_notes.category_$cat".tr()}',
+              SizedBox(height: AppSpacing.md),
+              // Kategori seçimi
+              Text(
+                'health_notes.category_label'.tr(),
+                style: textTheme.labelLarge,
+              ),
+              SizedBox(height: AppSpacing.xs),
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
+                children: HealthNoteCategory.all.map((cat) {
+                  final isSelected = _selectedCategory == cat;
+                  return ChoiceChip(
+                    label: Text(
+                      '${HealthNoteCategory.iconFor(cat)} ${'health_notes.category_$cat'.tr()}',
+                    ),
+                    selected: isSelected,
+                    onSelected: (_) =>
+                        setState(() => _selectedCategory = cat),
+                    selectedColor: const Color(0xFF1565C0),
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.white : colorScheme.onSurface,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: AppSpacing.md),
+
+              // ── Tansiyon alanları ──
+              if (_selectedCategory == HealthNoteCategory.tansiyon) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _systolicCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'health_notes.systolic'.tr(),
+                          suffixText: 'mmHg',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: TextField(
+                        controller: _diastolicCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'health_notes.diastolic'.tr(),
+                          suffixText: 'mmHg',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                selected: isSelected,
-                onSelected: (_) => setState(() => _selectedCategory = cat),
-                selectedColor: const Color(0xFF1565C0),
-                labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : colorScheme.onSurface,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                SizedBox(height: AppSpacing.md),
+              ],
+
+              // ── Kan şekeri alanı ──
+              if (_selectedCategory == HealthNoteCategory.seker) ...[
+                TextField(
+                  controller: _glucoseCtrl,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(
+                    labelText: 'health_notes.glucose_value'.tr(),
+                    suffixText: 'mg/dL',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
-              );
-            }).toList(),
-          ),
-          SizedBox(height: AppSpacing.md),
-          // Mood seçimi
-          Text(
-            'health_notes.mood_label'.tr(),
-            style: textTheme.labelLarge,
-          ),
-          SizedBox(height: AppSpacing.xs),
-          Wrap(
-            spacing: AppSpacing.sm,
-            children: HealthNoteMood.all.map((mood) {
-              final isSelected = _selectedMood == mood;
-              return ChoiceChip(
-                label: Text(
-                  mood,
-                  style: const TextStyle(fontSize: 22),
+                SizedBox(height: AppSpacing.md),
+              ],
+
+              // ── Ağrı seviyesi slider'ı ──
+              if (_selectedCategory == HealthNoteCategory.agri) ...[
+                Row(
+                  children: [
+                    Text(
+                      'health_notes.pain_level'.tr(),
+                      style: textTheme.labelLarge,
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${_painLevel.round()}/10',
+                      style: textTheme.bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-                selected: isSelected,
-                onSelected: (_) => setState(() => _selectedMood = mood),
-                selectedColor: colorScheme.primaryContainer,
-              );
-            }).toList(),
+                Row(
+                  children: [
+                    Text(
+                      'health_notes.pain_none'.tr(),
+                      style: textTheme.bodySmall,
+                    ),
+                    Expanded(
+                      child: Slider(
+                        value: _painLevel,
+                        min: 0,
+                        max: 10,
+                        divisions: 10,
+                        activeColor: _painColor(_painLevel),
+                        onChanged: (v) => setState(() => _painLevel = v),
+                      ),
+                    ),
+                    Text(
+                      'health_notes.pain_severe'.tr(),
+                      style: textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppSpacing.md),
+              ],
+
+              // Mood seçimi
+              Text(
+                'health_notes.mood_label'.tr(),
+                style: textTheme.labelLarge,
+              ),
+              SizedBox(height: AppSpacing.xs),
+              Wrap(
+                spacing: AppSpacing.sm,
+                children: HealthNoteMood.all.map((mood) {
+                  final isSelected = _selectedMood == mood;
+                  return ChoiceChip(
+                    label: Text(
+                      mood,
+                      style: const TextStyle(fontSize: 22),
+                    ),
+                    selected: isSelected,
+                    onSelected: (_) => setState(() => _selectedMood = mood),
+                    selectedColor: colorScheme.primaryContainer,
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: AppSpacing.md),
+
+              // ── Semptom hızlı seçimi ──
+              Text(
+                'health_notes.symptoms_label'.tr(),
+                style: textTheme.labelLarge,
+              ),
+              SizedBox(height: AppSpacing.xs),
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
+                children: _kSymptoms.map((s) {
+                  final selected = _selectedSymptoms.contains(s);
+                  return FilterChip(
+                    label: Text(s),
+                    selected: selected,
+                    onSelected: (v) => setState(() {
+                      if (v) {
+                        _selectedSymptoms.add(s);
+                      } else {
+                        _selectedSymptoms.remove(s);
+                      }
+                    }),
+                    selectedColor:
+                        const Color(0xFF1565C0).withValues(alpha: 0.2),
+                    checkmarkColor: const Color(0xFF1565C0),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: AppSpacing.md),
+
+              // ── İlaç alındı switch ──
+              SwitchListTile.adaptive(
+                value: _medicationTaken,
+                onChanged: (v) => setState(() => _medicationTaken = v),
+                title: Text('health_notes.medication_taken'.tr()),
+                subtitle:
+                    Text('health_notes.medication_taken_subtitle'.tr()),
+                activeColor: const Color(0xFF1565C0),
+                contentPadding: EdgeInsets.zero,
+              ),
+              SizedBox(height: AppSpacing.md),
+
+              // Not metni
+              AppTextField(
+                controller: _textCtrl,
+                label: 'health_notes.text_label'.tr(),
+                hint: 'health_notes.text_hint'.tr(),
+                maxLines: 5,
+                autofocus: !isEdit,
+              ),
+              SizedBox(height: AppSpacing.xl),
+              // Kaydet butonu
+              AppButton(
+                onPressed: _status.isLoading ? null : _save,
+                isLoading: _status.isLoading,
+                label: isEdit
+                    ? 'health_notes.update'.tr()
+                    : 'health_notes.save'.tr(),
+                color: const Color(0xFF1565C0),
+                isFullWidth: true,
+              ),
+            ],
           ),
-          SizedBox(height: AppSpacing.md),
-          // Not metni
-          AppTextField(
-            controller: _textCtrl,
-            label: 'health_notes.text_label'.tr(),
-            hint: 'health_notes.text_hint'.tr(),
-            maxLines: 5,
-            autofocus: !isEdit,
-          ),
-          SizedBox(height: AppSpacing.xl),
-          // Kaydet butonu
-          AppButton(
-            onPressed: _status.isLoading ? null : _save,
-            isLoading: _status.isLoading,
-            label:
-                isEdit ? 'health_notes.update'.tr() : 'health_notes.save'.tr(),
-            color: const Color(0xFF1565C0),
-            isFullWidth: true,
-          ),
-        ],
+        ),
       ),
     );
+  }
+
+  /// Ağrı seviyesine göre renk — 0–3 yeşil, 4–6 turuncu, 7+ kırmızı.
+  Color _painColor(double level) {
+    if (level <= 3) return Colors.green;
+    if (level <= 6) return Colors.orange;
+    return Colors.red;
   }
 }
 
@@ -671,7 +990,11 @@ class _EmptyNotesState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('📋', style: TextStyle(fontSize: 72)),
+            Image.asset(
+              'assets/images/health_notes_empty.png',
+              height: 160,
+              fit: BoxFit.contain,
+            ),
             SizedBox(height: AppSpacing.lg),
             Text(
               isFiltered

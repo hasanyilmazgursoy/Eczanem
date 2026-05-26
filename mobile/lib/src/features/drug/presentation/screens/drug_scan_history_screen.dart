@@ -231,18 +231,10 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.document_scanner_outlined,
-                size: 36,
-                color: colorScheme.onSurfaceVariant,
-              ),
+            Image.asset(
+              'assets/images/search_empty.png',
+              height: 160,
+              fit: BoxFit.contain,
             ),
             SizedBox(height: AppSpacing.lg),
             Text(

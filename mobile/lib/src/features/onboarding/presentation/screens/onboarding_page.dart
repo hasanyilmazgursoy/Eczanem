@@ -30,33 +30,32 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.didChangeDependencies();
     if (_dataInitialized) return;
     _dataInitialized = true;
-    final primaryColor = Theme.of(context).colorScheme.primary;
     _onboardingData = [
       {
         'title': 'onboarding.onboarding_title_1'.tr(),
         'subtitle': 'onboarding.onboarding_subtitle_1'.tr(),
-        'pageWidget': Icon(
-          Icons.medication_rounded,
-          size: 140,
-          color: primaryColor,
+        'pageWidget': Image.asset(
+          'assets/images/onboarding_scan.png',
+          height: 220,
+          fit: BoxFit.contain,
         ),
       },
       {
         'title': 'onboarding.onboarding_title_2'.tr(),
         'subtitle': 'onboarding.onboarding_subtitle_2'.tr(),
-        'pageWidget': Icon(
-          Icons.family_restroom_rounded,
-          size: 140,
-          color: primaryColor,
+        'pageWidget': Image.asset(
+          'assets/images/onboarding_family.png',
+          height: 220,
+          fit: BoxFit.contain,
         ),
       },
       {
         'title': 'onboarding.onboarding_title_3'.tr(),
         'subtitle': 'onboarding.onboarding_subtitle_3'.tr(),
-        'pageWidget': Icon(
-          Icons.emergency_rounded,
-          size: 140,
-          color: primaryColor,
+        'pageWidget': Image.asset(
+          'assets/images/onboarding_emergency.png',
+          height: 220,
+          fit: BoxFit.contain,
         ),
       },
     ];

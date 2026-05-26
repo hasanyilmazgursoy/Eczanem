@@ -650,18 +650,10 @@ class _EmptyState extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: context.colors.primaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.alarm_add_rounded,
-                size: 36,
-                color: context.colors.primary,
-              ),
+            Image.asset(
+              'assets/images/reminder_empty.png',
+              height: 160,
+              fit: BoxFit.contain,
             ),
             SizedBox(height: AppSpacing.lg),
             Text(
