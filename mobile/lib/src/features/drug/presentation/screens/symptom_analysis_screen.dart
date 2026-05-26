@@ -23,6 +23,8 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
   }
 
   Future<void> _analyze() async {
+    // Klavyeyi kapat
+    FocusManager.instance.primaryFocus?.unfocus();
     final description = _controller.text.trim();
     if (description.isEmpty) {
       setState(() => _error = 'symptom_analysis.empty_error'.tr());

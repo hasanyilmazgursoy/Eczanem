@@ -31,6 +31,8 @@ class _AiChatScreenState extends State<AiChatScreen> {
     final text = _inputController.text.trim();
     if (text.isEmpty || _isLoading) return;
 
+    // Klavyeyi kapat
+    FocusManager.instance.primaryFocus?.unfocus();
     _inputController.clear();
 
     setState(() {
