@@ -346,29 +346,30 @@ class _ReminderCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Üst satır: ikon + ilaç adı + switch + 3-nokta menü
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: (reminder.isActive
                           ? colorScheme.primary
                           : colorScheme.outline)
                       .withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   reminder.isActive
                       ? Icons.alarm_on_rounded
                       : Icons.alarm_off_rounded,
+                  size: 22,
                   color: reminder.isActive
                       ? colorScheme.primary
                       : colorScheme.outline,
                 ),
               ),
-              SizedBox(width: AppSpacing.md),
+              SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,9 +380,8 @@ class _ReminderCard extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    SizedBox(height: AppSpacing.xxs),
                     Text(
-                      _buildSubtitle(context, reminder),
+                      _formatTimes(context, reminder.reminderTimes),
                       style: context.textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),
@@ -389,37 +389,50 @@ class _ReminderCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Switch.adaptive(
-                value: reminder.isActive,
-                onChanged: onToggle,
+              Switch.adaptive(value: reminder.isActive, onChanged: onToggle),
+              // Düzenle / Sil menüsü
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert_rounded),
+                onSelected: (value) {
+                  if (value == 'edit') onEdit();
+                  if (value == 'delete') onDelete();
+                },
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: ListTile(
+                      leading: const Icon(Icons.edit_outlined),
+                      title: Text('medication_reminder.edit_button'.tr()),
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.delete_outline_rounded,
+                        color: colorScheme.error,
+                      ),
+                      title: Text(
+                        'medication_reminder.delete_tooltip'.tr(),
+                        style: TextStyle(color: colorScheme.error),
+                      ),
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          if (reminder.notes != null) ...[
-            SizedBox(height: AppSpacing.sm),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(AppSpacing.sm),
-              decoration: BoxDecoration(
-                color:
-                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.45),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                reminder.notes!,
-                style: context.textTheme.bodySmall,
-              ),
-            ),
-          ],
-          SizedBox(height: AppSpacing.md),
+
+          // Meta chip satırı: günde kaç kez + doz
+          SizedBox(height: AppSpacing.sm),
           Wrap(
             spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
-              _MetaChip(
-                icon: Icons.schedule_rounded,
-                label: _formatTimes(context, reminder.reminderTimes),
-              ),
               _MetaChip(
                 icon: Icons.repeat_rounded,
                 label: 'medication_reminder.times_per_day_value'
@@ -432,6 +445,19 @@ class _ReminderCard extends StatelessWidget {
               ),
             ],
           ),
+
+          // Notlar
+          if (reminder.notes != null && reminder.notes!.isNotEmpty) ...[
+            SizedBox(height: AppSpacing.xs),
+            Text(
+              reminder.notes!,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+
+          // Stok takibi
           if (reminder.hasStockTracking) ...[
             SizedBox(height: AppSpacing.md),
             Row(
@@ -461,12 +487,12 @@ class _ReminderCard extends StatelessWidget {
                   ),
               ],
             ),
-            SizedBox(height: AppSpacing.sm),
+            SizedBox(height: AppSpacing.xs),
             ClipRRect(
               borderRadius: BorderRadius.circular(999),
               child: LinearProgressIndicator(
                 value: reminder.stockProgress,
-                minHeight: 10,
+                minHeight: 8,
                 backgroundColor: colorScheme.surfaceContainerHighest,
                 valueColor: AlwaysStoppedAnimation<Color>(stockColor),
               ),
@@ -483,57 +509,18 @@ class _ReminderCard extends StatelessWidget {
               ),
             ],
           ],
+
+          // Doz al butonu
           SizedBox(height: AppSpacing.md),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: onEdit,
-                      icon: const Icon(Icons.edit_outlined),
-                      label: Text('medication_reminder.edit_button'.tr()),
-                    ),
-                  ),
-                  SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: AppButton(
-                      label: 'medication_reminder.take_now_button'.tr(),
-                      onPressed: onTakeDose,
-                      isFullWidth: true,
-                      prefixIcon:
-                          const Icon(Icons.check_circle_outline_rounded),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: AppSpacing.sm),
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton.filledTonal(
-                  onPressed: onDelete,
-                  icon: const Icon(Icons.delete_outline_rounded),
-                  tooltip: 'medication_reminder.delete_tooltip'.tr(),
-                ),
-              ),
-            ],
+          AppButton(
+            label: 'medication_reminder.take_now_button'.tr(),
+            onPressed: onTakeDose,
+            isFullWidth: true,
+            prefixIcon: const Icon(Icons.check_circle_outline_rounded),
           ),
         ],
       ),
     );
-  }
-
-  static String _buildSubtitle(
-    BuildContext context,
-    MedicationReminder reminder,
-  ) {
-    final statusKey = reminder.isActive
-        ? 'medication_reminder.status_active'
-        : 'medication_reminder.status_paused';
-    return '${statusKey.tr()} · ${'medication_reminder.times_per_day_value'.tr(args: [
-          reminder.timesPerDay.toString()
-        ])}';
   }
 
   static String _formatTime(BuildContext context, TimeOfDay time) {
@@ -803,6 +790,23 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
     Navigator.of(context).pop(reminder);
   }
 
+  /// Bölüm başlığı — ikonlu, renkli etiket
+  Widget _sectionLabel(BuildContext context, IconData icon, String title) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: context.colors.primary),
+        SizedBox(width: AppSpacing.xs),
+        Text(
+          title,
+          style: context.textTheme.labelLarge?.copyWith(
+            color: context.colors.primary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final titleKey = widget.existing == null
@@ -834,6 +838,14 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
               ),
             ),
             SizedBox(height: AppSpacing.lg),
+
+            // ── İlaç Adı ──────────────────────────────────────────────────
+            _sectionLabel(
+              context,
+              Icons.medication_outlined,
+              'medication_reminder.drug_name_hint'.tr(),
+            ),
+            SizedBox(height: AppSpacing.xs),
             AppTextField(
               controller: _drugController,
               hint: 'medication_reminder.drug_name_hint'.tr(),
@@ -859,46 +871,46 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
               ),
             ],
             SizedBox(height: AppSpacing.lg),
-            Row(
-              children: [
-                Expanded(
-                  child: _PickerTile(
-                    title: 'medication_reminder.time_label'.tr(),
-                    value: MaterialLocalizations.of(context)
-                        .formatTimeOfDay(_time),
-                    icon: Icons.schedule_rounded,
-                    onTap: _pickTime,
-                  ),
-                ),
-                SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: DropdownButtonFormField<int>(
-                    initialValue: _timesPerDay,
-                    decoration: InputDecoration(
-                      labelText: 'medication_reminder.times_per_day_label'.tr(),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    items: List.generate(
-                      6,
-                      (index) => DropdownMenuItem(
-                        value: index + 1,
-                        child: Text(
-                          'medication_reminder.times_per_day_value'
-                              .tr(args: [(index + 1).toString()]),
-                        ),
-                      ),
-                    ),
-                    onChanged: (value) {
-                      if (value == null) return;
-                      setState(() => _timesPerDay = value);
-                    },
-                  ),
-                ),
-              ],
+
+            // ── Zamanlama ─────────────────────────────────────────────────
+            _sectionLabel(
+              context,
+              Icons.schedule_rounded,
+              'medication_reminder.time_label'.tr(),
+            ),
+            SizedBox(height: AppSpacing.xs),
+            _PickerTile(
+              title: 'medication_reminder.time_label'.tr(),
+              value: MaterialLocalizations.of(context).formatTimeOfDay(_time),
+              icon: Icons.schedule_rounded,
+              onTap: _pickTime,
             ),
             SizedBox(height: AppSpacing.sm),
+            DropdownButtonFormField<int>(
+              initialValue: _timesPerDay,
+              decoration: InputDecoration(
+                labelText: 'medication_reminder.times_per_day_label'.tr(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              items: List.generate(
+                6,
+                (index) => DropdownMenuItem(
+                  value: index + 1,
+                  child: Text(
+                    'medication_reminder.times_per_day_value'
+                        .tr(args: [(index + 1).toString()]),
+                  ),
+                ),
+              ),
+              onChanged: (value) {
+                if (value == null) return;
+                setState(() => _timesPerDay = value);
+              },
+            ),
+            SizedBox(height: AppSpacing.sm),
+            // Zamanlama önizlemesi
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(AppSpacing.sm),
@@ -931,7 +943,15 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
                 ),
               ),
             ),
-            SizedBox(height: AppSpacing.md),
+            SizedBox(height: AppSpacing.lg),
+
+            // ── Doz & Stok ────────────────────────────────────────────────
+            _sectionLabel(
+              context,
+              Icons.medication_liquid_outlined,
+              'medication_reminder.units_per_dose_label'.tr(),
+            ),
+            SizedBox(height: AppSpacing.xs),
             Row(
               children: [
                 Expanded(
@@ -976,7 +996,15 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
                 ),
               ],
             ),
-            SizedBox(height: AppSpacing.md),
+            SizedBox(height: AppSpacing.lg),
+
+            // ── Ayarlar & Notlar ──────────────────────────────────────────
+            _sectionLabel(
+              context,
+              Icons.tune_rounded,
+              'medication_reminder.status_switch'.tr(),
+            ),
+            SizedBox(height: AppSpacing.xs),
             SwitchListTile.adaptive(
               value: _isActive,
               contentPadding: EdgeInsets.zero,
