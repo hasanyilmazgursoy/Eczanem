@@ -632,8 +632,6 @@ class _PharmacyTile extends StatelessWidget {
                 pharmacy.address,
                 style: textTheme.bodySmall
                     ?.copyWith(color: colorScheme.onSurfaceVariant),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             if (pharmacy.distanceKm != null)
               Padding(
