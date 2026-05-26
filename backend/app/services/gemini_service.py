@@ -1,8 +1,8 @@
 ﻿"""Google AI Studio (Gemini API) üzerinden ilaç bilgisi sorgulama."""
 
 import base64
-from io import BytesIO
 import json
+from io import BytesIO
 
 import httpx
 from fastapi import HTTPException
