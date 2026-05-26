@@ -501,7 +501,7 @@
     },
     "ai_chat": {
         "title": "AI Eczacı Asistanı",
-        "powered_by": "Gemini AI destekli · Genel bilgilendirme amaçlıdır",
+        "powered_by": "Yapay Zeka Destekli · Genel bilgilendirme amaçlıdır",
         "input_hint": "Sorunuzu yazın...",
         "send": "Gönder",
         "empty_title": "Eczacı Asistanınıza Sorun",

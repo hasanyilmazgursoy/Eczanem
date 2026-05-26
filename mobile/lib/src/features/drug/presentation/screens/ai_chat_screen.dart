@@ -1,3 +1,5 @@
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+
 import '../../../../imports/imports.dart';
 import '../../data/drug_repository.dart';
 
@@ -335,13 +337,33 @@ class _ChatBubble extends StatelessWidget {
                   bottomRight: Radius.circular(isUser ? 4 : 20),
                 ),
               ),
-              child: Text(
-                message,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: isUser ? Colors.white : colorScheme.onSurface,
-                  height: 1.5,
-                ),
-              ),
+              // Kullanıcı mesajı düz metin; AI yanıtı markdown olarak render edilir
+              child: isUser
+                  ? Text(
+                      message,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: Colors.white,
+                        height: 1.5,
+                      ),
+                    )
+                  : MarkdownBody(
+                      data: message,
+                      styleSheet: MarkdownStyleSheet(
+                        p: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                          height: 1.5,
+                        ),
+                        strong: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        listBullet: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                        ),
+                        blockSpacing: 8,
+                      ),
+                      shrinkWrap: true,
+                    ),
             ),
           ),
         ],

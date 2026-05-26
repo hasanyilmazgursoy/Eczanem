@@ -1,7 +1,6 @@
+import 'package:eczanem/src/features/auth/presentation/providers/session_provider.dart';
 import 'package:eczanem/src/imports/core_imports.dart';
 import 'package:eczanem/src/imports/packages_imports.dart';
-
-import 'package:eczanem/src/features/auth/presentation/providers/session_provider.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -343,7 +342,7 @@ class _AiFeaturedCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Gemini AI',
+                            'Yapay Zeka',
                             style: textTheme.labelSmall?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,

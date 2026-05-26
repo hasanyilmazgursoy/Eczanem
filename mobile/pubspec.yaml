@@ -81,6 +81,9 @@ dependencies:
   # QR Kod
   qr_flutter: ^4.1.0
 
+  # AI yanıtlarını markdown olarak render etmek için
+  flutter_markdown_plus: ^1.0.7
+
   flutter_native_splash: ^2.4.3
 
 dev_dependencies:

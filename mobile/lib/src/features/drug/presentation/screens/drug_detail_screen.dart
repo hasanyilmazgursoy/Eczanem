@@ -63,7 +63,7 @@ class DrugDetailScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'Gemini AI',
+                    'Yapay Zeka',
                     style: context.textTheme.labelSmall?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w800,

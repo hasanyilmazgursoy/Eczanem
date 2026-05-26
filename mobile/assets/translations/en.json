@@ -501,7 +501,7 @@
   },
   "ai_chat": {
     "title": "AI Pharmacist Assistant",
-    "powered_by": "Powered by Gemini AI · For general information only",
+    "powered_by": "AI Powered · For general information only",
     "input_hint": "Type your question...",
     "send": "Send",
     "empty_title": "Ask Your Pharmacist Assistant",
