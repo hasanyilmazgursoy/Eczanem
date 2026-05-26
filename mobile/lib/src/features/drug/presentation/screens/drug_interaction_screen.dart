@@ -1,3 +1,5 @@
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+
 import '../../../../imports/imports.dart';
 import '../../data/drug_history_repository.dart';
 import '../../data/drug_repository.dart';
@@ -320,10 +322,11 @@ class _InteractionResultCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: AppSpacing.md),
-              Text(
-                result['ozet']?.toString() ??
+              MarkdownBody(
+                data: result['ozet']?.toString() ??
                     'drug_interaction.no_summary'.tr(),
-                style: context.textTheme.bodyMedium,
+                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                    .copyWith(p: context.textTheme.bodyMedium),
               ),
             ],
           ),
@@ -438,7 +441,11 @@ class _InteractionItemCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: AppSpacing.xs),
-          Text(item['neden']?.toString() ?? '-'),
+          MarkdownBody(
+            data: item['neden']?.toString() ?? '-',
+            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                .copyWith(p: context.textTheme.bodyMedium),
+          ),
           SizedBox(height: AppSpacing.sm),
           Container(
             width: double.infinity,
@@ -447,9 +454,12 @@ class _InteractionItemCard extends StatelessWidget {
               color: color.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(
-              item['oneri']?.toString() ?? '-',
-              style: context.textTheme.bodySmall?.copyWith(color: color),
+            child: MarkdownBody(
+              data: item['oneri']?.toString() ?? '-',
+              styleSheet:
+                  MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                p: context.textTheme.bodySmall?.copyWith(color: color),
+              ),
             ),
           ),
         ],
@@ -494,17 +504,10 @@ class _SectionCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: AppSpacing.sm),
-          ...items.map(
-            (item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('• ', style: TextStyle(color: color)),
-                  Expanded(child: Text(item)),
-                ],
-              ),
-            ),
+          MarkdownBody(
+            data: items.map((item) => '\u2022 $item').join('  \n'),
+            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                .copyWith(p: context.textTheme.bodyMedium),
           ),
         ],
       ),

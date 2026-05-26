@@ -1,4 +1,6 @@
-﻿import '../../../../imports/imports.dart';
+﻿import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+
+import '../../../../imports/imports.dart';
 
 /// Ä°laÃ§ bilgi detay ekranÄ± â€” API'den dÃ¶nen veriyi gÃ¶sterir
 class DrugDetailScreen extends StatelessWidget {
@@ -245,7 +247,11 @@ class _InfoCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: AppSpacing.sm),
-            Text(content, style: context.textTheme.bodyMedium),
+            MarkdownBody(
+              data: content,
+              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                  .copyWith(p: context.textTheme.bodyMedium),
+            ),
           ],
         ),
       ),
@@ -303,16 +309,16 @@ class _ListCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: AppSpacing.sm),
-            ...items.map((item) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('â€¢ ', style: TextStyle(color: color)),
-                      Expanded(child: Text(item)),
-                    ],
-                  ),
-                )),
+            // Her madde '• item' olarak markdown'a dönüştürülüyor;
+            // bu sayede içindeki bold/italic de düzgün render edilir
+            MarkdownBody(
+              data: items.map((item) => '\u2022 $item').join('  \n'),
+              styleSheet:
+                  MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                p: context.textTheme.bodyMedium,
+                listBullet: TextStyle(color: color),
+              ),
+            ),
           ],
         ),
       ),

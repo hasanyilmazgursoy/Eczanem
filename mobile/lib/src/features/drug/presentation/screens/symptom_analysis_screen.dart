@@ -1,3 +1,4 @@
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../../../imports/imports.dart';
@@ -336,9 +337,10 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
           icon: Icons.summarize_rounded,
           title: 'symptom_analysis.summary_title'.tr(),
           color: const Color(0xFF00897B),
-          child: Text(
-            result['semptomlar_ozeti'] as String? ?? '',
-            style: textTheme.bodyMedium,
+          child: MarkdownBody(
+            data: result['semptomlar_ozeti'] as String? ?? '',
+            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                .copyWith(p: textTheme.bodyMedium),
           ),
         ),
         SizedBox(height: AppSpacing.lg),
@@ -347,21 +349,12 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
           icon: Icons.search_rounded,
           title: 'symptom_analysis.causes_title'.tr(),
           color: const Color(0xFF1565C0),
-          child: Column(
-            children: ((result['olasilik_nedenler'] as List?) ?? [])
-                .map(
-                  (item) => Padding(
-                    padding: EdgeInsets.only(bottom: AppSpacing.xs),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('• ', style: TextStyle(fontSize: 16)),
-                        Expanded(child: Text(item.toString())),
-                      ],
-                    ),
-                  ),
-                )
-                .toList(),
+          child: MarkdownBody(
+            data: ((result['olasilik_nedenler'] as List?) ?? [])
+                .map((item) => '\u2022 ${item.toString()}')
+                .join('  \n'),
+            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                .copyWith(p: textTheme.bodyMedium),
           ),
         ),
         SizedBox(height: AppSpacing.lg),
@@ -370,21 +363,12 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
           icon: Icons.tips_and_updates_rounded,
           title: 'symptom_analysis.advice_title'.tr(),
           color: const Color(0xFF6750A4),
-          child: Column(
-            children: ((result['tavsiyeler'] as List?) ?? [])
-                .map(
-                  (item) => Padding(
-                    padding: EdgeInsets.only(bottom: AppSpacing.xs),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('• ', style: TextStyle(fontSize: 16)),
-                        Expanded(child: Text(item.toString())),
-                      ],
-                    ),
-                  ),
-                )
-                .toList(),
+          child: MarkdownBody(
+            data: ((result['tavsiyeler'] as List?) ?? [])
+                .map((item) => '\u2022 ${item.toString()}')
+                .join('  \n'),
+            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                .copyWith(p: textTheme.bodyMedium),
           ),
         ),
         SizedBox(height: AppSpacing.lg),
@@ -393,9 +377,10 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
           icon: Icons.local_hospital_rounded,
           title: 'symptom_analysis.doctor_when_title'.tr(),
           color: const Color(0xFFE65100),
-          child: Text(
-            result['doktora_ne_zaman'] as String? ?? '',
-            style: textTheme.bodyMedium,
+          child: MarkdownBody(
+            data: result['doktora_ne_zaman'] as String? ?? '',
+            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                .copyWith(p: textTheme.bodyMedium),
           ),
         ),
         SizedBox(height: AppSpacing.lg),
