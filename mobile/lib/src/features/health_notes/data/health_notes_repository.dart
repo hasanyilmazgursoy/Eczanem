@@ -29,6 +29,12 @@ class HealthNotesRepository {
     required String category,
     required String text,
     String mood = '',
+    int? systolic,
+    int? diastolic,
+    double? glucoseValue,
+    int? painLevel,
+    List<String> symptoms = const [],
+    bool medicationTaken = false,
   }) async {
     return runTask(() async {
       final now = DateTime.now();
@@ -39,6 +45,12 @@ class HealthNotesRepository {
         text: text.trim(),
         mood: mood,
         createdAt: now,
+        systolic: systolic,
+        diastolic: diastolic,
+        glucoseValue: glucoseValue,
+        painLevel: painLevel,
+        symptoms: symptoms,
+        medicationTaken: medicationTaken,
       );
 
       final updated = [note, ...getNotes()];

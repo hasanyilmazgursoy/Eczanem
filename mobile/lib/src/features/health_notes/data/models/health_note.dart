@@ -2,8 +2,8 @@ import 'dart:convert';
 
 /// Tek bir sağlık notu kaydı.
 ///
-/// Tarihsel sağlık bilgilerini, mood durumunu ve kategorisini tutar.
-/// Hive'da JSON string olarak saklanır — FamilyMember ile aynı strateji.
+/// Tarihsel sağlık bilgilerini, mood durumunu, kategorisini ve
+/// klinik ölçüm verilerini tutar. Hive'da JSON string olarak saklanır.
 class HealthNote {
   const HealthNote({
     required this.id,
@@ -12,6 +12,12 @@ class HealthNote {
     required this.text,
     this.mood = '',
     required this.createdAt,
+    this.systolic,
+    this.diastolic,
+    this.glucoseValue,
+    this.painLevel,
+    this.symptoms = const [],
+    this.medicationTaken = false,
   });
 
   /// Benzersiz tanımlayıcı — microsecondsSinceEpoch.
@@ -20,17 +26,43 @@ class HealthNote {
   /// Notun tarih damgası (kullanıcı seçer veya bugün).
   final DateTime date;
 
-  /// Not kategorisi (genel, tansiyon, şeker, ağrı, psikoloji, diğer).
+  /// Not kategorisi (genel, tansiyon, seker, agri, psikoloji, diger).
   final String category;
 
   /// Not metni.
   final String text;
 
-  /// Emoji olarak ruh hali (😊 😐 😢 😫 🤒) — isteğe bağlı.
+  /// Emoji olarak ruh hali — isteğe bağlı.
   final String mood;
 
   /// Kaydın oluşturulma zamanı.
   final DateTime createdAt;
+
+  /// Tansiyon üst (sistolik) değer mmHg — tansiyon kategorisi.
+  final int? systolic;
+
+  /// Tansiyon alt (diastolik) değer mmHg — tansiyon kategorisi.
+  final int? diastolic;
+
+  /// Kan şekeri mg/dL — seker kategorisi.
+  final double? glucoseValue;
+
+  /// Ağrı seviyesi 0–10 — agri kategorisi.
+  final int? painLevel;
+
+  /// Hızlı semptom etiketleri (bulantı, baş dönmesi vb.).
+  final List<String> symptoms;
+
+  /// İlaç alındı mı?
+  final bool medicationTaken;
+
+  /// Tansiyon değerini "120/80 mmHg" formatında döner.
+  String? get bloodPressureDisplay {
+    if (systolic != null && diastolic != null) {
+      return '$systolic/$diastolic mmHg';
+    }
+    return null;
+  }
 
   HealthNote copyWith({
     String? id,
@@ -39,6 +71,12 @@ class HealthNote {
     String? text,
     String? mood,
     DateTime? createdAt,
+    int? systolic,
+    int? diastolic,
+    double? glucoseValue,
+    int? painLevel,
+    List<String>? symptoms,
+    bool? medicationTaken,
   }) {
     return HealthNote(
       id: id ?? this.id,
@@ -47,6 +85,12 @@ class HealthNote {
       text: text ?? this.text,
       mood: mood ?? this.mood,
       createdAt: createdAt ?? this.createdAt,
+      systolic: systolic ?? this.systolic,
+      diastolic: diastolic ?? this.diastolic,
+      glucoseValue: glucoseValue ?? this.glucoseValue,
+      painLevel: painLevel ?? this.painLevel,
+      symptoms: symptoms ?? this.symptoms,
+      medicationTaken: medicationTaken ?? this.medicationTaken,
     );
   }
 
@@ -57,6 +101,12 @@ class HealthNote {
         'text': text,
         'mood': mood,
         'created_at': createdAt.toIso8601String(),
+        if (systolic != null) 'systolic': systolic,
+        if (diastolic != null) 'diastolic': diastolic,
+        if (glucoseValue != null) 'glucose_value': glucoseValue,
+        if (painLevel != null) 'pain_level': painLevel,
+        if (symptoms.isNotEmpty) 'symptoms': symptoms,
+        if (medicationTaken) 'medication_taken': true,
       };
 
   factory HealthNote.fromJson(Map<String, dynamic> json) {
@@ -67,6 +117,13 @@ class HealthNote {
       text: json['text'] as String? ?? '',
       mood: json['mood'] as String? ?? '',
       createdAt: DateTime.parse(json['created_at'] as String),
+      systolic: json['systolic'] as int?,
+      diastolic: json['diastolic'] as int?,
+      glucoseValue: (json['glucose_value'] as num?)?.toDouble(),
+      painLevel: json['pain_level'] as int?,
+      symptoms:
+          (json['symptoms'] as List<dynamic>?)?.cast<String>() ?? const [],
+      medicationTaken: json['medication_taken'] as bool? ?? false,
     );
   }
 

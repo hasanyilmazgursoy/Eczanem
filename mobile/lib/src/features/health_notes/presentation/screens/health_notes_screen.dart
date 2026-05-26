@@ -766,8 +766,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                       '${HealthNoteCategory.iconFor(cat)} ${'health_notes.category_$cat'.tr()}',
                     ),
                     selected: isSelected,
-                    onSelected: (_) =>
-                        setState(() => _selectedCategory = cat),
+                    onSelected: (_) => setState(() => _selectedCategory = cat),
                     selectedColor: const Color(0xFF1565C0),
                     labelStyle: TextStyle(
                       color: isSelected ? Colors.white : colorScheme.onSurface,
@@ -930,8 +929,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                 value: _medicationTaken,
                 onChanged: (v) => setState(() => _medicationTaken = v),
                 title: Text('health_notes.medication_taken'.tr()),
-                subtitle:
-                    Text('health_notes.medication_taken_subtitle'.tr()),
+                subtitle: Text('health_notes.medication_taken_subtitle'.tr()),
                 activeColor: const Color(0xFF1565C0),
                 contentPadding: EdgeInsets.zero,
               ),
@@ -1375,6 +1373,508 @@ class _CategoryProgressRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ══════════════════════ ÖLÇÜM ROZET WİDGET'İ ══════════════════
+
+/// Renk kodlu ölçüm değerini pill şeklinde gösterir.
+class _MeasurementBadge extends StatelessWidget {
+  const _MeasurementBadge({
+    required this.icon,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: color.withValues(alpha: 0.3)),
+            ),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ══════════════════════ SAĞLIK TREND GRAFİĞİ ════════════════════
+
+/// fl_chart ile tek veya çift çizgili trend grafiği.
+///
+/// Tansiyon için iki çizgi (sistolik/diastolik), tek ölçümler için bir çizgi.
+class _HealthTrendChart extends StatelessWidget {
+  const _HealthTrendChart({
+    required this.spots,
+    required this.color,
+    required this.unit,
+    this.spots2,
+    this.color2,
+  });
+
+  final List<FlSpot> spots;
+  final Color color;
+  final String unit;
+
+  /// Diastolik değerler için ikinci çizgi (isteğe bağlı).
+  final List<FlSpot>? spots2;
+  final Color? color2;
+
+  @override
+  Widget build(BuildContext context) {
+    final allSpots = [...spots, if (spots2 != null) ...spots2!];
+    if (allSpots.isEmpty) return const SizedBox.shrink();
+
+    final minY = allSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b) - 10;
+    final maxY = allSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b) + 10;
+
+    LineChartBarData _line(List<FlSpot> s, Color c) => LineChartBarData(
+          spots: s,
+          isCurved: true,
+          color: c,
+          barWidth: 2.5,
+          dotData: FlDotData(
+            getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
+              radius: 3,
+              color: c,
+              strokeWidth: 1,
+              strokeColor: Colors.white,
+            ),
+          ),
+          belowBarData: BarAreaData(
+            show: true,
+            color: c.withValues(alpha: 0.08),
+          ),
+        );
+
+    return SizedBox(
+      height: 160,
+      child: LineChart(
+        LineChartData(
+          minY: minY < 0 ? 0 : minY,
+          maxY: maxY,
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            horizontalInterval: 20,
+            getDrawingHorizontalLine: (v) => FlLine(
+              color: Colors.grey.withValues(alpha: 0.2),
+              strokeWidth: 1,
+            ),
+          ),
+          borderData: FlBorderData(show: false),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 38,
+                getTitlesWidget: (v, meta) => Text(
+                  '${v.toInt()}',
+                  style: const TextStyle(fontSize: 10),
+                ),
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 24,
+                getTitlesWidget: (v, meta) => Text(
+                  '${v.toInt() + 1}.',
+                  style: const TextStyle(fontSize: 10),
+                ),
+              ),
+            ),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          lineBarsData: [
+            _line(spots, color),
+            if (spots2 != null && color2 != null) _line(spots2!, color2!),
+          ],
+          lineTouchData: LineTouchData(
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipItems: (touchedSpots) => touchedSpots
+                  .map(
+                    (ts) => LineTooltipItem(
+                      '${ts.y.toStringAsFixed(1)} $unit',
+                      const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ══════════════════════ DOKTORA GÖSTER SAYFASI ══════════════════
+
+/// Klinik özet — doktora göstermek için hazırlanmış yapılandırılmış rapor.
+///
+/// Vital bulgular, ağrı takibi, semptom sıklığı ve son notları listeler.
+/// Metin tabanlı paylaşım desteği vardır.
+class _DoctorViewSheet extends StatelessWidget {
+  const _DoctorViewSheet({required this.notes});
+
+  final List<HealthNote> notes;
+
+  /// Kategoriye göre filtreli notlar.
+  List<HealthNote> _byCategory(String cat) =>
+      notes.where((n) => n.category == cat).toList()
+        ..sort((a, b) => a.date.compareTo(b.date));
+
+  /// Semptom sıklık haritası, azalan sırayla.
+  List<MapEntry<String, int>> _symptomFrequency() {
+    final freq = <String, int>{};
+    for (final n in notes) {
+      for (final s in n.symptoms) {
+        freq[s] = (freq[s] ?? 0) + 1;
+      }
+    }
+    return freq.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+  }
+
+  /// Klinik metin raporu — paylaşım için.
+  String _buildClinicalText() {
+    final buf = StringBuffer();
+    buf.writeln('=== KLİNİK ÖZET ===');
+    buf.writeln(
+      'Tarih: ${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}',
+    );
+    buf.writeln('Toplam kayıt: ${notes.length}');
+    buf.writeln();
+
+    final tansiyon = _byCategory(HealthNoteCategory.tansiyon);
+    if (tansiyon.isNotEmpty) {
+      buf.writeln('TANSIYON:');
+      for (final n in tansiyon.take(5)) {
+        if (n.bloodPressureDisplay != null) {
+          final d = '${n.date.day}.${n.date.month}.${n.date.year}';
+          buf.writeln('  $d — ${n.bloodPressureDisplay}');
+        }
+      }
+      buf.writeln();
+    }
+
+    final seker = _byCategory(HealthNoteCategory.seker);
+    if (seker.isNotEmpty) {
+      buf.writeln('KAN ŞEKERİ:');
+      for (final n in seker.take(5)) {
+        if (n.glucoseValue != null) {
+          final d = '${n.date.day}.${n.date.month}.${n.date.year}';
+          buf.writeln('  $d — ${n.glucoseValue!.toStringAsFixed(1)} mg/dL');
+        }
+      }
+      buf.writeln();
+    }
+
+    final freq = _symptomFrequency();
+    if (freq.isNotEmpty) {
+      buf.writeln('SEMPTOMLAR:');
+      for (final e in freq.take(8)) {
+        buf.writeln('  ${e.key}: ${e.value}x');
+      }
+    }
+
+    return buf.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = context.textTheme;
+    final colorScheme = context.colors;
+
+    final tansiyon = _byCategory(HealthNoteCategory.tansiyon);
+    final seker = _byCategory(HealthNoteCategory.seker);
+    final agri = _byCategory(HealthNoteCategory.agri);
+    final symptomFreq = _symptomFrequency();
+
+    // fl_chart için nokta listeleri oluştur.
+    final bpSysSpots = <FlSpot>[];
+    final bpDiaSpots = <FlSpot>[];
+    for (var i = 0; i < tansiyon.length; i++) {
+      final n = tansiyon[i];
+      if (n.systolic != null)
+        bpSysSpots.add(FlSpot(i.toDouble(), n.systolic!.toDouble()));
+      if (n.diastolic != null)
+        bpDiaSpots.add(FlSpot(i.toDouble(), n.diastolic!.toDouble()));
+    }
+
+    final glucoseSpots = <FlSpot>[];
+    for (var i = 0; i < seker.length; i++) {
+      final n = seker[i];
+      if (n.glucoseValue != null) {
+        glucoseSpots.add(FlSpot(i.toDouble(), n.glucoseValue!));
+      }
+    }
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.85,
+      maxChildSize: 0.98,
+      minChildSize: 0.5,
+      builder: (_, scrollCtrl) => Column(
+        children: [
+          // Tutma kolu
+          Center(
+            child: Container(
+              margin: EdgeInsets.only(top: AppSpacing.sm),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          // Başlık satırı
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.xl,
+              vertical: AppSpacing.md,
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.medical_information_rounded,
+                  size: 28,
+                  color: Color(0xFF1565C0),
+                ),
+                SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'health_notes.doctor_view_title'.tr(),
+                        style: textTheme.titleLarge
+                            ?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                      Text(
+                        'health_notes.doctor_view_subtitle'.tr(),
+                        style: textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton.filled(
+                  onPressed: () => Share.share(_buildClinicalText()),
+                  icon: const Icon(Icons.share_outlined),
+                  tooltip: 'health_notes.report_share'.tr(),
+                  style: IconButton.styleFrom(
+                    backgroundColor: const Color(0xFF1565C0),
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: ListView(
+              controller: scrollCtrl,
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.md,
+                AppSpacing.xl,
+                AppSpacing.xxl,
+              ),
+              children: [
+                // ── Tansiyon trendi ──
+                if (bpSysSpots.isNotEmpty) ...[
+                  Text(
+                    'health_notes.report_blood_pressure'.tr(),
+                    style: textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: [
+                      _LegendDot(color: Colors.red.shade600, label: 'Sistolik'),
+                      SizedBox(width: AppSpacing.md),
+                      _LegendDot(
+                          color: Colors.blue.shade600, label: 'Diastolik'),
+                    ],
+                  ),
+                  SizedBox(height: AppSpacing.xs),
+                  _HealthTrendChart(
+                    spots: bpSysSpots,
+                    color: Colors.red.shade600,
+                    unit: 'mmHg',
+                    spots2: bpDiaSpots.isNotEmpty ? bpDiaSpots : null,
+                    color2: Colors.blue.shade600,
+                  ),
+                  SizedBox(height: AppSpacing.lg),
+                ],
+
+                // ── Kan şekeri trendi ──
+                if (glucoseSpots.isNotEmpty) ...[
+                  Text(
+                    'health_notes.report_glucose'.tr(),
+                    style: textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  _HealthTrendChart(
+                    spots: glucoseSpots,
+                    color: Colors.amber.shade700,
+                    unit: 'mg/dL',
+                  ),
+                  SizedBox(height: AppSpacing.lg),
+                ],
+
+                // ── Ağrı takibi ──
+                if (agri.isNotEmpty) ...[
+                  Text(
+                    'health_notes.pain_tracking'.tr(),
+                    style: textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  ...agri.take(5).map((n) {
+                    final d =
+                        '${n.date.day.toString().padLeft(2, '0')}.${n.date.month.toString().padLeft(2, '0')}';
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: AppSpacing.xs),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 40,
+                            child: Text(d,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                )),
+                          ),
+                          SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: LinearProgressIndicator(
+                              value: (n.painLevel ?? 0) / 10,
+                              color: n.painLevel != null && n.painLevel! > 6
+                                  ? Colors.red
+                                  : n.painLevel != null && n.painLevel! > 3
+                                      ? Colors.orange
+                                      : Colors.green,
+                              backgroundColor:
+                                  colorScheme.onSurface.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(4),
+                              minHeight: 8,
+                            ),
+                          ),
+                          SizedBox(width: AppSpacing.sm),
+                          Text(
+                            '${n.painLevel ?? 0}/10',
+                            style: textTheme.labelSmall,
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  SizedBox(height: AppSpacing.lg),
+                ],
+
+                // ── Semptom sıklığı ──
+                if (symptomFreq.isNotEmpty) ...[
+                  Text(
+                    'health_notes.symptom_frequency'.tr(),
+                    style: textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
+                    children: symptomFreq
+                        .map(
+                          (e) => Chip(
+                            label: Text('${e.key}  ×${e.value}'),
+                            labelStyle: const TextStyle(fontSize: 13),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  SizedBox(height: AppSpacing.lg),
+                ],
+
+                // Ölçüm yoksa bilgi mesajı
+                if (bpSysSpots.isEmpty &&
+                    glucoseSpots.isEmpty &&
+                    agri.isEmpty &&
+                    symptomFreq.isEmpty)
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(AppSpacing.xxl),
+                      child: Text(
+                        'health_notes.no_measurements'.tr(),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Grafik lejant noktası.
+class _LegendDot extends StatelessWidget {
+  const _LegendDot({required this.color, required this.label});
+
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 4),
+        Text(label, style: const TextStyle(fontSize: 12)),
+      ],
     );
   }
 }
