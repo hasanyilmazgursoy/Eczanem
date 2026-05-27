@@ -12,8 +12,9 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - Arama geçmişi ve tarama geçmişi
 - İlaç etkileşim kontrolü
 - İlaç bazlı doğal alternatif önerileri
+- AI eczacı sohbet asistanı (Gemini tabanlı, markdown yanıtlar)
 - Offline ilaç hatırlatıcıları ve stok takibi
-- Nöbetçi eczane harita görünümü (OSM, kullanıcı konumu)
+- Nöbetçi eczane — il/ilçe dropdown seçimi, OSM harita, konum desteği
 - Acil durum kartı + QR kod ile hızlı paylaşım
 - Sağlık notları ve klinik ölçüm takibi (tansiyon / şeker / ağrı seviyesi)
 - JWT tabanlı kullanıcı oturumu
@@ -64,8 +65,10 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - Doğal alternatif öneri ekranı
 - Yerel ilaç hatırlatıcıları, stok dashboard'u ve offline bildirimler
 - Aile profili, aile bireyi detayları ve birey bazlı ilaç listeleri
-- Nöbetçi eczane ekranı ve backend sorgulama akışı
+- Nöbetçi eczane ekranı — il/ilçe dropdown seçimi (81 il statik + dinamik ilçe listesi)
 - Nöbetçi eczane OSM tabanlı harita görünümü (flutter_map, kullanıcı konumu, pin'ler)
+- Nöbetçi eczane ilçe fallback: ilçede nöbet yoksa il geneline düşme + bildirim banner'ı
+- AI eczacı sohbet ekranı (Gemini tabanlı, markdown+emoji formatıyla yapılandırılmış yanıtlar)
 - Acil durum kartı oluşturma / düzenleme
 - Acil durum kartı QR kod ile paylaşma
 - Sağlık notları ekleme, filtreleme ve düzenleme
@@ -89,7 +92,13 @@ Flutter Mobile App
  ├─ Photo Scan + Prospectus Summary
  ├─ Search/Scan History
  ├─ Drug Interaction Check
- └─ Natural Alternatives
+ ├─ Natural Alternatives
+ ├─ AI Pharmacist Chat
+ ├─ Reminders & Stock
+ ├─ Family Profile
+ ├─ Pharmacy (il/ilçe dropdown + OSM map)
+ ├─ Emergency Card + QR
+ └─ Health Notes
 
 FastAPI Backend
  ├─ /health
@@ -98,7 +107,11 @@ FastAPI Backend
  ├─ /api/drug/analyze-image
  ├─ /api/drug/prospectus
  ├─ /api/drug/interaction
- └─ /api/drug/natural-alternatives
+ ├─ /api/drug/natural-alternatives
+ ├─ /api/drug/chat
+ ├─ /api/pharmacy/nearby
+ ├─ /api/pharmacy/districts
+ └─ /api/profile/*
 ```
 
 ## Teknoloji yığını
@@ -124,10 +137,11 @@ FastAPI Backend
 - FastAPI
 - Pydantic Settings
 - HTTPX
+- BeautifulSoup4 (eczaneler.gen.tr scraping)
 - Python-Jose
 - Passlib / bcrypt
 - Redis
-- Gemini API
+- Gemini API (`gemini-2.5-flash`)
 - PostgreSQL (hedef mimaride planlı, henüz aktif veri katmanı değil)
 
 ## Proje yapısı

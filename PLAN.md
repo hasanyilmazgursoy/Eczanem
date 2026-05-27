@@ -38,7 +38,8 @@ asistanı uygulaması.
 │  /api/drug/search          → OpenRouter  │
 │  /api/drug/interaction     → OpenRouter  │
 │  /api/drug/barcode/{code}  → İlaç DB     │
-│  /api/pharmacy/nearby      → Eczane API  │
+│  /api/pharmacy/nearby      → Scraping    │
+│  /api/pharmacy/districts   → Scraping    │
 │  /api/auth/ (opsiyonel)    → JWT         │
 │  /api/profile/             → Aile yönetim│
 │  PostgreSQL + Redis (cache)              │
@@ -239,12 +240,16 @@ Yerel çalışan ilaç hatırlayıcı, stok takibi ve offline bildirim akışı 
 **Durum:** 🟢 Tamamlandı
 
 ### Backend
-- [x] `GET /api/pharmacy/nearby?lat=X&lon=Y` — En yakın nöbetçi eczaneler
-- [x] Veri kaynağı: CollectAPI tabanlı servis katmanı
+- [x] `GET /api/pharmacy/nearby?il=X&ilce=Y&lat=X&lon=Y` — İl/ilçe ve koordinata göre nöbetçi eczaneler
+- [x] `GET /api/pharmacy/districts?il=X` — İle ait nöbet ilçelerini listeler (dropdown doldurmak için)
+- [x] Veri kaynağı: eczaneler.gen.tr HTML scraping (BeautifulSoup4 + httpx)
+- [x] İlçede sonuç yoksa il geneline otomatik fallback (`fallback_to_il: true`)
+- [x] Koordinat verilirse Nominatim ile reverse geocoding (il/ilçe otomatik tespit)
 
 ### Flutter Ekranları
 - [x] Eczane Harita: OpenStreetMap + flutter_map tabanlı harita görünümü, kullanıcı konumu, eczane pin'leri, bottom sheet ve yol tarifi
-- [x] Eczane Liste: Liste, telefon, adres ve temel aksiyonlar
+- [x] Eczane Liste: Liste, telefon, adres ve temel aksiyonlar; il/ilçe dropdown ile seçim (81 il statik + dinamik ilçe)
+- [x] İlçede nöbet yoksa il geneline fallback + bildirim banner'ı
 - [x] Sesli Arama: Mikrofon butonu → STT → ilaç arama (speech_to_text ^7.0.0)
 - [x] Konum izni kalıcı red → dialog + `openAppSettings()` yönlendirmesi
 
