@@ -141,6 +141,7 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
   }
 
   Future<void> _searchDrug() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final query = _searchController.text.trim();
     if (query.isEmpty) {
       setState(() {

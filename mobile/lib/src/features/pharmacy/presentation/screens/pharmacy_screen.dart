@@ -95,7 +95,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     );
   }
 
-  Future<void> _callPharmacy(String phone) async {    final uri = Uri.parse('tel:$phone');
+  Future<void> _callPharmacy(String phone) async {
+    final uri = Uri.parse('tel:$phone');
     await launchUrl(uri);
   }
 

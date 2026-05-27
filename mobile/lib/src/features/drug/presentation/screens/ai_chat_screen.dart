@@ -384,12 +384,11 @@ class _ChatBubble extends StatelessWidget {
                         code: textTheme.bodySmall?.copyWith(
                           fontFamily: 'monospace',
                           color: accentColor,
-                          backgroundColor:
-                              accentColor.withValues(alpha: 0.08),
+                          backgroundColor: accentColor.withValues(alpha: 0.08),
                         ),
                         blockSpacing: 10,
                         listIndent: 20,
-                        blockquotePadding: EdgeInsets.symmetric(
+                        blockquotePadding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 4,
                         ),

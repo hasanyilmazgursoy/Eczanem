@@ -40,6 +40,7 @@ class _DrugNaturalAlternativesScreenState
   }
 
   Future<void> _loadAlternatives() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     final drugName = _controller.text.trim();
     if (drugName.isEmpty) {
       setState(() {
