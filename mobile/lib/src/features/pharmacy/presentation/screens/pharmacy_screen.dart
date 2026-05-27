@@ -33,7 +33,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
 
   // Dropdown seçim değerleri
   String? _selectedIl;
-  String? _selectedIlce;
+  // '' → "tüm ilçe", dolu string → belirli ilçe
+  String _selectedIlce = '';
   // Seçili ile ait ilçe listesi (backendden çekilir)
   List<String> _districts = [];
   bool _districtsLoading = false;
@@ -76,7 +77,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
 
     final result = await PharmacyRepository.instance.getNearbyPharmacies(
       il: _selectedIl!,
-      ilce: _selectedIlce ?? '',
+      ilce: _selectedIlce,
     );
 
     if (!mounted) return;
@@ -225,7 +226,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
           if (matchedIl != null) _fetchDistricts(matchedIl);
           setState(() {
             _selectedIl = matchedIl;
-            _selectedIlce = null; // ilçeler yüklenince kullanıcı seçer
+            _selectedIlce = ''; // ilçeler yüklenince kullanıcı seçer
             _status = AppStatus.success;
             _pharmacies = response.pharmacies;
             _apiAvailable = response.apiAvailable;
@@ -326,7 +327,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                     setState(() {
                       _selectedIl = val;
                       // İl değişince ilçeyi sıfırla
-                      _selectedIlce = null;
+                      _selectedIlce = '';
                       _districts = [];
                     });
                     if (val != null) _fetchDistricts(val);
@@ -361,12 +362,15 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                   // İl seçilmemişse veya yükleniyorsa devre dışı
                   onChanged: (_selectedIl == null || _districtsLoading)
                       ? null
-                      : (val) => setState(() => _selectedIlce = val),
+                      : (String? val) =>
+                          setState(() => _selectedIlce = val ?? ''),
                   items: [
-                    // "Tüm il" seçeneği her zaman başta
+                    // "Tüm ilçe" sentinel — Builder ile tr() context'i garantilenir
                     DropdownMenuItem<String>(
-                      value: null,
-                      child: Text('pharmacy.all_districts'.tr()),
+                      value: '',
+                      child: Builder(
+                        builder: (ctx) => Text('pharmacy.all_districts'.tr()),
+                      ),
                     ),
                     ..._districts.map(
                       (d) => DropdownMenuItem(value: d, child: Text(d)),
@@ -588,7 +592,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                 SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
-                    'pharmacy.fallback_notice'.tr(args: [_selectedIlce ?? '']),
+                    'pharmacy.fallback_notice'.tr(args: [_selectedIlce]),
                     style: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSecondaryContainer,
                     ),
