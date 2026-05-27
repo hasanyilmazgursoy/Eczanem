@@ -66,10 +66,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
           _isLoading = false;
           _messages.add({'role': 'model', 'content': reply});
         });
+        // Yanıt gelince otomatik scroll yok — kullanıcı isterse kendi iner.
       },
     );
-
-    _scrollToBottom();
   }
 
   void _scrollToBottom() {
@@ -352,16 +351,56 @@ class _ChatBubble extends StatelessWidget {
                       styleSheet: MarkdownStyleSheet(
                         p: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,
-                          height: 1.5,
+                          height: 1.6,
                         ),
                         strong: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
+                        em: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        h1: textTheme.titleMedium?.copyWith(
+                          color: accentColor,
+                          fontWeight: FontWeight.w800,
+                          height: 1.4,
+                        ),
+                        h2: textTheme.titleSmall?.copyWith(
+                          color: accentColor,
+                          fontWeight: FontWeight.w700,
+                          height: 1.4,
+                        ),
+                        h3: textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w700,
+                          height: 1.4,
+                        ),
                         listBullet: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,
+                          height: 1.6,
                         ),
-                        blockSpacing: 8,
+                        // Satır içi kod
+                        code: textTheme.bodySmall?.copyWith(
+                          fontFamily: 'monospace',
+                          color: accentColor,
+                          backgroundColor:
+                              accentColor.withValues(alpha: 0.08),
+                        ),
+                        blockSpacing: 10,
+                        listIndent: 20,
+                        blockquotePadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        blockquoteDecoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                              color: accentColor.withValues(alpha: 0.5),
+                              width: 3,
+                            ),
+                          ),
+                        ),
                       ),
                       shrinkWrap: true,
                     ),
