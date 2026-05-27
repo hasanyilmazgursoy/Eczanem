@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
 
-from app.services.pharmacy_service import get_nearby_pharmacies
+from app.services.pharmacy_service import get_districts, get_nearby_pharmacies
 
 router = APIRouter()
 
@@ -52,3 +52,19 @@ async def nearby_pharmacies(
         detected_ilce=result["detected_ilce"],
         fallback_to_il=result.get("fallback_to_il", False),
     )
+
+
+class DistrictsResponse(BaseModel):
+    districts: list[str]
+
+
+@router.get("/districts", response_model=DistrictsResponse)
+async def districts(
+    il: str = Query(description="İl adı (örn: Malatya)"),
+):
+    """Bir ilin eczaneler.gen.tr'deki nöbet ilçelerini listeler.
+
+    Dropdown doldurmak için kullanılır; veri site kenar çubuğundan çekilir.
+    """
+    district_list = await get_districts(il)
+    return DistrictsResponse(districts=district_list)

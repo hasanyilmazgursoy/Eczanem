@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import '../../../../imports/imports.dart';
 import '../../data/models/pharmacy_item.dart';
 import '../../data/pharmacy_repository.dart';
+import '../../data/turkey_data.dart';
 
 /// Nöbetçi eczane listesi ekranı (FAZ 6).
 ///
@@ -30,8 +31,12 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
   /// Kullanıcının cihaz konumu — harita merkezini belirlemek için saklanır.
   LatLng? _userLocation;
 
-  final _ilCtrl = TextEditingController();
-  final _ilceCtrl = TextEditingController();
+  // Dropdown seçim değerleri
+  String? _selectedIl;
+  String? _selectedIlce;
+  // Seçili ile ait ilçe listesi (backendden çekilir)
+  List<String> _districts = [];
+  bool _districtsLoading = false;
 
   @override
   void initState() {
@@ -51,13 +56,12 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
 
   @override
   void dispose() {
-    _ilCtrl.dispose();
-    _ilceCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _search() async {
-    if (_ilCtrl.text.trim().isEmpty) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (_selectedIl == null) {
       context.showTypedSnackBar(
         'pharmacy.il_required'.tr(),
         type: SnackBarType.error,
@@ -71,8 +75,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     });
 
     final result = await PharmacyRepository.instance.getNearbyPharmacies(
-      il: _ilCtrl.text.trim(),
-      ilce: _ilceCtrl.text.trim(),
+      il: _selectedIl!,
+      ilce: _selectedIlce ?? '',
     );
 
     if (!mounted) return;
@@ -91,9 +95,25 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     );
   }
 
-  Future<void> _callPharmacy(String phone) async {
-    final uri = Uri.parse('tel:$phone');
+  Future<void> _callPharmacy(String phone) async {    final uri = Uri.parse('tel:$phone');
     await launchUrl(uri);
+  }
+
+  /// İl seçildiğinde eczaneler.gen.tr'deki gerçek ilçe listesini çeker.
+  Future<void> _fetchDistricts(String il) async {
+    setState(() {
+      _districtsLoading = true;
+      _districts = [];
+    });
+    final result = await PharmacyRepository.instance.getDistricts(il);
+    if (!mounted) return;
+    result.fold(
+      (_) => setState(() => _districtsLoading = false),
+      (districts) => setState(() {
+        _districts = districts;
+        _districtsLoading = false;
+      }),
+    );
   }
 
   /// Eczane adresini Google Maps'te açar (yol tarifi).
@@ -189,14 +209,22 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
           _errorMessage = failure.message;
         }),
         (response) {
-          // Tespit edilen il/ilçe adlarını text alanlara yaz
+          // Nominatim'den gelen il adını 81-il listesiyle eşleştir
+          String? matchedIl;
           if (response.detectedIl.isNotEmpty) {
-            _ilCtrl.text = response.detectedIl;
+            matchedIl = kTurkeyIller
+                .where(
+                  (il) => il.toLowerCase() == response.detectedIl.toLowerCase(),
+                )
+                .firstOrNull;
+            // Listede yoksa Nominatim sonucunu olduğu gibi kullan
+            matchedIl ??= response.detectedIl;
           }
-          if (response.detectedIlce.isNotEmpty) {
-            _ilceCtrl.text = response.detectedIlce;
-          }
+          // İlçe dropdownı için arka planda ilçeleri yükle (sonuçlar zaten gösteriyor)
+          if (matchedIl != null) _fetchDistricts(matchedIl);
           setState(() {
+            _selectedIl = matchedIl;
+            _selectedIlce = null; // ilçeler yüklenince kullanıcı seçer
             _status = AppStatus.success;
             _pharmacies = response.pharmacies;
             _apiAvailable = response.apiAvailable;
@@ -275,34 +303,72 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
             padding: EdgeInsets.all(AppSpacing.lg),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _ilCtrl,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: InputDecoration(
-                          labelText: 'pharmacy.il_label'.tr(),
-                          hintText: 'pharmacy.il_hint'.tr(),
-                          isDense: true,
-                          prefixIcon: const Icon(Icons.location_city_rounded),
+                // İl dropdown’u
+                DropdownButtonFormField<String>(
+                  value: _selectedIl,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: 'pharmacy.il_label'.tr(),
+                    isDense: true,
+                    prefixIcon: const Icon(Icons.location_city_rounded),
+                  ),
+                  hint: Text('pharmacy.il_hint'.tr()),
+                  items: kTurkeyIller
+                      .map(
+                        (il) => DropdownMenuItem(
+                          value: il,
+                          child: Text(il),
                         ),
-                        onSubmitted: (_) => _search(),
-                      ),
+                      )
+                      .toList(),
+                  onChanged: (val) {
+                    setState(() {
+                      _selectedIl = val;
+                      // İl değişince ilçeyi sıfırla
+                      _selectedIlce = null;
+                      _districts = [];
+                    });
+                    if (val != null) _fetchDistricts(val);
+                  },
+                ),
+                SizedBox(height: AppSpacing.sm),
+                // İlçe dropdown’u (il seçildikten sonra aktif olur)
+                DropdownButtonFormField<String>(
+                  value: _selectedIlce,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: 'pharmacy.ilce_label'.tr(),
+                    isDense: true,
+                    prefixIcon: _districtsLoading
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: Padding(
+                              padding: EdgeInsets.all(3),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : const Icon(Icons.map_outlined),
+                  ),
+                  hint: Text(
+                    _selectedIl == null
+                        ? 'pharmacy.il_first'.tr()
+                        : _districtsLoading
+                            ? 'pharmacy.districts_loading'.tr()
+                            : 'pharmacy.ilce_optional'.tr(),
+                  ),
+                  // İl seçilmemişse veya yükleniyorsa devre dışı
+                  onChanged: (_selectedIl == null || _districtsLoading)
+                      ? null
+                      : (val) => setState(() => _selectedIlce = val),
+                  items: [
+                    // "Tüm il" seçeneği her zaman başta
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('pharmacy.all_districts'.tr()),
                     ),
-                    SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: TextField(
-                        controller: _ilceCtrl,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: InputDecoration(
-                          labelText: 'pharmacy.ilce_label'.tr(),
-                          hintText: 'pharmacy.ilce_hint'.tr(),
-                          isDense: true,
-                          prefixIcon: const Icon(Icons.map_outlined),
-                        ),
-                        onSubmitted: (_) => _search(),
-                      ),
+                    ..._districts.map(
+                      (d) => DropdownMenuItem(value: d, child: Text(d)),
                     ),
                   ],
                 ),
@@ -521,8 +587,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                 SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
-                    'pharmacy.fallback_notice'
-                        .tr(args: [_ilceCtrl.text.trim()]),
+                    'pharmacy.fallback_notice'.tr(args: [_selectedIlce ?? '']),
                     style: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSecondaryContainer,
                     ),

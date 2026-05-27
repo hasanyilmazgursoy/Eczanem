@@ -214,3 +214,52 @@ async def get_nearby_pharmacies(
         "detected_ilce": detected_ilce,
         "fallback_to_il": fallback_to_il,
     }
+
+
+async def get_districts(il: str) -> list[str]:
+    """eczaneler.gen.tr'nin il sayfasındaki İlçe Seç kenar çubuğundan
+    o ile ait gerçek ilçe adlarını çeker.
+
+    Döner: Sıralı ilçe adları listesi (Türkçe karakterler korunur).
+    Hata ya da il bulunamazsa boş liste döner.
+    """
+    if not il.strip():
+        return []
+
+    il_slug = _to_slug(il.strip())
+    url = f"{_BASE_URL}/nobetci-{il_slug}"
+
+    try:
+        async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+            resp = await client.get(url, headers=_HEADERS)
+            resp.raise_for_status()
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+        prefix = f"/nobetci-{il_slug}-"
+        seen: set[str] = set()
+        districts: list[str] = []
+
+        # Önce "İlçe Seç" başlığının bulunduğu container'a bak
+        ilce_sec = soup.find(string=lambda t: t and "İlçe Seç" in t)
+        search_root = None
+        if ilce_sec:
+            search_root = ilce_sec.find_parent(["div", "section", "aside", "ul", "nav"])
+
+        # Container bulunamazsa tüm sayfayı tara (fallback)
+        if search_root is None:
+            search_root = soup
+
+        for a in search_root.find_all("a", href=True):
+            href: str = a["href"]
+            if href.startswith(prefix):
+                name = a.get_text(strip=True)
+                # Uzun ve anlamsız metin olanları filtrele (navigasyon linkleri)
+                if name and len(name) < 60 and name not in seen:
+                    seen.add(name)
+                    districts.append(name)
+
+        return sorted(districts)
+
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("İlçe listesi alınamadı (il=%s): %s", il, exc)
+        return []

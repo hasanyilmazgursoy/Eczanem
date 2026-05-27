@@ -34,4 +34,23 @@ class PharmacyRepository {
       ),
     );
   }
+
+  /// Bir ilin eczaneler.gen.tr'deki gerçek ilçe listesini döndürür.
+  ///
+  /// İlçe dropdown'ını doldurmak için kullanılır.
+  FutureEither<List<String>> getDistricts(String il) async {
+    final response = await _dio.get(
+      '/api/pharmacy/districts',
+      queryParameters: {'il': il},
+    );
+
+    return response.fold(
+      (failure) => left(failure),
+      (response) {
+        final data = response.data as Map<String, dynamic>;
+        final list = (data['districts'] as List).cast<String>();
+        return right(list);
+      },
+    );
+  }
 }
