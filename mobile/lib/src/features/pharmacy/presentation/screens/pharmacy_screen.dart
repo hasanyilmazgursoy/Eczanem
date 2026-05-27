@@ -23,6 +23,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
   String? _errorMessage;
   bool _apiAvailable = true;
   bool _showMap = false; // liste / harita toggle
+  // İlçede sonuç bulunamazsa il geneline düşüldüğünü belirtir
+  bool _fallbackToIl = false;
   bool _locationLoading = false;
 
   /// Kullanıcının cihaz konumu — harita merkezini belirlemek için saklanır.
@@ -84,6 +86,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
         _status = AppStatus.success;
         _pharmacies = response.pharmacies;
         _apiAvailable = response.apiAvailable;
+        _fallbackToIl = response.fallbackToIl;
       }),
     );
   }
@@ -197,6 +200,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
             _status = AppStatus.success;
             _pharmacies = response.pharmacies;
             _apiAvailable = response.apiAvailable;
+            _fallbackToIl = response.fallbackToIl;
             // eczaneler.gen.tr lat/lon vermiyor → marker olmaz → liste göster
             _showMap = false;
           });
@@ -496,17 +500,52 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
 
     if (!_apiAvailable || _pharmacies.isEmpty) return _ApiUnavailableState();
 
-    return ListView.separated(
-      padding: EdgeInsets.all(AppSpacing.lg),
-      itemCount: _pharmacies.length,
-      separatorBuilder: (_, __) => SizedBox(height: AppSpacing.sm),
-      itemBuilder: (context, i) => _PharmacyTile(
-        pharmacy: _pharmacies[i],
-        onCall: _pharmacies[i].phone.isNotEmpty
-            ? () => _callPharmacy(_pharmacies[i].phone)
-            : null,
-        onDirections: () => _openDirections(_pharmacies[i]),
-      ),
+    return Column(
+      children: [
+        // İlçede nöbetçi eczane bulunamayınca il geneline düşüldüğünü bildir
+        if (_fallbackToIl)
+          Container(
+            width: double.infinity,
+            color: colorScheme.secondaryContainer,
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.sm,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 16,
+                  color: colorScheme.onSecondaryContainer,
+                ),
+                SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'pharmacy.fallback_notice'
+                        .tr(args: [_ilceCtrl.text.trim()]),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        Expanded(
+          child: ListView.separated(
+            padding: EdgeInsets.all(AppSpacing.lg),
+            itemCount: _pharmacies.length,
+            separatorBuilder: (_, __) => SizedBox(height: AppSpacing.sm),
+            itemBuilder: (context, i) => _PharmacyTile(
+              pharmacy: _pharmacies[i],
+              onCall: _pharmacies[i].phone.isNotEmpty
+                  ? () => _callPharmacy(_pharmacies[i].phone)
+                  : null,
+              onDirections: () => _openDirections(_pharmacies[i]),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

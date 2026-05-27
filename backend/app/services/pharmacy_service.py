@@ -174,34 +174,43 @@ async def get_nearby_pharmacies(
     il_slug = _to_slug(detected_il)
     ilce_slug = _to_slug(detected_ilce) if detected_ilce else ""
 
+    async def _fetch_pharmacies(url: str) -> list[dict[str, Any]]:
+        """Verilen URL'den eczane listesini çekip parse eder; hata durumunda [] döner."""
+        try:
+            async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+                resp = await client.get(url, headers=_HEADERS)
+                resp.raise_for_status()
+                return _parse_pharmacies(resp.text)
+        except httpx.HTTPStatusError as exc:
+            logger.warning("eczaneler.gen.tr HTTP hatası: %s", exc)
+            return []
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("eczaneler.gen.tr erişim hatası: %s", exc)
+            return []
+
     url = f"{_BASE_URL}/nobetci-{il_slug}"
     if ilce_slug:
         url += f"-{ilce_slug}"
 
     logger.info("eczaneler.gen.tr isteği: %s", url)
+    pharmacies = await _fetch_pharmacies(url)
 
-    try:
-        async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
-            resp = await client.get(url, headers=_HEADERS)
-            resp.raise_for_status()
-            html = resp.text
-    except httpx.HTTPStatusError as exc:
-        logger.warning("eczaneler.gen.tr HTTP hatası: %s", exc)
-        return {
-            "pharmacies": [],
-            "detected_il": detected_il,
-            "detected_ilce": detected_ilce,
-        }
-    except Exception as exc:  # noqa: BLE001
-        logger.warning("eczaneler.gen.tr erişim hatası: %s", exc)
-        return {
-            "pharmacies": [],
-            "detected_il": detected_il,
-            "detected_ilce": detected_ilce,
-        }
+    # İlçe belirtildi ama sonuç boş → il geneline düş
+    fallback_to_il = False
+    if ilce_slug and not pharmacies:
+        fallback_url = f"{_BASE_URL}/nobetci-{il_slug}"
+        logger.info(
+            "İlçe '%s' için sonuç yok, il geneline düşülüyor: %s",
+            detected_ilce,
+            fallback_url,
+        )
+        pharmacies = await _fetch_pharmacies(fallback_url)
+        if pharmacies:
+            fallback_to_il = True
 
     return {
-        "pharmacies": _parse_pharmacies(html),
+        "pharmacies": pharmacies,
         "detected_il": detected_il,
         "detected_ilce": detected_ilce,
+        "fallback_to_il": fallback_to_il,
     }

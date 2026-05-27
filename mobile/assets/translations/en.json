@@ -385,7 +385,8 @@
     "search_button": "Search",
     "no_results_title": "No Pharmacy Found",
     "no_results_subtitle": "No on-duty pharmacy found in this area. Check the province/district and try again.",
-    "error_generic": "Could not retrieve pharmacy info. Please try again."
+    "error_generic": "Could not retrieve pharmacy info. Please try again.",
+    "fallback_notice": "No on-duty pharmacy found in {}; showing results for the whole province."
   },
   "emergency_card": {
     "title": "My Emergency Card",

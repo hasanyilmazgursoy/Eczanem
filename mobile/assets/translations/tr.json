@@ -385,7 +385,8 @@
         "search_button": "Ara",
         "no_results_title": "Eczane Bulunamadı",
         "no_results_subtitle": "Bu bölgede nöbetçi eczane bilgisi bulunamadı. İl/ilçe bilgisini kontrol edip tekrar deneyin.",
-        "error_generic": "Eczane bilgisi alınamadı. Lütfen tekrar deneyin."
+        "error_generic": "Eczane bilgisi alınamadı. Lütfen tekrar deneyin.",
+        "fallback_notice": "{} ilçesinde nöbetçi eczane bulunamadı; il genelindeki eczaneler gösteriliyor."
     },
     "emergency_card": {
         "title": "Acil Durum Kartım",

@@ -27,6 +27,8 @@ class NearbyPharmaciesResponse(BaseModel):
     # Nominatim ile tespit edilen il/ilçe (konum butonu kullanıldığında dolu olur)
     detected_il: str = ""
     detected_ilce: str = ""
+    # İlçede sonuç bulunamayınca il geneline düşüldüğünü belirtir
+    fallback_to_il: bool = False
 
 
 @router.get("/nearby", response_model=NearbyPharmaciesResponse)
@@ -48,4 +50,5 @@ async def nearby_pharmacies(
         api_available=bool(pharmacies),
         detected_il=result["detected_il"],
         detected_ilce=result["detected_ilce"],
+        fallback_to_il=result.get("fallback_to_il", False),
     )

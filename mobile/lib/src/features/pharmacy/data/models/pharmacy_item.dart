@@ -39,6 +39,7 @@ class NearbyPharmaciesResponse {
     required this.apiAvailable,
     this.detectedIl = '',
     this.detectedIlce = '',
+    this.fallbackToIl = false,
   });
 
   final List<PharmacyItem> pharmacies;
@@ -51,6 +52,9 @@ class NearbyPharmaciesResponse {
   /// Nominatim ile tespit edilen ilçe
   final String detectedIlce;
 
+  /// İlçede nöbetçi eczane bulunamayınca il geneline düşüldüğünü belirtir
+  final bool fallbackToIl;
+
   factory NearbyPharmaciesResponse.fromJson(Map<String, dynamic> json) {
     final rawList = json['pharmacies'] as List<dynamic>? ?? [];
     return NearbyPharmaciesResponse(
@@ -62,6 +66,7 @@ class NearbyPharmaciesResponse {
       apiAvailable: json['api_available'] as bool? ?? false,
       detectedIl: json['detected_il'] as String? ?? '',
       detectedIlce: json['detected_ilce'] as String? ?? '',
+      fallbackToIl: json['fallback_to_il'] as bool? ?? false,
     );
   }
 }
