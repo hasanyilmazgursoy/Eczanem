@@ -239,21 +239,13 @@ async def get_districts(il: str) -> list[str]:
         seen: set[str] = set()
         districts: list[str] = []
 
-        # Önce "İlçe Seç" başlığının bulunduğu container'a bak
-        ilce_sec = soup.find(string=lambda t: t and "İlçe Seç" in t)
-        search_root = None
-        if ilce_sec:
-            search_root = ilce_sec.find_parent(["div", "section", "aside", "ul", "nav"])
-
-        # Container bulunamazsa tüm sayfayı tara (fallback)
-        if search_root is None:
-            search_root = soup
-
-        for a in search_root.find_all("a", href=True):
+        # Tüm sayfadan ilçe linklerini topla; sidebar kısıtlaması bazı illerde
+        # eksik sonuç verdiğinden doğrudan tam sayfa taraması yapılır.
+        for a in soup.find_all("a", href=True):
             href: str = a["href"]
             if href.startswith(prefix):
                 name = a.get_text(strip=True)
-                # Uzun ve anlamsız metin olanları filtrele (navigasyon linkleri)
+                # Uzun ve anlamsız metin olanları filtrele
                 if name and len(name) < 60 and name not in seen:
                     seen.add(name)
                     districts.append(name)
