@@ -270,7 +270,9 @@ Nöbetçi eczane bulma + sesle ilaç sorgulama çalışıyor.
 
 ### Flutter Ekranları
 - [x] Acil Kart Düzenle: Kan grubu, alerjiler, kronik hastalıklar, acil kişi
+- [x] Acil Kart Düzenle: Kan grubu alanı 8 standart seçenekli dropdown'a taşındı (A/B/AB/0 Rh+/-); mevcut veriler normalize edilerek eşleştiriliyor
 - [x] Acil Kart Görüntüle: Tek ekranda tüm bilgi, büyük font, yüksek kontrast
+- [x] Acil Kart Görüntüle: AppBar'da ikon-only düzenle butonu (başlık kesilmesi giderildi); QR koyu tema beyaz arka plan + siyah renk düzeltmesi
 - [x] Paylaş: QR kod ile acil kart bilgilerini anında dışa aktar (qr_flutter ^4.1.0)
 - [ ] Paylaş: PDF olarak dışa aktar (gelecek iterasyon)
 - [x] Sağlık Notu Ekle: Tarih, kategori, metin, semptom chip'leri, ilaç alındı switch
@@ -288,11 +290,16 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 **Durum:** 🟢 Tamamlandı
 
 - [x] UI/UX iyileştirme: Tutarlı tasarım, empty state ekranları (tüm dinamik liste ekranları)
-- [~] Karanlık mod: AppBar ve ana ekran dark mode uyumu sağlandı; bazı ekranlarda hardcoded renk kalıntısı olabilir
+- [x] Karanlık mod: AppBar ve bileşen renkleri temaya taşındı; hardcoded color kalıntıları Sağlık Notları, Acil Kart, Aile Profili, Nöbetçi Eczane, Semptom Analizi, Fotoğraftan Tara ekranlarında temizlendi
+- [x] AppButton global fix: Özel `color` parametresi verildiğinde ön plan rengi (`fg`) görünmez oluyordu; `Colors.white` sabitleme ile düzeltildi
+- [x] Login / Signup marka kimliği: Üstte eczane ikonu + "Eczanem" başlığı + scale+fade animasyonları eklendi
+- [x] "AI / Gemini" branding kaldırıldı: Uygulama genelinde "yapay zeka" olarak güncellendi (tr/en JSON + backend hata mesajları)
+- [x] Gemini 5xx otomatik yeniden deneme: Backend'de exponential backoff ile 3 deneme mantığı; geçici API hataları kullanıcıya yansımıyor
+- [x] UX mikro-iyileştirmeler: Semptom Analizi hızlı başlangıç önerileri, Etkileşim ekranı scroll + "Hazırsınız!" mesajı, Hatırlatıcı form sadeleştirme, Nöbetçi Eczane "Konumumu Kullan" başlangıç butonu, Aile birey detail AppBar düzenleme butonu
 - [x] Onboarding: İlk açılışta temel onboarding akışı
 - [x] Hata yönetimi: Her ekranda yükleniyor/hata/boş/başarılı durumları
 - [x] Güvenlik: input sanitization, debug=False production default, JWT key rotation, global exception handler
-- [x] Güvenlik (derin): TOCTOU race condition çözümü (RLock), Do S koruması (10 MB görsel sınırı), X-Forwarded-For rate limit, config validator
+- [x] Güvenlik (derin): TOCTOU race condition çözümü (RLock), DoS koruması (10 MB görsel sınırı), X-Forwarded-For rate limit, config validator
 - [x] CI/CD: `.github/workflows/ci.yml` — ruff lint, pip-audit, flutter analyze+test, Docker build
 - [x] DevOps: Docker non-root kullanıcı, healthcheck, `docker-compose.override.yml`, `requirements-dev.txt`
 - [x] Test: HealthNote + EmergencyCard + PharmacyItem + MedicationReminder + DrugScanHistoryEntry model birim testleri

@@ -38,8 +38,8 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 
 - **FAZ 3** — Aile profili ekranları ve yerel veri akışı hazır; backend senkronizasyonu ve son polish eksik
 - **FAZ 6** — Tamamlandı: nöbetçi eczane listesi, OSM tabanlı harita görünümü ve sesli sorgu özelliği hazır
-- **FAZ 7** — Tamamlandı: acil durum kartı, QR kod paylaşımı ve sağlık notları modülü hazır; PDF dışa aktarma gelecek iterasyona ertelendi
-- **FAZ 8** — Test, yayın ve son polish aktif odak alanı
+- **FAZ 7** — Tamamlandı: acil durum kartı (kan grubu dropdown, QR dark-mode düzeltmesi), QR kod paylaşımı ve sağlık notları modülü hazır; PDF dışa aktarma gelecek iterasyona ertelendi
+- **FAZ 8** — Büyük ölçüde tamamlandı: kapsamlı UI polish, dark mode renk tutarlılığı, AppButton global fix, marka kimliği ve branding düzenlemesi, Gemini 5xx retry altyapısı yapıldı
 
 ### Teknik özet
 
@@ -78,9 +78,9 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 
 ### Yol haritasındaki sıradaki odaklar
 
-- FAZ 8 polish: dark mode tam tutarlılık, remaining hardcoded color temizliği
-- Release checklist, mağaza hazırlığı ve deploy planı
-- Sonraki faz için büyük işler: veritabanı migration, backend senkronizasyonu, PDF dışa aktarma, CORS sertleştirme ve HTTPS
+- Sonraki büyük adım: veritabanı migration (PostgreSQL), backend senkronizasyonu, PDF dışa aktarma
+- Mağaza hazırlığı: uygulama ikon / splash, mağaza görselleri, sürüm numaralandırma
+- Altyapı: CORS sertleştirme, HTTPS, deploy ortamı kurulumu
 
 ## Mimarinin kısa özeti
 
