@@ -159,7 +159,27 @@ class FamilyRepository {
       );
       apiResult.fold(
         (f) => AppLogger.warning('Backend ilaç ekleme başarısız: ${f.message}'),
-        (_) {},
+        (backendDrug) async {
+          if (backendDrug.id == drug.id) return;
+          // Backend farklı ID atadı; lokal ilaç kaydını güncelle.
+          // memberId _syncAddMember sonrası değişmiş olabilir;
+          // drug.id üzerinden de arama yapılır.
+          final members = getMembers();
+          var idx = members.indexWhere((m) => m.id == memberId);
+          if (idx == -1) {
+            idx = members.indexWhere(
+              (m) => m.drugs.any((d) => d.id == drug.id),
+            );
+          }
+          if (idx == -1) return;
+          final member = members[idx];
+          final updatedDrugs = member.drugs
+              .map((d) => d.id == drug.id ? backendDrug : d)
+              .toList();
+          final updatedMembers = List<FamilyMember>.from(members);
+          updatedMembers[idx] = member.copyWith(drugs: updatedDrugs);
+          await _persist(updatedMembers);
+        },
       );
     });
 
@@ -211,17 +231,28 @@ class FamilyRepository {
   }
 
   /// Backend'e yeni üye eklemeyi arka planda dener.
-  void _syncAddMember(FamilyMember member) {
+  /// Başarılı olunca backend UUID'sini yerel kayda yazar;
+  /// böylece aynı oturumdaki güncelleme/silme işlemleri doğru ID'yi kullanır.
+  void _syncAddMember(FamilyMember localMember) {
     Future<void>.microtask(() async {
       final apiResult = await FamilyApiService.instance.addMember(
-        name: member.name,
-        relationship: member.relationship,
-        emoji: member.emoji,
-        age: member.age,
+        name: localMember.name,
+        relationship: localMember.relationship,
+        emoji: localMember.emoji,
+        age: localMember.age,
       );
       apiResult.fold(
         (f) => AppLogger.warning('Backend üye ekleme başarısız: ${f.message}'),
-        (_) {},
+        (backendMember) async {
+          if (backendMember.id == localMember.id) return;
+          // Backend farklı bir UUID atadı; lokal kaydı güncelle (ilaçlar korunur).
+          final members = getMembers();
+          final updated = members.map((m) {
+            if (m.id != localMember.id) return m;
+            return backendMember.copyWith(drugs: m.drugs);
+          }).toList();
+          await _persist(updated);
+        },
       );
     });
   }

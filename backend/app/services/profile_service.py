@@ -112,11 +112,12 @@ def create_family_member(
 def update_family_member(
     user_id: str,
     member_id: str,
-    name: str | None,
-    relationship: str | None,
-    age: int | None,
-    emoji: str | None,
+    updates: dict,
 ) -> dict:
+    """Sadece gönderilen alanları günceller (PATCH semantikler).
+
+    age: null ise yaş alanı temizlenir.
+    """
     with _store_lock:
         members = _load_members(user_id)
         idx = next((i for i, m in enumerate(members) if m["id"] == member_id), None)
@@ -128,14 +129,16 @@ def update_family_member(
             )
 
         member = dict(members[idx])
-        if name is not None:
-            member["name"] = name.strip()
-        if relationship is not None:
-            member["relationship"] = relationship.strip()
-        if age is not None:
-            member["age"] = age
-        if emoji is not None:
-            member["emoji"] = emoji
+        # Yalnızca gönderilen alanlar uygulanır.
+        # "age" alanı null ile gönderilirse yaş temizlenir.
+        if "name" in updates and updates["name"] is not None:
+            member["name"] = updates["name"].strip()
+        if "relationship" in updates:
+            member["relationship"] = (updates.get("relationship") or "").strip()
+        if "age" in updates:
+            member["age"] = updates["age"]
+        if "emoji" in updates and updates["emoji"] is not None:
+            member["emoji"] = updates["emoji"]
         member["updated_at"] = datetime.now(timezone.utc).isoformat()
 
         members[idx] = member

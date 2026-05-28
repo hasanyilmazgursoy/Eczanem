@@ -8,13 +8,13 @@ from pydantic import BaseModel, Field
 
 from app.services.auth_service import get_current_user
 from app.services.profile_service import (
-    list_family_members,
-    create_family_member,
-    update_family_member,
-    delete_family_member,
-    list_member_drugs,
     add_member_drug,
+    create_family_member,
+    delete_family_member,
+    list_family_members,
+    list_member_drugs,
     remove_member_drug,
+    update_family_member,
 )
 
 router = APIRouter()
@@ -129,14 +129,15 @@ async def update_member(
     request: UpdateFamilyMemberRequest,
     user_id: str = Depends(_get_user_id),
 ):
-    """Mevcut aile üyesini günceller."""
+    """Mevcut aile üyesini günceller.
+
+    Sadece gönderilen alanlar güncellenir (PATCH semantikler).
+    age: null gönderilirse yaş alanı temizlenir.
+    """
     return update_family_member(
         user_id=user_id,
         member_id=member_id,
-        name=request.name,
-        relationship=request.relationship,
-        age=request.age,
-        emoji=request.emoji,
+        updates=request.model_dump(exclude_unset=True),
     )
 
 
