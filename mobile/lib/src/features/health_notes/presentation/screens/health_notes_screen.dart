@@ -743,8 +743,8 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                     selected: selected,
                     visualDensity: VisualDensity.compact,
                     selectedColor:
-                        const Color(0xFF1565C0).withValues(alpha: 0.15),
-                    checkmarkColor: const Color(0xFF1565C0),
+                        colorScheme.primary.withValues(alpha: 0.15),
+                    checkmarkColor: colorScheme.primary,
                     onSelected: (_) => setState(() {
                       if (selected) {
                         _selectedSymptoms.remove(s);
@@ -763,7 +763,6 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                 subtitle: Text('health_notes.medication_taken_subtitle'.tr()),
                 value: _medicationTaken,
                 onChanged: (v) => setState(() => _medicationTaken = v),
-                activeThumbColor: const Color(0xFF1565C0),
               ),
               SizedBox(height: AppSpacing.md),
               // Not metni
@@ -782,7 +781,6 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                 label: isEdit
                     ? 'health_notes.update'.tr()
                     : 'health_notes.save'.tr(),
-                color: const Color(0xFF1565C0),
                 isFullWidth: true,
               ),
             ],
@@ -819,10 +817,14 @@ class _EmptyNotesState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              'assets/images/health_notes_empty.png',
-              height: 160,
-              fit: BoxFit.contain,
+            // Koyu temada beyaz arka plan sorununu gidermek için köşe yuvarla
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset(
+                'assets/images/health_notes_empty.png',
+                height: 160,
+                fit: BoxFit.contain,
+              ),
             ),
             SizedBox(height: AppSpacing.lg),
             Text(
@@ -848,8 +850,7 @@ class _EmptyNotesState extends StatelessWidget {
               AppButton(
                 onPressed: onAdd,
                 label: 'health_notes.add_first'.tr(),
-                color: const Color(0xFF1565C0),
-                prefixIcon: const Icon(Icons.add_rounded, color: Colors.white),
+                prefixIcon: const Icon(Icons.add_rounded),
               ),
             ],
           ],
