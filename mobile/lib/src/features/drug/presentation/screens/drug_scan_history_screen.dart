@@ -231,10 +231,19 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              'assets/images/search_empty.png',
-              height: 160,
-              fit: BoxFit.contain,
+            // Dark modda PNG'nin beyaz arka planı görünmemesi için multiply blend
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).brightness == Brightness.dark
+                    ? colorScheme.surface
+                    : Colors.transparent,
+                BlendMode.multiply,
+              ),
+              child: Image.asset(
+                'assets/images/search_empty.png',
+                height: 160,
+                fit: BoxFit.contain,
+              ),
             ),
             SizedBox(height: AppSpacing.lg),
             Text(

@@ -12,6 +12,9 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   Future<void> _handleLogout() async {
     await ref.read(sessionProvider.notifier).logout();
+    // GoRouter'da refreshListenable olmadığından redirect otomatik tetiklenmez;
+    // logout sonrası doğrudan login ekranına yönlendirmek gerekir.
+    if (mounted) context.go(AppRoutes.login);
   }
 
   void _showProfileSheet() {
@@ -111,7 +114,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 SizedBox(height: AppSpacing.lg),
                 OutlinedButton.icon(
                   onPressed: () {
-                    context.pop();
+                    // Navigator.of kullanımı bottom sheet'i güvenli kapatır
+                    Navigator.of(context).pop();
                     _handleLogout();
                   },
                   icon: const Icon(Icons.logout_rounded),
@@ -119,6 +123,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 56),
+                    foregroundColor: context.colors.error,
+                    side: BorderSide(
+                      color: context.colors.error.withValues(alpha: 0.5),
+                    ),
                   ),
                 ),
                 SizedBox(height: AppSpacing.md),

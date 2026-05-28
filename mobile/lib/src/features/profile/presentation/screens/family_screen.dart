@@ -89,12 +89,12 @@ class _FamilyScreenState extends State<FamilyScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.primary,
         title: Text(
           'family.title'.tr(),
           style: textTheme.titleLarge?.copyWith(
-            color: colorScheme.onPrimary,
+            color: colorScheme.primary,
             fontWeight: FontWeight.w800,
           ),
         ),
