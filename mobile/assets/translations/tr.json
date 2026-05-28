@@ -477,7 +477,7 @@
         "systolic": "Sistolik (üst)",
         "diastolic": "Diastolik (alt)",
         "glucose_value": "Kan şekeri (mg/dL)",
-        "pain_level": "Ağrı Seviyesi",
+        "pain_level": "Ağrı {level}/10",
         "pain_none": "Ağrı yok",
         "pain_severe": "Çok şiddetli",
         "symptoms_label": "Semptomlar",
@@ -560,6 +560,8 @@
         "advice_title": "Tavsiyeler",
         "doctor_when_title": "Doktora Ne Zaman Başvurmalısınız?",
         "disclaimer": "Bu analiz tıbbi teşhis değildir. Kesin tanı için doktora veya eczacıya başvurun.",
-        "suggestions_label": "Hızlı başlangıç — bir semptoma dokunun:"
+        "suggestions_label": "Hızlı başlangıç — bir semptoma dokunun:",
+        "voice_start": "Sesle yaz",
+        "voice_stop": "Kaydı durdur"
     }
 }

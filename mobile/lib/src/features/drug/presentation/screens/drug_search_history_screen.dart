@@ -168,10 +168,10 @@ class _EmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: AppSpacing.xl),
-            FilledButton.icon(
+            AppButton(
+              label: 'drug_search_history.go_search'.tr(),
               onPressed: () => context.push(AppRoutes.drugSearch),
-              icon: const Icon(Icons.search_rounded),
-              label: Text('drug_search_history.go_search'.tr()),
+              prefixIcon: const Icon(Icons.search_rounded),
             ),
           ],
         ),

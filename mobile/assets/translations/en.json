@@ -477,7 +477,7 @@
     "systolic": "Systolic (upper)",
     "diastolic": "Diastolic (lower)",
     "glucose_value": "Blood Glucose (mg/dL)",
-    "pain_level": "Pain Level",
+    "pain_level": "Pain {level}/10",
     "pain_none": "No pain",
     "pain_severe": "Severe",
     "symptoms_label": "Symptoms",
@@ -560,6 +560,8 @@
     "advice_title": "Recommendations",
     "doctor_when_title": "When Should You See a Doctor?",
     "disclaimer": "This is not a medical diagnosis. Consult a doctor or pharmacist for a definitive assessment.",
-    "suggestions_label": "Quick start — tap a symptom:"
+    "suggestions_label": "Quick start — tap a symptom:",
+    "voice_start": "Type by voice",
+    "voice_stop": "Stop recording"
   }
 }

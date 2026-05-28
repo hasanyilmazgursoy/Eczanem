@@ -263,10 +263,10 @@ class _EmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: AppSpacing.xl),
-            FilledButton.icon(
+            AppButton(
+              label: 'drug_scan_history.go_scan'.tr(),
               onPressed: () => context.push(AppRoutes.drugPhotoScan),
-              icon: const Icon(Icons.document_scanner_outlined),
-              label: Text('drug_scan_history.go_scan'.tr()),
+              prefixIcon: const Icon(Icons.document_scanner_outlined),
             ),
           ],
         ),

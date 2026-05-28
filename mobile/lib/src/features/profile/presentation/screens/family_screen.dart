@@ -356,13 +356,11 @@ class _EmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: AppSpacing.xl),
-            FilledButton.icon(
+            AppButton(
+              label: 'family.add_member'.tr(),
               onPressed: onAdd,
-              icon: const Icon(Icons.person_add_rounded),
-              label: Text('family.add_member'.tr()),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(double.infinity, 56),
-              ),
+              isFullWidth: true,
+              prefixIcon: const Icon(Icons.person_add_rounded),
             ),
           ],
         ),
@@ -568,23 +566,13 @@ class _FamilyMemberEditorSheetState extends State<FamilyMemberEditorSheet> {
                 },
               ),
               SizedBox(height: AppSpacing.xl),
-              FilledButton(
+              AppButton(
+                label: isEditing
+                    ? 'family.save_changes'.tr()
+                    : 'family.add_member'.tr(),
                 onPressed: _saving ? null : _save,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 56),
-                ),
-                child: _saving
-                    ? const SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2.5),
-                      )
-                    : Text(
-                        isEditing
-                            ? 'family.save_changes'.tr()
-                            : 'family.add_member'.tr(),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                isFullWidth: true,
+                isLoading: _saving,
               ),
             ],
           ),

@@ -112,22 +112,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                   },
                 ),
                 SizedBox(height: AppSpacing.lg),
-                OutlinedButton.icon(
+                AppButton(
+                  label: 'home.logout'.tr(),
                   onPressed: () {
-                    // Navigator.of kullanımı bottom sheet'i güvenli kapatır
                     Navigator.of(context).pop();
                     _handleLogout();
                   },
-                  icon: const Icon(Icons.logout_rounded),
-                  label: Text('home.logout'.tr(),
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 56),
-                    foregroundColor: context.colors.error,
-                    side: BorderSide(
-                      color: context.colors.error.withValues(alpha: 0.5),
-                    ),
-                  ),
+                  variant: ButtonVariant.danger,
+                  isFullWidth: true,
+                  prefixIcon: const Icon(Icons.logout_rounded),
                 ),
                 SizedBox(height: AppSpacing.md),
               ],

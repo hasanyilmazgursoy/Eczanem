@@ -124,12 +124,12 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1565C0),
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         title: Text(
           'health_notes.title'.tr(),
           style: textTheme.titleLarge?.copyWith(
-            color: Colors.white,
+            color: colorScheme.onPrimary,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -150,8 +150,8 @@ class _HealthNotesScreenState extends State<HealthNotesScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openAddSheet(),
-        backgroundColor: const Color(0xFF1565C0),
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         icon: const Icon(Icons.add_rounded),
         label: Text('health_notes.add'.tr()),
       ),
@@ -249,9 +249,9 @@ class _CategoryFilterBar extends StatelessWidget {
             ),
             selected: isSelected,
             onSelected: (_) => onSelected(cat),
-            selectedColor: const Color(0xFF1565C0),
+            selectedColor: colorScheme.primary,
             labelStyle: TextStyle(
-              color: isSelected ? Colors.white : colorScheme.onSurface,
+              color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
             ),
           );
         },
@@ -277,6 +277,7 @@ class _NoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
     final colorScheme = context.colors;
+    final appColors = context.appColors;
 
     final dateStr =
         '${note.date.day.toString().padLeft(2, '0')}.${note.date.month.toString().padLeft(2, '0')}.${note.date.year}';
@@ -356,40 +357,50 @@ class _NoteCard extends StatelessWidget {
                     if (note.bloodPressureDisplay != null)
                       _MeasurementBadge(
                         label: '🩺 ${note.bloodPressureDisplay!}',
-                        backgroundColor: Colors.red.shade100,
-                        foregroundColor: Colors.red.shade800,
+                        backgroundColor: colorScheme.errorContainer,
+                        foregroundColor: colorScheme.onErrorContainer,
                       ),
                     if (note.glucoseValue != null)
                       _MeasurementBadge(
                         label:
                             '🩸 ${note.glucoseValue!.toStringAsFixed(0)} mg/dL',
-                        backgroundColor: Colors.orange.shade100,
-                        foregroundColor: Colors.orange.shade800,
+                        backgroundColor: appColors.warningContainer ??
+                            colorScheme.tertiaryContainer,
+                        foregroundColor: appColors.onWarningContainer ??
+                            colorScheme.onTertiaryContainer,
                       ),
                     if (note.painLevel != null)
                       _MeasurementBadge(
-                        label: '😣 Ağrı ${note.painLevel}/10',
-                        backgroundColor: _painBadgeColor(note.painLevel!),
-                        foregroundColor: _painBadgeTextColor(note.painLevel!),
+                        label: '😣 ${'health_notes.pain_level'.tr(namedArgs: {
+                              'level': note.painLevel.toString()
+                            })}',
+                        backgroundColor: _painBadgeColor(
+                            note.painLevel!, appColors, colorScheme),
+                        foregroundColor: _painBadgeTextColor(
+                            note.painLevel!, appColors, colorScheme),
                       ),
                     if (note.medicationTaken)
                       _MeasurementBadge(
                         label: '💊 ${'health_notes.medication_taken'.tr()}',
-                        backgroundColor: Colors.green.shade100,
-                        foregroundColor: Colors.green.shade800,
+                        backgroundColor: appColors.successContainer ??
+                            colorScheme.primaryContainer,
+                        foregroundColor: appColors.onSuccessContainer ??
+                            colorScheme.onPrimaryContainer,
                       ),
                     ...note.symptoms.take(3).map(
                           (s) => _MeasurementBadge(
                             label: s,
-                            backgroundColor: Colors.blue.shade50,
-                            foregroundColor: Colors.blue.shade700,
+                            backgroundColor: appColors.infoContainer ??
+                                colorScheme.secondaryContainer,
+                            foregroundColor: appColors.onInfoContainer ??
+                                colorScheme.onSecondaryContainer,
                           ),
                         ),
                     if (note.symptoms.length > 3)
                       _MeasurementBadge(
                         label: '+${note.symptoms.length - 3}',
-                        backgroundColor: Colors.grey.shade200,
-                        foregroundColor: Colors.grey.shade700,
+                        backgroundColor: colorScheme.surfaceContainerHighest,
+                        foregroundColor: colorScheme.onSurfaceVariant,
                       ),
                   ],
                 ),
@@ -622,9 +633,9 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                     ),
                     selected: isSelected,
                     onSelected: (_) => setState(() => _selectedCategory = cat),
-                    selectedColor: const Color(0xFF1565C0),
+                    selectedColor: colorScheme.primary,
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : colorScheme.onSurface,
+                      color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
@@ -742,8 +753,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                     label: Text(s, style: const TextStyle(fontSize: 12)),
                     selected: selected,
                     visualDensity: VisualDensity.compact,
-                    selectedColor:
-                        colorScheme.primary.withValues(alpha: 0.15),
+                    selectedColor: colorScheme.primary.withValues(alpha: 0.15),
                     checkmarkColor: colorScheme.primary,
                     onSelected: (_) => setState(() {
                       if (selected) {
@@ -863,17 +873,23 @@ class _EmptyNotesState extends StatelessWidget {
 // ══════════════════════ YARDIMCI FONKSİYONLAR ══════════════════════
 
 /// Ağrı seviyesine göre badge arka plan rengi.
-Color _painBadgeColor(int level) {
-  if (level <= 3) return Colors.green.shade100;
-  if (level <= 6) return Colors.orange.shade100;
-  return Colors.red.shade100;
+Color _painBadgeColor(
+    int level, AppColorsExtension appColors, ColorScheme colorScheme) {
+  if (level <= 3)
+    return appColors.successContainer ?? colorScheme.primaryContainer;
+  if (level <= 6)
+    return appColors.warningContainer ?? colorScheme.tertiaryContainer;
+  return colorScheme.errorContainer;
 }
 
 /// Ağrı seviyesine göre badge yazı rengi.
-Color _painBadgeTextColor(int level) {
-  if (level <= 3) return Colors.green.shade800;
-  if (level <= 6) return Colors.orange.shade800;
-  return Colors.red.shade800;
+Color _painBadgeTextColor(
+    int level, AppColorsExtension appColors, ColorScheme colorScheme) {
+  if (level <= 3)
+    return appColors.onSuccessContainer ?? colorScheme.onPrimaryContainer;
+  if (level <= 6)
+    return appColors.onWarningContainer ?? colorScheme.onTertiaryContainer;
+  return colorScheme.onErrorContainer;
 }
 
 // ═══════════════════════ ÖLÇÜM BADGE ═══════════════════════
@@ -997,7 +1013,7 @@ class _HealthReportSheet extends StatelessWidget {
                           child: _StatCard(
                             label: 'health_notes.report_total'.tr(),
                             value: '${notes.length}',
-                            color: const Color(0xFF1565C0),
+                            color: colorScheme.primary,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -1215,7 +1231,8 @@ class _DoctorViewSheet extends StatelessWidget {
                       ...painNotes.take(5).map(
                             (n) => _DoctorDataRow(
                               icon: Icons.warning_amber_rounded,
-                              color: _painBadgeTextColor(n.painLevel!),
+                              color: _painBadgeTextColor(n.painLevel!,
+                                  context.appColors, context.colors),
                               label: 'Ağrı ${n.painLevel}/10',
                               value: n.text.length > 50
                                   ? '${n.text.substring(0, 50)}…'
@@ -1251,9 +1268,9 @@ class _DoctorViewSheet extends StatelessWidget {
                                             child: LinearProgressIndicator(
                                               value: e.value /
                                                   sortedSymptoms.first.value,
-                                              color: const Color(0xFF1565C0),
+                                              color: Theme.of(context).colorScheme.primary,
                                               backgroundColor:
-                                                  Colors.grey.shade200,
+                                                  Theme.of(context).colorScheme.surfaceContainerHighest,
                                               minHeight: 6,
                                             ),
                                           ),
@@ -1399,8 +1416,8 @@ class _CategoryBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: ratio,
-                color: const Color(0xFF1565C0),
-                backgroundColor: Colors.grey.shade200,
+                color: context.colors.primary,
+                backgroundColor: context.colors.surfaceContainerHighest,
                 minHeight: 8,
               ),
             ),
@@ -1498,7 +1515,7 @@ class _SectionHeader extends StatelessWidget {
       title,
       style: context.textTheme.titleSmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: const Color(0xFF1565C0),
+        color: context.colors.primary,
       ),
     );
   }

@@ -113,10 +113,10 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
         foregroundColor: colorScheme.onSurface,
         title: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.health_and_safety_rounded,
               size: 26,
-              color: Color(0xFF00897B),
+              color: colorScheme.primary,
             ),
             SizedBox(width: AppSpacing.sm),
             Text(
@@ -137,7 +137,7 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
             _buildInputCard(colorScheme, textTheme),
             // Boş durum — örnek semptom önerileri
             if (_result == null && !_isLoading)
-              _buildSuggestionsSection(textTheme),
+              _buildSuggestionsSection(colorScheme, textTheme),
             SizedBox(height: AppSpacing.xl),
             // Hata mesajı
             if (_error != null)
@@ -170,8 +170,8 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
                   padding: EdgeInsets.all(AppSpacing.xxl),
                   child: Column(
                     children: [
-                      const CircularProgressIndicator(
-                        color: Color(0xFF00897B),
+                      CircularProgressIndicator(
+                        color: colorScheme.primary,
                       ),
                       SizedBox(height: AppSpacing.lg),
                       Text(
@@ -195,7 +195,8 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
   }
 
   /// Kullanıcıya hızlı başlangıç için dokunulabilir örnek semptom önerileri sunar.
-  Widget _buildSuggestionsSection(TextTheme textTheme) {
+  Widget _buildSuggestionsSection(
+      ColorScheme colorScheme, TextTheme textTheme) {
     const suggestions = [
       ('Baş ağrısı, ateş', Icons.sick_rounded),
       ('Bulantı, mide ağrısı', Icons.sentiment_dissatisfied_rounded),
@@ -212,7 +213,7 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
           Text(
             'symptom_analysis.suggestions_label'.tr(),
             style: textTheme.labelMedium?.copyWith(
-              color: const Color(0xFF00897B),
+              color: colorScheme.primary,
             ),
           ),
           SizedBox(height: AppSpacing.sm),
@@ -221,13 +222,12 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
             runSpacing: AppSpacing.sm,
             children: suggestions.map((s) {
               return ActionChip(
-                avatar: Icon(s.$2, size: 16, color: const Color(0xFF00897B)),
+                avatar: Icon(s.$2, size: 16, color: colorScheme.primary),
                 label: Text(s.$1, style: textTheme.bodySmall),
                 onPressed: () => setState(() => _controller.text = s.$1),
-                backgroundColor:
-                    const Color(0xFF00897B).withValues(alpha: 0.08),
+                backgroundColor: colorScheme.primary.withValues(alpha: 0.08),
                 side: BorderSide(
-                  color: const Color(0xFF00897B).withValues(alpha: 0.25),
+                  color: colorScheme.primary.withValues(alpha: 0.25),
                 ),
               );
             }).toList(),
@@ -241,10 +241,10 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
     return Container(
       padding: EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
-        color: const Color(0xFF00897B).withValues(alpha: 0.08),
+        color: colorScheme.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: const Color(0xFF00897B).withValues(alpha: 0.3),
+          color: colorScheme.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -252,14 +252,14 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
         children: [
           Row(
             children: [
-              const Icon(Icons.psychology_rounded, color: Color(0xFF00897B)),
+              const Icon(Icons.psychology_rounded),
               SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   'symptom_analysis.input_title'.tr(),
                   style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF00897B),
+                    color: colorScheme.primary,
                   ),
                 ),
               ),
@@ -284,13 +284,13 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
-                  color: const Color(0xFF00897B).withValues(alpha: 0.3),
+                  color: colorScheme.primary.withValues(alpha: 0.3),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(
-                  color: Color(0xFF00897B),
+                borderSide: BorderSide(
+                  color: colorScheme.primary,
                   width: 2,
                 ),
               ),
@@ -308,31 +308,24 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
                   size: 20,
                 ),
                 label: Text(
-                  _isListening ? 'Kaydı durdur' : 'Sesle yaz',
+                  _isListening
+                      ? 'symptom_analysis.voice_stop'.tr()
+                      : 'symptom_analysis.voice_start'.tr(),
                   style: const TextStyle(fontSize: 13),
                 ),
                 style: TextButton.styleFrom(
                   foregroundColor:
-                      _isListening ? Colors.red : const Color(0xFF00897B),
+                      _isListening ? colorScheme.error : colorScheme.primary,
                 ),
               ),
             ),
           SizedBox(height: AppSpacing.sm),
-          ElevatedButton.icon(
+          AppButton(
+            label: 'symptom_analysis.button'.tr(),
             onPressed: _isLoading ? null : _analyze,
-            icon: const Icon(Icons.monitor_heart_rounded),
-            label: Text(
-              'symptom_analysis.button'.tr(),
-              style: const TextStyle(fontWeight: FontWeight.w700),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF00897B),
-              foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 52),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
+            isFullWidth: true,
+            height: ButtonSize.large,
+            prefixIcon: const Icon(Icons.monitor_heart_rounded),
           ),
         ],
       ),
@@ -387,7 +380,7 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
         _ResultCard(
           icon: Icons.summarize_rounded,
           title: 'symptom_analysis.summary_title'.tr(),
-          color: const Color(0xFF00897B),
+          color: colorScheme.primary,
           child: MarkdownBody(
             data: result['semptomlar_ozeti'] as String? ?? '',
             styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))

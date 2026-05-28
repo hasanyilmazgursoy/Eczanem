@@ -364,8 +364,8 @@ class _ReminderCard extends StatelessWidget {
     final stockColor = reminder.isOutOfStock
         ? colorScheme.error
         : reminder.isLowStock
-            ? Colors.orange.shade700
-            : Colors.teal;
+            ? context.appColors.warning
+            : context.appColors.success;
 
     return AppCard(
       showShadow: true,
@@ -583,12 +583,12 @@ class _NotificationPermissionCard extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.14),
+              color: context.appColors.warningContainer ?? Theme.of(context).colorScheme.tertiaryContainer,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.notifications_off_outlined,
-              color: Colors.orange,
+              color: context.appColors.warning,
             ),
           ),
           SizedBox(width: AppSpacing.md),
@@ -1027,7 +1027,7 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
               contentPadding: EdgeInsets.zero,
               secondary: Icon(
                 Icons.alarm_rounded,
-                color: _useAlarm ? Colors.orange : null,
+                color: _useAlarm ? context.appColors.warning : null,
               ),
               title: Text('medication_reminder.alarm_switch'.tr()),
               subtitle: Text('medication_reminder.alarm_switch_subtitle'.tr()),
