@@ -54,13 +54,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   'auth.log_in'.tr(),
                   style:
                       tt.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
+                ).animate().fadeIn().slideY(begin: 0.2),
                 SizedBox(height: AppSpacing.sm.h),
                 Text(
                   'auth.log_in_subtitle'.tr(),
                   textAlign: TextAlign.center,
                   style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
-                ),
+                ).animate().fadeIn().slideY(begin: 0.2),
                 SizedBox(height: AppSpacing.xxxl.h),
                 // Form Card
                 Form(

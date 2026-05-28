@@ -193,10 +193,11 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
               SizedBox(height: AppSpacing.xl),
               _HugeActionCard(
-                icon: Icons.health_and_safety_rounded,
+                // AI destekli; mavi ton klinik/bilişsel çağrışım taşır
+                icon: Icons.psychology_rounded,
                 title: 'home.action_symptom_analysis'.tr(),
                 subtitle: 'home.action_symptom_analysis_subtitle'.tr(),
-                color: const Color(0xFF00897B),
+                color: const Color(0xFF1565C0),
                 onTap: () => context.push(AppRoutes.symptomAnalysis),
               ),
               SizedBox(height: AppSpacing.xl),
@@ -249,10 +250,11 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
               SizedBox(height: AppSpacing.xl),
               _HugeActionCard(
-                icon: Icons.health_and_safety_rounded,
+                // Notlar için defter ikonu ve kahverengi ton — not/günlük çağrışımı
+                icon: Icons.note_alt_rounded,
                 title: 'home.action_health_notes'.tr(),
                 subtitle: 'home.action_health_notes_subtitle'.tr(),
-                color: const Color(0xFF00796B),
+                color: const Color(0xFF5D4037),
                 onTap: () => context.push(AppRoutes.healthNotes),
               ),
               SizedBox(height: AppSpacing.xl),

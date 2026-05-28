@@ -169,7 +169,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
                       children: [
                         TextSpan(
-                          text: 'auth.sign_up'.tr(),
+                          // Kayıt ekranında "giriş yap" bağlantısı — doğru key kullanılmalı
+                          text: 'auth.sign_in'.tr(),
                           style: TextStyle(
                             color: cs.primary,
                             fontWeight: FontWeight.bold,

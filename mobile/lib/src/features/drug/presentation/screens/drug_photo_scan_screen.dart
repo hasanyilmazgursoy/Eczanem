@@ -357,7 +357,7 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                       Text(
                         isProspectusMode
                             ? 'drug_search.prospectus_mode_subtitle'.tr()
-                            : 'Fotoğraf seçin veya yeni bir fotoğraf çekin.',
+                            : 'drug_search.image_empty_subtitle'.tr(),
                         textAlign: TextAlign.center,
                         style: textTheme.titleMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,

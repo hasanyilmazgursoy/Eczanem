@@ -1,6 +1,9 @@
+import 'package:eczanem/src/features/auth/domain/entities/user.dart';
+import 'package:eczanem/src/features/auth/presentation/providers/session_provider.dart';
+
 import '../../../../imports/imports.dart';
 
-/// Hesap ayarları ekranı — şifre değiştirme ve çıkış işlemleri.
+/// Hesap ayarları ekranı — kullanıcı bilgisi, şifre değiştirme ve çıkış işlemleri.
 class AccountSettingsScreen extends ConsumerStatefulWidget {
   const AccountSettingsScreen({super.key});
 
@@ -88,41 +91,59 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Kullanıcı adı ve e-posta üst bölümde gösterilir
+    final user = ref.watch(sessionProvider).user;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('account_settings.title'.tr()),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(AppSpacing.xl),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Kullanıcı bilgisi kartı — isim ve e-posta gösterimi
+                _UserInfoHeader(user: user),
+                SizedBox(height: AppSpacing.xl),
                 Text(
                   'account_settings.change_password'.tr(),
                   style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 16),
-                _PasswordField(
+                SizedBox(height: AppSpacing.md),
+                AppTextField(
                   controller: _currentPasswordCtrl,
                   label: 'account_settings.current_password'.tr(),
-                  obscure: _obscureCurrent,
-                  onToggle: () =>
-                      setState(() => _obscureCurrent = !_obscureCurrent),
+                  obscureText: _obscureCurrent,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureCurrent ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () =>
+                        setState(() => _obscureCurrent = !_obscureCurrent),
+                  ),
                   validator: (v) => (v == null || v.isEmpty)
                       ? 'account_settings.field_required'.tr()
                       : null,
                 ),
-                const SizedBox(height: 12),
-                _PasswordField(
+                SizedBox(height: AppSpacing.ms),
+                AppTextField(
                   controller: _newPasswordCtrl,
                   label: 'account_settings.new_password'.tr(),
-                  obscure: _obscureNew,
-                  onToggle: () => setState(() => _obscureNew = !_obscureNew),
+                  obscureText: _obscureNew,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureNew ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () => setState(() => _obscureNew = !_obscureNew),
+                  ),
                   validator: (v) {
                     if (v == null || v.isEmpty) {
                       return 'account_settings.field_required'.tr();
@@ -133,38 +154,38 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
-                _PasswordField(
+                SizedBox(height: AppSpacing.ms),
+                AppTextField(
                   controller: _confirmPasswordCtrl,
                   label: 'account_settings.confirm_password'.tr(),
-                  obscure: _obscureConfirm,
-                  onToggle: () =>
-                      setState(() => _obscureConfirm = !_obscureConfirm),
+                  obscureText: _obscureConfirm,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureConfirm ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () =>
+                        setState(() => _obscureConfirm = !_obscureConfirm),
+                  ),
                   validator: (v) => v != _newPasswordCtrl.text
                       ? 'account_settings.passwords_mismatch'.tr()
                       : null,
                 ),
-                const SizedBox(height: 24),
-                ElevatedButton(
+                SizedBox(height: AppSpacing.xl),
+                AppButton(
+                  label: 'account_settings.save'.tr(),
+                  isLoading: _isSaving,
                   onPressed: _isSaving ? null : _changePassword,
-                  child: _isSaving
-                      ? const SizedBox.square(
-                          dimension: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text('account_settings.save'.tr()),
+                  isFullWidth: true,
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: AppSpacing.xxl),
                 const Divider(),
-                const SizedBox(height: 16),
-                OutlinedButton.icon(
+                SizedBox(height: AppSpacing.md),
+                AppButton(
+                  label: 'account_settings.logout'.tr(),
+                  variant: ButtonVariant.danger,
                   onPressed: _logout,
-                  icon: const Icon(Icons.logout),
-                  label: Text('account_settings.logout'.tr()),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: context.colors.error,
-                    side: BorderSide(color: context.colors.error),
-                  ),
+                  isFullWidth: true,
                 ),
               ],
             ),
@@ -175,34 +196,52 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
   }
 }
 
-class _PasswordField extends StatelessWidget {
-  const _PasswordField({
-    required this.controller,
-    required this.label,
-    required this.obscure,
-    required this.onToggle,
-    required this.validator,
-  });
+/// Kullanıcı adı ve e-posta adresini ekranın üstünde gösterir.
+class _UserInfoHeader extends StatelessWidget {
+  const _UserInfoHeader({required this.user});
 
-  final TextEditingController controller;
-  final String label;
-  final bool obscure;
-  final VoidCallback onToggle;
-  final FormFieldValidator<String> validator;
+  final AppUser? user;
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscure,
-      validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        suffixIcon: IconButton(
-          onPressed: onToggle,
-          icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
+    final cs = context.colors;
+    final tt = context.textTheme;
+
+    return Row(
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: cs.primaryContainer,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.person_rounded,
+            size: 28,
+            color: cs.onPrimaryContainer,
+          ),
         ),
-      ),
+        SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                user?.name ?? '',
+                style: tt.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (user?.email != null)
+                Text(
+                  user!.email,
+                  style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+                  overflow: TextOverflow.ellipsis,
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
