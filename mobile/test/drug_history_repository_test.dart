@@ -35,5 +35,56 @@ void main() {
       expect(restored.subtitle, 'Kullanma talimatı');
       expect(restored.hasCandidates, isFalse);
     });
+
+    test('fromPayload ilac_adi boşsa medicine için bilinmeyen ilaç fallback kullanır', () {
+      final entry = DrugScanHistoryEntry.fromPayload(
+        mode: DrugScanHistoryMode.medicine,
+        payload: {'etken_madde': 'bilinmiyor'},
+      );
+
+      expect(entry.title, 'Bilinmeyen İlaç');
+      expect(entry.subtitle, 'bilinmiyor');
+    });
+
+    test('fromPayload ilac_adi boşsa prospektüs için varsayılan başlık kullanır', () {
+      final entry = DrugScanHistoryEntry.fromPayload(
+        mode: DrugScanHistoryMode.prospectus,
+        payload: {'prospektus_turu': 'Kullanma talimatı'},
+      );
+
+      expect(entry.title, 'Prospektüs Özeti');
+      expect(entry.subtitle, 'Kullanma talimatı');
+    });
+
+    // Adaylar birincil ilaçla aynıysa (case-insensitive) hasCandidates false olmalı
+    test('hasCandidates adaylar yalnızca birincil ilaçla eşleşiyorsa false döner', () {
+      final entry = DrugScanHistoryEntry.fromPayload(
+        mode: DrugScanHistoryMode.medicine,
+        payload: {
+          'ilac_adi': 'Aspirin',
+          'aday_ilaclar': ['Aspirin', 'ASPIRIN'],
+        },
+      );
+
+      expect(entry.hasCandidates, isFalse);
+    });
+
+    test('hasCandidates prospektüs modunda her zaman false döner', () {
+      final entry = DrugScanHistoryEntry.fromPayload(
+        mode: DrugScanHistoryMode.prospectus,
+        payload: {
+          'ilac_adi': 'Augmentin',
+          'aday_ilaclar': ['Augmentin', 'Amoksisilin'],
+        },
+      );
+
+      expect(entry.hasCandidates, isFalse);
+    });
+
+    test('tryParse bozuk veya boş JSON için null döner', () {
+      expect(DrugScanHistoryEntry.tryParse('{bozuk'), isNull);
+      expect(DrugScanHistoryEntry.tryParse(''), isNull);
+      expect(DrugScanHistoryEntry.tryParse('null'), isNull);
+    });
   });
 }
