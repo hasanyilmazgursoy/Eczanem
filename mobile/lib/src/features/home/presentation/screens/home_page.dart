@@ -140,13 +140,15 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
+        // AppBar surface ile uyumlu; başlık primary rengiyle vurgulanır.
+        // Dark mode'da açık yeşil primary arka plan ile kontrast düşüklüğü oluşuyordu.
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.primary,
         centerTitle: false,
         title: Text(
           'home.app_name'.tr(),
           style: textTheme.titleLarge?.copyWith(
-            color: colorScheme.onPrimary,
+            color: colorScheme.primary,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -364,7 +366,7 @@ class _AiFeaturedCard extends StatelessWidget {
                     SizedBox(height: AppSpacing.xs),
                     Text(
                       subtitle,
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(
                         color: Colors.white.withValues(alpha: 0.85),
@@ -377,7 +379,7 @@ class _AiFeaturedCard extends StatelessWidget {
               const Icon(
                 Icons.chevron_right_rounded,
                 color: Colors.white,
-                size: 36,
+                size: 28,
               ),
             ],
           ),
@@ -477,7 +479,7 @@ class _HugeActionCard extends StatelessWidget {
                     SizedBox(height: AppSpacing.xs),
                     Text(
                       subtitle,
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(
                         color: subtitleColor,
@@ -490,7 +492,7 @@ class _HugeActionCard extends StatelessWidget {
               Icon(
                 Icons.chevron_right_rounded,
                 color: chevronColor,
-                size: 36,
+                size: 28,
               ),
             ],
           ),

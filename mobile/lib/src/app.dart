@@ -24,10 +24,9 @@ class App extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       builder: (context, child) {
-        Widget current = child!;
-        current = SkeletonWrapper(child: current);
-        current = SessionListenerWrapper(child: current);
-        return current;
+        // SkeletonWrapper global builder'da kullanılmıyor; her ekran kendi
+        // skeleton/loading state'ini yönetiyor. Burada sadece oturum dinleyici.
+        return SessionListenerWrapper(child: child!);
       },
     );
   }
