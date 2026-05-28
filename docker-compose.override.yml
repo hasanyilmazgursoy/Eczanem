@@ -1,0 +1,16 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Geliştirme ortamı overrides (docker-compose.override.yml)
+#
+# Bu dosya `docker-compose up` çalıştırıldığında otomatik olarak
+# docker-compose.yml ile birleştirilir. Production'da bu dosyayı kullanmayın.
+# Production build için: docker-compose -f docker-compose.yml up
+# ─────────────────────────────────────────────────────────────────────────────
+services:
+  api:
+    # Geliştirme: kod değişikliklerini hemen yansıtmak için --reload aktif,
+    # backend klasörü mount edilir.
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    environment:
+      - DEBUG=True

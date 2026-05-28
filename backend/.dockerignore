@@ -1,0 +1,42 @@
+# ─── Ortam değişkenleri ve gizli bilgiler ──────────────────────────────────────
+# .env dosyası imaja baked-in olursa saldırgan docker image layer'ından
+# sırları okuyabilir (OWASP A02 - Cryptographic Failures).
+.env
+.env.*
+!.env.example
+
+# ─── Python cache ──────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+.Python
+
+# ─── Geliştirme ve test verileri ───────────────────────────────────────────────
+data/
+logs/
+*.log
+
+# ─── Test / kalite araçları ────────────────────────────────────────────────────
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+*.cover
+tests/
+
+# ─── Sürüm kontrolü ───────────────────────────────────────────────────────────
+.git/
+.gitignore
+.gitattributes
+
+# ─── IDE ───────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ─── Dökümantasyon ────────────────────────────────────────────────────────────
+*.md

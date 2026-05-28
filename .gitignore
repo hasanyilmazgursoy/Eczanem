@@ -63,7 +63,7 @@ Thumbs.db
 # =====================
 # Docker
 # =====================
-docker-compose.override.yml
+# docker-compose.override.yml paylaşılan geliştirme ayarlarını içerdiğinden takip edilir.
 
 # =====================
 # Logs

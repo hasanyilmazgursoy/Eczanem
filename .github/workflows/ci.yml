@@ -1,0 +1,90 @@
+name: CI
+
+on:
+    push:
+        branches: [main, develop]
+    pull_request:
+
+jobs:
+    # ─────────────────────────────────────
+    # Backend: Lint (ruff)
+    # ─────────────────────────────────────
+    backend-lint:
+        name: "Backend — Lint"
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+                  cache: "pip"
+
+            - name: Bağımlılıkları kur
+              run: pip install ruff
+
+            - name: Lint (ruff)
+              # Sözdizimi ve stil hatalarını kontrol eder
+              run: ruff check backend/app/
+
+    # ─────────────────────────────────────
+    # Backend: Güvenlik Taraması (pip-audit)
+    # ─────────────────────────────────────
+    backend-security:
+        name: "Backend — Bağımlılık Güvenlik Taraması"
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+                  cache: "pip"
+
+            - name: pip-audit kur
+              run: pip install pip-audit
+
+            - name: Bilinen CVE'leri tara
+              run: pip-audit -r backend/requirements.txt
+
+    # ─────────────────────────────────────
+    # Flutter: Analyze + Test
+    # ─────────────────────────────────────
+    flutter:
+        name: "Flutter — Analyze & Test"
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: mobile
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: subosito/flutter-action@v2
+              with:
+                  # Projenin gerektirdiği minimum SDK versiyonu: Dart >=3.5.0
+                  channel: "beta"
+                  cache: true
+
+            - name: Bağımlılıkları kur
+              run: flutter pub get
+
+            - name: Statik analiz
+              run: flutter analyze --fatal-infos
+
+            - name: Testleri çalıştır
+              run: flutter test
+
+    # ─────────────────────────────────────
+    # Docker: Build Testi (sadece main'de)
+    # ─────────────────────────────────────
+    docker-build:
+        name: "Docker — Build Testi"
+        runs-on: ubuntu-latest
+        # main'e push edildiğinde backend image'ının build edildiğini doğrula
+        if: github.ref == 'refs/heads/main'
+        needs: [backend-lint, backend-security, flutter]
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Docker image'ı build et
+              run: docker build -t eczanem-api:ci ./backend
