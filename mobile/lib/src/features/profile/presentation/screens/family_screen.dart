@@ -33,7 +33,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (_) => _MemberEditorSheet(existing: existing),
+      builder: (_) => FamilyMemberEditorSheet(existing: existing),
     );
     if (result ?? false) _load();
   }
@@ -375,15 +375,16 @@ class _EmptyState extends StatelessWidget {
 // Üye ekleme / düzenleme bottom sheet
 // ---------------------------------------------------------------------------
 
-class _MemberEditorSheet extends StatefulWidget {
-  const _MemberEditorSheet({this.existing});
+class FamilyMemberEditorSheet extends StatefulWidget {
+  const FamilyMemberEditorSheet({super.key, this.existing});
   final FamilyMember? existing;
 
   @override
-  State<_MemberEditorSheet> createState() => _MemberEditorSheetState();
+  State<FamilyMemberEditorSheet> createState() =>
+      _FamilyMemberEditorSheetState();
 }
 
-class _MemberEditorSheetState extends State<_MemberEditorSheet> {
+class _FamilyMemberEditorSheetState extends State<FamilyMemberEditorSheet> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameCtrl;
   late final TextEditingController _relationshipCtrl;

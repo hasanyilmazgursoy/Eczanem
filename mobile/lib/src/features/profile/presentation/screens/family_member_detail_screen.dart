@@ -2,6 +2,7 @@ import '../../../../imports/imports.dart';
 import '../../../drug/data/drug_repository.dart';
 import '../../data/family_repository.dart';
 import '../../data/models/family_member.dart';
+import 'family_screen.dart';
 
 /// Belirli bir aile üyesinin ilaç listesini gösteren ve yönetim
 /// işlemlerini başlatan detay ekranı.
@@ -32,6 +33,17 @@ class _FamilyMemberDetailScreenState extends State<FamilyMemberDetailScreen> {
         .where((m) => m.id == _member.id)
         .firstOrNull;
     if (fresh != null) setState(() => _member = fresh);
+  }
+
+  Future<void> _openEditSheet() async {
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      builder: (_) => FamilyMemberEditorSheet(existing: _member),
+    );
+    if (result ?? false) _reload();
   }
 
   Future<void> _openAddDrugSheet() async {
@@ -124,6 +136,14 @@ class _FamilyMemberDetailScreenState extends State<FamilyMemberDetailScreen> {
             fontWeight: FontWeight.w800,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: _openEditSheet,
+            icon: const Icon(Icons.edit_outlined),
+            tooltip: 'family.edit'.tr(),
+          ),
+          SizedBox(width: AppSpacing.xs),
+        ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -310,54 +330,123 @@ class _DrugTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(color: colorScheme.outlineVariant),
       ),
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.md),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // İlaç ikonu
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(Icons.medication_rounded,
+                  color: colorScheme.onPrimaryContainer),
+            ),
+            SizedBox(width: AppSpacing.md),
+            // İsim + chip'ler
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    drug.drugName,
+                    style:
+                        textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  if (drug.dosage.isNotEmpty || drug.frequency.isNotEmpty) ...[
+                    SizedBox(height: AppSpacing.xs),
+                    Wrap(
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        if (drug.dosage.isNotEmpty)
+                          _DrugInfoChip(
+                            icon: Icons.straighten_rounded,
+                            label: drug.dosage,
+                          ),
+                        if (drug.frequency.isNotEmpty)
+                          _DrugInfoChip(
+                            icon: Icons.repeat_rounded,
+                            label: drug.frequency,
+                          ),
+                      ],
+                    ),
+                  ],
+                  if (drug.notes.isNotEmpty) ...[
+                    SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      drug.notes,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            // Aksiyon butonları
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.search_rounded),
+                  tooltip: 'family.search_drug'.tr(),
+                  onPressed: onSearch,
+                  iconSize: 20,
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete_outline_rounded,
+                      color: colorScheme.error),
+                  tooltip: 'family.remove_drug_title'.tr(),
+                  onPressed: onRemove,
+                  iconSize: 20,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+          ],
         ),
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(12),
+      ),
+    );  
+  }
+}
+
+/// Doz ve sıklık gibi ilaç bilgilerini gösteren küçük etiket chip'i.
+class _DrugInfoChip extends StatelessWidget {
+  const _DrugInfoChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceContainerHighest.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: context.colors.onSurfaceVariant),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: context.textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
-          child: Icon(Icons.medication_rounded,
-              color: colorScheme.onPrimaryContainer),
-        ),
-        title: Text(
-          drug.drugName,
-          style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (drug.dosage.isNotEmpty)
-              Text(drug.dosage,
-                  style: textTheme.bodySmall
-                      ?.copyWith(color: colorScheme.onSurfaceVariant)),
-            if (drug.frequency.isNotEmpty)
-              Text(drug.frequency,
-                  style: textTheme.bodySmall
-                      ?.copyWith(color: colorScheme.onSurfaceVariant)),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.search_rounded),
-              tooltip: 'family.search_drug'.tr(),
-              onPressed: onSearch,
-            ),
-            IconButton(
-              icon:
-                  Icon(Icons.delete_outline_rounded, color: colorScheme.error),
-              tooltip: 'family.remove_drug_title'.tr(),
-              onPressed: onRemove,
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -402,13 +491,12 @@ class _EmptyDrugsState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: AppSpacing.xl),
-            OutlinedButton.icon(
+            AppButton(
+              label: 'family.add_drug'.tr(),
               onPressed: onAdd,
-              icon: const Icon(Icons.add_rounded),
-              label: Text('family.add_drug'.tr()),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 48),
-              ),
+              isFullWidth: true,
+              variant: ButtonVariant.outline,
+              prefixIcon: const Icon(Icons.add_rounded),
             ),
           ],
         ),
@@ -533,21 +621,11 @@ class _AddDrugSheetState extends State<_AddDrugSheet> {
                 ),
               ),
               SizedBox(height: AppSpacing.xl),
-              FilledButton(
+              AppButton(
+                label: 'family.add_drug'.tr(),
                 onPressed: _saving ? null : _save,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 56),
-                ),
-                child: _saving
-                    ? const SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2.5),
-                      )
-                    : Text(
-                        'family.add_drug'.tr(),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                isFullWidth: true,
+                isLoading: _saving,
               ),
             ],
           ),
