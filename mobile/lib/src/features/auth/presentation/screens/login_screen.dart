@@ -49,6 +49,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(height: AppSpacing.xxxl.h),
+                // Uygulama logosu + marka kimliği
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: cs.primary.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.local_pharmacy_rounded,
+                    size: 44,
+                    color: cs.primary,
+                  ),
+                ).animate().scale(duration: const Duration(milliseconds: 400), curve: Curves.easeOut),
+                SizedBox(height: AppSpacing.md.h),
+                Text(
+                  'Eczanem',
+                  style: tt.titleLarge?.copyWith(
+                    color: cs.primary,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ).animate().fadeIn(delay: const Duration(milliseconds: 100)),
                 SizedBox(height: AppSpacing.xl.h),
                 Text(
                   'auth.log_in'.tr(),
@@ -61,8 +85,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   textAlign: TextAlign.center,
                   style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
                 ).animate().fadeIn().slideY(begin: 0.2),
-                SizedBox(height: AppSpacing.xxxl.h),
-                // Form Card
+                SizedBox(height: AppSpacing.xxl.h),
+                // Form
                 Form(
                   key: formKey,
                   child: Column(
@@ -110,7 +134,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         },
                       ),
                       SizedBox(height: AppSpacing.sm.h),
-                      // "Şifremi Unuttum" linki sağa hizalanmış
+                      // Şifremi Unuttum — primary renk, tıklanabilir görünüm
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
@@ -123,7 +147,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: Text(
                             'auth.forgot_password'.tr(),
                             style: tt.bodySmall?.copyWith(
-                              color: cs.onSurfaceVariant,
+                              color: cs.primary,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -133,8 +158,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         label: 'auth.login'.tr(),
                         isLoading: isLoading,
                         onPressed: isLoading ? null : handleLogin,
-                        width: ButtonSize.large,
-                        isFullWidth: false,
+                        isFullWidth: true,
                       ),
                     ],
                   ),
@@ -161,6 +185,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                 ),
+                SizedBox(height: AppSpacing.xl.h),
               ],
             ),
           ),

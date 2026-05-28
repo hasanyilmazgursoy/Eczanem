@@ -55,7 +55,34 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: AppSpacing.xl.h),
+                SizedBox(height: AppSpacing.xxl.h),
+                // Uygulama logosu + marka kimliği
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: cs.primary.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.local_pharmacy_rounded,
+                    size: 40,
+                    color: cs.primary,
+                  ),
+                ).animate().scale(
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeOut,
+                    ),
+                SizedBox(height: AppSpacing.sm.h),
+                Text(
+                  'Eczanem',
+                  style: tt.titleMedium?.copyWith(
+                    color: cs.primary,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ).animate().fadeIn(delay: const Duration(milliseconds: 100)),
+                SizedBox(height: AppSpacing.lg.h),
                 Text(
                   'auth.create_account'.tr(),
                   style:
@@ -67,8 +94,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   textAlign: TextAlign.center,
                   style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
                 ).animate().fadeIn().slideY(begin: 0.2),
-                SizedBox(height: AppSpacing.xxxl.h),
-                // Form Card
+                SizedBox(height: AppSpacing.xl.h),
+                // Form
                 Form(
                   key: _formKey,
                   child: Column(
@@ -153,8 +180,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         label: 'auth.create_account'.tr(),
                         isLoading: isLoading,
                         onPressed: isLoading ? null : _handleSignup,
-                        width: ButtonSize.large,
-                        isFullWidth: false,
+                        isFullWidth: true,
                       ),
                     ],
                   ),
@@ -169,7 +195,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
                       children: [
                         TextSpan(
-                          // Kayıt ekranında "giriş yap" bağlantısı — doğru key kullanılmalı
                           text: 'auth.sign_in'.tr(),
                           style: TextStyle(
                             color: cs.primary,
