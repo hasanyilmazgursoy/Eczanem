@@ -18,12 +18,12 @@ FutureEither<T> runTask<T>(
       AppLogger.warning('Network unavailable for task');
       showGlobalToast(
         message:
-            'No internet connection. Please check your connection and try again.',
+            'İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edip tekrar deneyin.',
         status: 'warning',
       );
       return left(
         const NetworkFailure(
-          'No internet connection. Please check your connection and try again.',
+          'İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edip tekrar deneyin.',
         ),
       );
     }

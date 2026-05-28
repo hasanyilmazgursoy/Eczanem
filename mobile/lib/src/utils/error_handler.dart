@@ -17,14 +17,14 @@ class AppErrorHandler {
         case DioExceptionType.connectionTimeout:
         case DioExceptionType.sendTimeout:
         case DioExceptionType.receiveTimeout:
-          return 'Request timed out. Please try again.';
+          return 'İstek zaman aşımına uğradı. Lütfen tekrar deneyin.';
         case DioExceptionType.connectionError:
         case DioExceptionType.unknown:
-          return 'Unable to reach the server. Please check your connection.';
+          return 'Sunucuya ulaşılamadı. İnternet bağlantınızı kontrol edin.';
         case DioExceptionType.badResponse:
           final statusCode = error.response?.statusCode;
           if (statusCode != null) {
-            return 'Request failed with status code $statusCode.';
+            return 'İstek başarısız oldu (Hata kodu: $statusCode).';
           }
         case DioExceptionType.cancel:
         case DioExceptionType.badCertificate:
@@ -37,6 +37,6 @@ class AppErrorHandler {
       if (error?.toString() != null) return error.toString();
     } catch (_) {}
 
-    return 'An unexpected error occurred';
+    return 'Beklenmeyen bir hata oluştu.';
   }
 }

@@ -110,42 +110,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         },
                       ),
                       SizedBox(height: AppSpacing.sm.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            spacing: 5.w,
-                            children: [
-                              SizedBox(
-                                width: 20.w,
-                                height: 20.h,
-                                child: Checkbox(
-                                  value: true,
-                                  onChanged: (value) {},
-                                ),
-                              ),
-                              Text(
-                                'auth.remember_me'.tr(),
-                                style: tt.bodySmall
-                                    ?.copyWith(color: cs.onSurfaceVariant),
-                              ),
-                            ],
+                      // "Şifremi Unuttum" linki sağa hizalanmış
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
                           ),
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                            ),
-                            onPressed: () {
-                              context.push(AppRoutes.forgotPassword);
-                            },
-                            child: Text(
-                              'auth.forgot_password'.tr(),
-                              style: tt.bodySmall?.copyWith(
-                                color: cs.onSurfaceVariant,
-                              ),
+                          onPressed: () {
+                            context.push(AppRoutes.forgotPassword);
+                          },
+                          child: Text(
+                            'auth.forgot_password'.tr(),
+                            style: tt.bodySmall?.copyWith(
+                              color: cs.onSurfaceVariant,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                       SizedBox(height: AppSpacing.lg.h),
                       AppButton(
