@@ -273,9 +273,10 @@ Nöbetçi eczane bulma + sesle ilaç sorgulama çalışıyor.
 - [x] Acil Kart Görüntüle: Tek ekranda tüm bilgi, büyük font, yüksek kontrast
 - [x] Paylaş: QR kod ile acil kart bilgilerini anında dışa aktar (qr_flutter ^4.1.0)
 - [ ] Paylaş: PDF olarak dışa aktar (gelecek iterasyon)
-- [x] Sağlık Notu Ekle: Tarih, kategori, metin, emoji mood
-- [x] Not Geçmişi: Liste + kategori filtreleme
-- [~] Takvim görünümü ve doktor raporu özeti — kullanılabilirlik gerekçesiyle kaldırıldı (refactor: 739edb1)
+- [x] Sağlık Notu Ekle: Tarih, kategori, metin, semptom chip'leri, ilaç alındı switch
+- [x] Not Geçmişi: Liste + kategori filtreleme + ölçüm rozetleri (tansiyon, kan şekeri, ağrı)
+- [x] Sağlık Raporu: `fl_chart` ile trend grafikleri + toplam/son-7-gün istatistik (AppBar'dan erişilir)
+- [x] Doktora Göster: Vital bulgular ve semptom özeti ekranı; `share_plus` ile klinik paylaşım
 
 ### Çıktı
 Acil durum kartı + sağlık günlüğü çalışıyor.
@@ -287,12 +288,15 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 **Durum:** 🟢 Tamamlandı
 
 - [x] UI/UX iyileştirme: Tutarlı tasarım, empty state ekranları (tüm dinamik liste ekranları)
-- [ ] Karanlık mod: Tam dark theme desteği ve hardcoded color temizliği (gelecek iterasyon)
+- [~] Karanlık mod: AppBar ve ana ekran dark mode uyumu sağlandı; bazı ekranlarda hardcoded renk kalıntısı olabilir
 - [x] Onboarding: İlk açılışta temel onboarding akışı
 - [x] Hata yönetimi: Her ekranda yükleniyor/hata/boş/başarılı durumları
-- [x] Güvenlik: input sanitization (Pydantic Field validation), debug=False production default, JWT key rotation, global exception handler
-- [x] Test: HealthNote + EmergencyCard model birim testleri eklendi (pure Dart)
-- [x] Dokümantasyon senkronizasyonu: CHANGELOG v1.2.0, RELEASE_CHECKLIST, README ve PLAN güncel
+- [x] Güvenlik: input sanitization, debug=False production default, JWT key rotation, global exception handler
+- [x] Güvenlik (derin): TOCTOU race condition çözümü (RLock), Do S koruması (10 MB görsel sınırı), X-Forwarded-For rate limit, config validator
+- [x] CI/CD: `.github/workflows/ci.yml` — ruff lint, pip-audit, flutter analyze+test, Docker build
+- [x] DevOps: Docker non-root kullanıcı, healthcheck, `docker-compose.override.yml`, `requirements-dev.txt`
+- [x] Test: HealthNote + EmergencyCard + PharmacyItem + MedicationReminder + DrugScanHistoryEntry model birim testleri
+- [x] Dokümantasyon senkronizasyonu: CHANGELOG, RELEASE_CHECKLIST, README ve PLAN güncel
 
 ---
 
@@ -307,9 +311,9 @@ Acil durum kartı + sağlık günlüğü çalışıyor.
 | 3       | Kullanıcı + Aile Profili     | 1-2 hafta | 🟡     |
 | 4       | Hatırlayıcı + Stok Takibi    | 1-2 hafta | 🟢     |
 | 5       | Etkileşim + Doğal Alternatif | 1-2 hafta | 🟢     |
-| 6       | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | �     |
+| 6       | Nöbetçi Eczane + Sesli Sorgu | 1-2 hafta | 🟢     |
 | 7       | Acil Kart + Sağlık Notları   | 1 hafta   | 🟢     |
-| 8       | Test & Yayın                 | 1-2 hafta | �     |
+| 8       | Test & Yayın                 | 1-2 hafta | 🟢     |
 
 **Toplam: ~8-14 hafta**
 

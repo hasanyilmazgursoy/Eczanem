@@ -71,16 +71,16 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - AI eczacı sohbet ekranı (Gemini tabanlı, markdown+emoji formatıyla yapılandırılmış yanıtlar)
 - Acil durum kartı oluşturma / düzenleme
 - Acil durum kartı QR kod ile paylaşma
-- Sağlık notları ekleme, filtreleme ve düzenleme
+- Sağlık notları ekleme, filtreleme, düzenleme; semptom chip'leri ve ilaç alındı takibi
 - Sağlık notu klinik ölçümleri: tansiyon, kan şekeri, ağrı seviyesi (kategoriye göre koşullu)
+- Sağlık notu — istatistik + fl_chart trend grafiği raporu ve doktora paylaşım ekranı
 - Onboarding: ilk açılış sonrası tekrar gösterilmez, doğrudan login
 
 ### Yol haritasındaki sıradaki odaklar
 
-- FAZ 8 polish: empty state, error state ve dark mode tutarlılığı
-- Mobil ve backend test kapsamını genişletme
+- FAZ 8 polish: dark mode tam tutarlılık, remaining hardcoded color temizliği
 - Release checklist, mağaza hazırlığı ve deploy planı
-- Sonraki faz için büyük işler: veritabanı migration, backend senkronizasyonu, PDF dışa aktarma, CORS sertleştirme
+- Sonraki faz için büyük işler: veritabanı migration, backend senkronizasyonu, PDF dışa aktarma, CORS sertleştirme ve HTTPS
 
 ## Mimarinin kısa özeti
 
@@ -102,7 +102,7 @@ Flutter Mobile App
 
 FastAPI Backend
  ├─ /health
- ├─ /api/auth/*
+ ├─ /auth/*
  ├─ /api/drug/search
  ├─ /api/drug/analyze-image
  ├─ /api/drug/prospectus
@@ -131,6 +131,8 @@ FastAPI Backend
 - Camera
 - Image Picker
 - qr_flutter
+- fl_chart
+- share_plus
 
 ### Backend
 
@@ -143,6 +145,13 @@ FastAPI Backend
 - Redis
 - Gemini API (`gemini-2.5-flash`)
 - PostgreSQL (hedef mimaride planlı, henüz aktif veri katmanı değil)
+
+### Geliştirme araçları
+
+- GitHub Actions CI/CD (ruff lint, pip-audit, flutter test, Docker build)
+- ruff (Python linter)
+- pip-audit (CVE taraması)
+- pytest + pytest-asyncio + httpx (backend test)
 
 ## Proje yapısı
 
@@ -239,12 +248,14 @@ API_BASE_URL=http://192.168.1.139:8000
 
 ### Auth
 
-- `POST /api/auth/signup`
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `GET /api/auth/me`
-- `POST /api/auth/logout`
-- `POST /api/auth/forgot-password`
+> **Not:** Auth endpoint'leri `/auth/` prefix'i altında yer alır (`/api/auth/` değil).
+
+- `POST /auth/signup`
+- `POST /auth/register`
+- `POST /auth/login`
+- `GET /auth/me`
+- `POST /auth/logout`
+- `POST /auth/forgot-password`
 
 ### Drug
 
@@ -253,6 +264,7 @@ API_BASE_URL=http://192.168.1.139:8000
 - `POST /api/drug/prospectus`
 - `POST /api/drug/interaction`
 - `POST /api/drug/natural-alternatives`
+- `POST /api/drug/chat`
 
 ### Profile
 
@@ -267,6 +279,7 @@ API_BASE_URL=http://192.168.1.139:8000
 ### Pharmacy
 
 - `GET /api/pharmacy/nearby`
+- `GET /api/pharmacy/districts`
 
 ## Geliştirme komutları
 
@@ -284,7 +297,21 @@ flutter test
 cd backend
 python -m compileall app
 ```
+### Backend geliştirme bağımlılıkları
 
+```text
+pip install -r backend/requirements-dev.txt
+```
+
+### Docker ile çalıştırma
+
+```text
+# Geliştirme ortamı (--reload otomatik uygulanır)
+docker compose up
+
+# Production ortamı
+docker compose -f docker-compose.yml up
+```
 ## Test hesabı
 
 Geliştirme sırasında kullanılan örnek hesap:
@@ -294,11 +321,12 @@ Geliştirme sırasında kullanılan örnek hesap:
 
 ## Bilinen sınırlamalar
 
-- Aile profili, nöbetçi eczane, acil kart ve sağlık notları modülleri şu an ağırlıklı olarak local-first / kısmi backend entegrasyon yaklaşımıyla ilerliyor
+- Aile profili modülü ağırlıklı olarak local-first çalışıyor; backend senkronizasyonu tamamlanmadı
 - Release APK üretilebilir; ancak mağaza yayını için Android imzalama anahtarı (keystore), privacy policy ve store materyalleri henüz tamamlanmadı
 - Backend auth ve profil katmanı şu an dosya tabanlı store kullanıyor (`backend/data/users.json`, `backend/data/family_profiles.json`)
 - PostgreSQL hedef mimaride planlı olsa da aktif kalıcı veri katmanı olarak henüz devrede değil
-- Backend production güvenliğinde CORS sertleştirme ve HTTPS henüz tamamlanmadı; input validation, debug=False ve JWT key rotation bu oturumda uygulandı
+- Backend production güvenliğinde CORS sertleştirme ve HTTPS henüz tamamlanmadı
+- Dark mode tema tutarlılığı büyük ölçüde sağlandı; bazı ekranlarda hardcoded renk kalıntısı olabilir
 
 ## Yol haritası
 
