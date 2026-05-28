@@ -2,7 +2,6 @@ import '../../../../imports/imports.dart';
 import '../../../drug/data/drug_repository.dart';
 import '../../data/family_repository.dart';
 import '../../data/models/family_member.dart';
-import 'family_screen.dart';
 
 /// Belirli bir aile üyesinin ilaç listesini gösteren ve yönetim
 /// işlemlerini başlatan detay ekranı.
@@ -354,8 +353,8 @@ class _DrugTile extends StatelessWidget {
                 children: [
                   Text(
                     drug.drugName,
-                    style:
-                        textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                    style: textTheme.titleSmall
+                        ?.copyWith(fontWeight: FontWeight.w700),
                   ),
                   if (drug.dosage.isNotEmpty || drug.frequency.isNotEmpty) ...[
                     SizedBox(height: AppSpacing.xs),
@@ -415,7 +414,7 @@ class _DrugTile extends StatelessWidget {
           ],
         ),
       ),
-    );  
+    );
   }
 }
 

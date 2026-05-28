@@ -7,10 +7,14 @@ import '../../data/models/emergency_card.dart';
 
 /// Dropdown için standart kan grubu seçenekleri (Türkiye notasyonu).
 const _kBloodTypes = [
-  'A Rh+', 'A Rh-',
-  'B Rh+', 'B Rh-',
-  'AB Rh+', 'AB Rh-',
-  '0 Rh+', '0 Rh-',
+  'A Rh+',
+  'A Rh-',
+  'B Rh+',
+  'B Rh-',
+  'AB Rh+',
+  'AB Rh-',
+  '0 Rh+',
+  '0 Rh-',
 ];
 
 /// FAZ 7 — Acil Durum Kartı Ekranı.
@@ -75,11 +79,13 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
   /// Form kontrollerini mevcut kart verileriyle doldurur.
   void _populateControllers(EmergencyCard card) {
     // Boşluk ve büyük/küçük harf farkı gözetmeden dropdown seçeneğiyle eşleştir
-    _selectedBloodType = _kBloodTypes.where(
-      (bt) =>
-          bt.toLowerCase().replaceAll(' ', '') ==
-          card.bloodType.toLowerCase().replaceAll(' ', ''),
-    ).firstOrNull;
+    _selectedBloodType = _kBloodTypes
+        .where(
+          (bt) =>
+              bt.toLowerCase().replaceAll(' ', '') ==
+              card.bloodType.toLowerCase().replaceAll(' ', ''),
+        )
+        .firstOrNull;
     _contactNameCtrl.text = card.emergencyContactName;
     _contactPhoneCtrl.text = card.emergencyContactPhone;
     _doctorNameCtrl.text = card.doctorName;

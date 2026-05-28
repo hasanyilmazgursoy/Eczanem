@@ -583,7 +583,8 @@ class _NotificationPermissionCard extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: context.appColors.warningContainer ?? Theme.of(context).colorScheme.tertiaryContainer,
+              color: context.appColors.warningContainer ??
+                  Theme.of(context).colorScheme.tertiaryContainer,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(

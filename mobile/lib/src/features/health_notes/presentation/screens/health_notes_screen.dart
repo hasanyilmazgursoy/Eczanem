@@ -635,7 +635,9 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
                     onSelected: (_) => setState(() => _selectedCategory = cat),
                     selectedColor: colorScheme.primary,
                     labelStyle: TextStyle(
-                      color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
+                      color: isSelected
+                          ? colorScheme.onPrimary
+                          : colorScheme.onSurface,
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
@@ -1268,9 +1270,12 @@ class _DoctorViewSheet extends StatelessWidget {
                                             child: LinearProgressIndicator(
                                               value: e.value /
                                                   sortedSymptoms.first.value,
-                                              color: Theme.of(context).colorScheme.primary,
-                                              backgroundColor:
-                                                  Theme.of(context).colorScheme.surfaceContainerHighest,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              backgroundColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .surfaceContainerHighest,
                                               minHeight: 6,
                                             ),
                                           ),
