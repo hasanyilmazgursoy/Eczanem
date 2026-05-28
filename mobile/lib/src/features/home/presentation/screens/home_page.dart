@@ -164,11 +164,12 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(AppSpacing.xl),
+          padding: EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: AppSpacing.md),
+              SizedBox(height: AppSpacing.xs),
               Text(
                 'home.greeting'.tr(args: [user?.name ?? '']),
                 style: textTheme.headlineMedium?.copyWith(
@@ -185,7 +186,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: AppSpacing.xxl),
+              SizedBox(height: AppSpacing.lg),
               // AI özellikler en üstte — görünürlüğü artırmak için öne alındı
               _AiFeaturedCard(
                 icon: Icons.smart_toy_rounded,
@@ -193,7 +194,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 subtitle: 'home.action_ai_chat_subtitle'.tr(),
                 onTap: () => context.push(AppRoutes.aiChat),
               ),
-              SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppSpacing.md),
               _HugeActionCard(
                 // AI destekli; mavi ton klinik/bilişsel çağrışım taşır
                 icon: Icons.psychology_rounded,
@@ -202,7 +203,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 color: const Color(0xFF1565C0),
                 onTap: () => context.push(AppRoutes.symptomAnalysis),
               ),
-              SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppSpacing.md),
               _HugeActionCard(
                 icon: Icons.search_rounded,
                 title: 'home.action_search'.tr(),
@@ -210,15 +211,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                 color: colorScheme.primary,
                 onTap: () => context.push(AppRoutes.drugSearch),
               ),
-              SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppSpacing.md),
               _HugeActionCard(
                 icon: Icons.camera_alt_rounded,
                 title: 'home.action_scan'.tr(),
                 subtitle: 'home.scan_all_in_one_title'.tr(),
-                color: colorScheme.tertiary,
+                color: const Color(0xFF0277BD),
                 onTap: () => context.push(AppRoutes.drugPhotoScan),
               ),
-              SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppSpacing.md),
               _HugeActionCard(
                 icon: Icons.alarm_rounded,
                 title: 'home.action_reminder'.tr(),
@@ -226,7 +227,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 color: const Color(0xFFFF8F00),
                 onTap: () => context.push(AppRoutes.medicationReminders),
               ),
-              SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppSpacing.md),
               _HugeActionCard(
                 icon: Icons.family_restroom_rounded,
                 title: 'home.action_family'.tr(),
@@ -234,7 +235,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 color: const Color(0xFF00897B),
                 onTap: () => context.push(AppRoutes.familyMembers),
               ),
-              SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppSpacing.md),
               _HugeActionCard(
                 icon: Icons.local_pharmacy_rounded,
                 title: 'home.action_pharmacy'.tr(),
@@ -242,7 +243,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 color: const Color(0xFF5E35B1),
                 onTap: () => context.push(AppRoutes.pharmacyNearby),
               ),
-              SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppSpacing.md),
               _HugeActionCard(
                 icon: Icons.emergency_rounded,
                 title: 'home.action_emergency_card'.tr(),
@@ -250,7 +251,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 color: const Color(0xFFB71C1C),
                 onTap: () => context.push(AppRoutes.emergencyCard),
               ),
-              SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppSpacing.md),
               _HugeActionCard(
                 // Notlar için defter ikonu ve kahverengi ton — not/günlük çağrışımı
                 icon: Icons.note_alt_rounded,
@@ -298,7 +299,7 @@ class _AiFeaturedCard extends StatelessWidget {
         splashColor: Colors.white24,
         child: Container(
           padding: EdgeInsets.symmetric(
-            vertical: AppSpacing.xl,
+            vertical: AppSpacing.lg,
             horizontal: AppSpacing.lg,
           ),
           decoration: const BoxDecoration(
@@ -360,13 +361,13 @@ class _AiFeaturedCard extends StatelessWidget {
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 22,
                       ),
                     ),
                     SizedBox(height: AppSpacing.xs),
                     Text(
                       subtitle,
-                      maxLines: 3,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(
                         color: Colors.white.withValues(alpha: 0.85),
@@ -436,7 +437,7 @@ class _HugeActionCard extends StatelessWidget {
         highlightColor: color.withValues(alpha: 0.1),
         child: Container(
           padding: EdgeInsets.symmetric(
-            vertical: AppSpacing.xl,
+            vertical: AppSpacing.lg,
             horizontal: AppSpacing.lg,
           ),
           decoration: BoxDecoration(
@@ -473,13 +474,13 @@ class _HugeActionCard extends StatelessWidget {
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: titleColor,
-                        fontSize: 24,
+                        fontSize: 20,
                       ),
                     ),
                     SizedBox(height: AppSpacing.xs),
                     Text(
                       subtitle,
-                      maxLines: 3,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(
                         color: subtitleColor,
