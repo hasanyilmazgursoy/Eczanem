@@ -543,7 +543,7 @@
   "symptom_analysis": {
     "title": "Symptom Analysis",
     "input_title": "Describe Your Symptoms",
-    "input_subtitle": "Describe what you're experiencing; AI will evaluate possible causes and recommendations.",
+    "input_subtitle": "Describe what you're experiencing; possible causes and recommendations will be evaluated.",
     "input_hint": "E.g. Headache, fever, and sore throat for the past two days...",
     "button": "Analyze",
     "loading": "Analyzing symptoms...",
@@ -555,6 +555,7 @@
     "causes_title": "Possible Causes",
     "advice_title": "Recommendations",
     "doctor_when_title": "When Should You See a Doctor?",
-    "disclaimer": "This is not a medical diagnosis. Consult a doctor or pharmacist for a definitive assessment."
+    "disclaimer": "This is not a medical diagnosis. Consult a doctor or pharmacist for a definitive assessment.",
+    "suggestions_label": "Quick start — tap a symptom:"
   }
 }

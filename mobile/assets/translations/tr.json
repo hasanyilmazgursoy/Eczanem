@@ -555,6 +555,7 @@
         "causes_title": "Olası Nedenler",
         "advice_title": "Tavsiyeler",
         "doctor_when_title": "Doktora Ne Zaman Başvurmalısınız?",
-        "disclaimer": "Bu analiz tıbbi teşhis değildir. Kesin tanı için doktora veya eczacıya başvurun."
+        "disclaimer": "Bu analiz tıbbi teşhis değildir. Kesin tanı için doktora veya eczacıya başvurun.",
+        "suggestions_label": "Hızlı başlangıç — bir semptoma dokunun:"
     }
 }
