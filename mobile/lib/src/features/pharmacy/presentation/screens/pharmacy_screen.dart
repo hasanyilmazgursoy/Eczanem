@@ -153,12 +153,12 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                 onPressed: () => Navigator.pop(ctx),
                 child: Text('shared.cancel'.tr()),
               ),
-              FilledButton(
+              AppButton(
+                label: 'pharmacy.location_open_settings'.tr(),
                 onPressed: () {
                   Navigator.pop(ctx);
                   Geolocator.openAppSettings();
                 },
-                child: Text('pharmacy.location_open_settings'.tr()),
               ),
             ],
           ),
@@ -380,19 +380,12 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                   ],
                 ),
                 SizedBox(height: AppSpacing.md),
-                FilledButton.icon(
+                AppButton(
+                  label: 'pharmacy.search_button'.tr(),
                   onPressed: _status.isLoading ? null : _search,
-                  icon: _status.isLoading
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2.5),
-                        )
-                      : const Icon(Icons.search_rounded),
-                  label: Text('pharmacy.search_button'.tr()),
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 48),
-                  ),
+                  isLoading: _status.isLoading,
+                  isFullWidth: true,
+                  prefixIcon: const Icon(Icons.search_rounded),
                 ),
               ],
             ),
@@ -506,20 +499,22 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                 children: [
                   if (pharmacy.phone.isNotEmpty)
                     Expanded(
-                      child: FilledButton.icon(
+                      child: AppButton(
+                        label: 'pharmacy.call'.tr(),
                         onPressed: () {
                           Navigator.pop(ctx);
                           _callPharmacy(pharmacy.phone);
                         },
-                        icon: const Icon(Icons.call_rounded),
-                        label: Text('pharmacy.call'.tr()),
+                        isFullWidth: true,
+                        prefixIcon: const Icon(Icons.call_rounded),
                       ),
                     ),
                   if (pharmacy.phone.isNotEmpty && pharmacy.lat != null)
                     SizedBox(width: AppSpacing.sm),
                   if (pharmacy.lat != null)
                     Expanded(
-                      child: OutlinedButton.icon(
+                      child: AppButton(
+                        label: 'pharmacy.directions'.tr(),
                         onPressed: () {
                           Navigator.pop(ctx);
                           launchUrl(Uri.parse(
@@ -527,8 +522,9 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                             '&destination=${pharmacy.lat},${pharmacy.lon}',
                           ));
                         },
-                        icon: const Icon(Icons.directions_rounded),
-                        label: Text('pharmacy.directions'.tr()),
+                        isFullWidth: true,
+                        variant: ButtonVariant.outline,
+                        prefixIcon: const Icon(Icons.directions_rounded),
                       ),
                     ),
                 ],
@@ -542,7 +538,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
   }
 
   Widget _buildBody(colorScheme, textTheme) {
-    if (_status.isInitial) return _InitialState();
+    if (_status.isInitial) return _InitialState(onGetLocation: _getLocation);
     if (_status.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -561,9 +557,10 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: AppSpacing.lg),
-              OutlinedButton(
+              AppButton(
+                label: 'shared.try_again'.tr(),
                 onPressed: _search,
-                child: Text('shared.try_again'.tr()),
+                variant: ButtonVariant.outline,
               ),
             ],
           ),
@@ -576,7 +573,7 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
     return Column(
       children: [
         // İlçede nöbetçi eczane bulunamayınca il geneline düşüldüğünü bildir
-        if (_fallbackToIl)
+        if (_fallbackToIl && _selectedIlce.isNotEmpty)
           Container(
             width: double.infinity,
             color: colorScheme.secondaryContainer,
@@ -627,6 +624,9 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
 // ---------------------------------------------------------------------------
 
 class _InitialState extends StatelessWidget {
+  const _InitialState({this.onGetLocation});
+  final VoidCallback? onGetLocation;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.colors;
@@ -649,6 +649,14 @@ class _InitialState extends StatelessWidget {
                 style: textTheme.bodyMedium
                     ?.copyWith(color: colorScheme.onSurfaceVariant),
                 textAlign: TextAlign.center),
+            SizedBox(height: AppSpacing.xl),
+            // Konum tabanlı otomatik arama için hızlı erişim butonu
+            AppButton(
+              label: 'pharmacy.get_location'.tr(),
+              onPressed: onGetLocation,
+              isFullWidth: true,
+              prefixIcon: const Icon(Icons.my_location_rounded),
+            ),
           ],
         ),
       ),
