@@ -1,5 +1,6 @@
 ﻿"""Google AI Studio (Gemini API) üzerinden ilaç bilgisi sorgulama."""
 
+import asyncio
 import base64
 import json
 from io import BytesIO
@@ -198,25 +199,38 @@ async def _post_gemini_request(payload: dict) -> httpx.Response:
     if not settings.gemini_api_key:
         raise HTTPException(status_code=500, detail="Gemini API key yapılandırılmamış.")
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            _build_gemini_url(),
-            headers={"Content-Type": "application/json"},
-            json=payload,
-        )
+    last_status = 0
+    # Gemini API geçici 5xx hatalarında üssel geri çekilme ile 3 kez dene (1s, 2s, 4s).
+    for attempt in range(3):
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                _build_gemini_url(),
+                headers={"Content-Type": "application/json"},
+                json=payload,
+            )
 
-    if response.status_code == 429:
-        raise HTTPException(
-            status_code=503,
-            detail="AI servisi şu an meşgul, lütfen biraz bekleyip tekrar deneyin.",
-        )
-    if response.status_code != 200:
-        raise HTTPException(
-            status_code=502,
-            detail=f"Gemini API yanıt vermedi: {response.status_code}",
-        )
+        if response.status_code == 200:
+            return response
 
-    return response
+        last_status = response.status_code
+
+        if response.status_code == 429:
+            raise HTTPException(
+                status_code=503,
+                detail="AI servisi şu an meşgul, lütfen biraz bekleyip tekrar deneyin.",
+            )
+
+        # Geçici sunucu hataları için bekleyip tekrar dene
+        if response.status_code >= 500 and attempt < 2:
+            await asyncio.sleep(2**attempt)  # 1. deneme: 1s, 2. deneme: 2s
+            continue
+
+        break
+
+    raise HTTPException(
+        status_code=502,
+        detail=f"Gemini API yanıt vermedi: {last_status}",
+    )
 
 
 async def query_drug_info(drug_name: str) -> dict:

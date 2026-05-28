@@ -86,7 +86,9 @@ class _SymptomAnalysisScreenState extends State<SymptomAnalysisScreen> {
         if (!mounted) return;
         setState(() {
           _isLoading = false;
-          _error = 'symptom_analysis.generic_error'.tr();
+          _error = failure.message.trim().isEmpty
+              ? 'symptom_analysis.generic_error'.tr()
+              : failure.message;
         });
       },
       (data) {
