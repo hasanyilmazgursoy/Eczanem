@@ -3,7 +3,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings
 
 # backend klasörünün yolu (.env dosyası burada)
@@ -50,6 +50,21 @@ class Settings(BaseSettings):
     # CORS — virgülle ayrılmış domain listesi; prod'da .env'den override edilmeli
     # Örnek: ALLOWED_ORIGINS=http://localhost:3000,https://eczanem.app
     allowed_origins: list[str] = ["*"]
+
+    @model_validator(mode="after")
+    def _check_production_jwt_secret(self) -> "Settings":
+        """Production modunda varsayılan JWT secret'in kullanılmasını engeller.
+
+        Varsayılan anahtar herkese açık olduğundan saldırganlar geçerli token
+        üretebilir. .env dosyasında JWT_SECRET_KEY tanımlanması zorunludur.
+        """
+        _default = "eczanem-dev-secret-key-change-in-production"
+        if not self.debug and self.jwt_secret_key == _default:
+            raise ValueError(
+                "Production modunda (DEBUG=False) JWT_SECRET_KEY varsayılan değeri "
+                "kullananamaz. .env dosyasında güçlü bir JWT_SECRET_KEY tanımlayın."
+            )
+        return self
 
     @field_validator("debug", mode="before")
     @classmethod

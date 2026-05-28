@@ -9,13 +9,14 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from threading import Lock
+from threading import RLock
 from uuid import uuid4
 
 from fastapi import HTTPException, status
 
 
-_store_lock = Lock()
+# RLock, CRUD fonksiyonlarının lock içinden _load_all/_save_all çağırabilmesi için gerekli
+_store_lock = RLock()
 _profiles_file = (
     Path(__file__).resolve().parent.parent.parent / "data" / "family_profiles.json"
 )
@@ -101,9 +102,11 @@ def create_family_member(
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }
 
-    members = _load_members(user_id)
-    members.append(member)
-    _save_members(user_id, members)
+    # Oku-ekle-yaz tek atomik işlem; eş zamanlı yazışma veri kaybını önler.
+    with _store_lock:
+        members = _load_members(user_id)
+        members.append(member)
+        _save_members(user_id, members)
     return member
 
 
@@ -115,42 +118,44 @@ def update_family_member(
     age: int | None,
     emoji: str | None,
 ) -> dict:
-    members = _load_members(user_id)
-    idx = next((i for i, m in enumerate(members) if m["id"] == member_id), None)
+    with _store_lock:
+        members = _load_members(user_id)
+        idx = next((i for i, m in enumerate(members) if m["id"] == member_id), None)
 
-    if idx is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aile üyesi bulunamadı.",
-        )
+        if idx is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Aile üyesi bulunamadı.",
+            )
 
-    member = dict(members[idx])
-    if name is not None:
-        member["name"] = name.strip()
-    if relationship is not None:
-        member["relationship"] = relationship.strip()
-    if age is not None:
-        member["age"] = age
-    if emoji is not None:
-        member["emoji"] = emoji
-    member["updated_at"] = datetime.now(timezone.utc).isoformat()
+        member = dict(members[idx])
+        if name is not None:
+            member["name"] = name.strip()
+        if relationship is not None:
+            member["relationship"] = relationship.strip()
+        if age is not None:
+            member["age"] = age
+        if emoji is not None:
+            member["emoji"] = emoji
+        member["updated_at"] = datetime.now(timezone.utc).isoformat()
 
-    members[idx] = member
-    _save_members(user_id, members)
+        members[idx] = member
+        _save_members(user_id, members)
     return member
 
 
 def delete_family_member(user_id: str, member_id: str) -> None:
-    members = _load_members(user_id)
-    updated = [m for m in members if m["id"] != member_id]
+    with _store_lock:
+        members = _load_members(user_id)
+        updated = [m for m in members if m["id"] != member_id]
 
-    if len(updated) == len(members):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aile üyesi bulunamadı.",
-        )
+        if len(updated) == len(members):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Aile üyesi bulunamadı.",
+            )
 
-    _save_members(user_id, updated)
+        _save_members(user_id, updated)
 
 
 # ---------------------------------------------------------------------------
@@ -176,15 +181,6 @@ def add_member_drug(
     frequency: str,
     notes: str,
 ) -> dict:
-    members = _load_members(user_id)
-    idx = next((i for i, m in enumerate(members) if m["id"] == member_id), None)
-
-    if idx is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aile üyesi bulunamadı.",
-        )
-
     drug: dict = {
         "id": uuid4().hex,
         "drug_name": drug_name.strip(),
@@ -194,37 +190,48 @@ def add_member_drug(
         "added_at": datetime.now(timezone.utc).isoformat(),
     }
 
-    member = dict(members[idx])
-    member["drugs"] = list(member.get("drugs", []))
-    member["drugs"].append(drug)
-    member["updated_at"] = datetime.now(timezone.utc).isoformat()
+    with _store_lock:
+        members = _load_members(user_id)
+        idx = next((i for i, m in enumerate(members) if m["id"] == member_id), None)
 
-    members[idx] = member
-    _save_members(user_id, members)
+        if idx is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Aile üyesi bulunamadı.",
+            )
+
+        member = dict(members[idx])
+        member["drugs"] = list(member.get("drugs", []))
+        member["drugs"].append(drug)
+        member["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+        members[idx] = member
+        _save_members(user_id, members)
     return drug
 
 
 def remove_member_drug(user_id: str, member_id: str, drug_id: str) -> None:
-    members = _load_members(user_id)
-    idx = next((i for i, m in enumerate(members) if m["id"] == member_id), None)
+    with _store_lock:
+        members = _load_members(user_id)
+        idx = next((i for i, m in enumerate(members) if m["id"] == member_id), None)
 
-    if idx is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aile üyesi bulunamadı.",
-        )
+        if idx is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Aile üyesi bulunamadı.",
+            )
 
-    member = dict(members[idx])
-    drugs = list(member.get("drugs", []))
-    updated_drugs = [d for d in drugs if d["id"] != drug_id]
+        member = dict(members[idx])
+        drugs = list(member.get("drugs", []))
+        updated_drugs = [d for d in drugs if d["id"] != drug_id]
 
-    if len(updated_drugs) == len(drugs):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="İlaç kaydı bulunamadı.",
-        )
+        if len(updated_drugs) == len(drugs):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="İlaç kaydı bulunamadı.",
+            )
 
-    member["drugs"] = updated_drugs
-    member["updated_at"] = datetime.now(timezone.utc).isoformat()
-    members[idx] = member
-    _save_members(user_id, members)
+        member["drugs"] = updated_drugs
+        member["updated_at"] = datetime.now(timezone.utc).isoformat()
+        members[idx] = member
+        _save_members(user_id, members)

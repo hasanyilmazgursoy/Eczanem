@@ -29,6 +29,14 @@ _AUTH_WINDOW_SECONDS = 60
 _AUTH_MAX_REQUESTS = 20
 
 
+def _resolve_client_key(http_request: Request) -> str:
+    """Proxy arkasında gerçek istemci IP'sini belirler."""
+    forwarded_for = http_request.headers.get("x-forwarded-for")
+    if forwarded_for:
+        return forwarded_for.split(",", 1)[0].strip()
+    return http_request.client.host if http_request.client else "unknown-client"
+
+
 def _enforce_auth_rate_limit(client_key: str) -> None:
     now = time()
     window_start = now - _AUTH_WINDOW_SECONDS
@@ -47,6 +55,15 @@ def _enforce_auth_rate_limit(client_key: str) -> None:
             )
 
         bucket.append(now)
+
+        # Uzun süre hiç istek gelmeyen IP girişlerini ara sıra temizle (bellek sızıntısı önleme).
+        if len(_auth_rate_limit_buckets) > 5_000:
+            stale = [
+                k for k, v in _auth_rate_limit_buckets.items()
+                if not v or v[-1] <= window_start
+            ]
+            for k in stale:
+                _auth_rate_limit_buckets.pop(k, None)
 
 
 class SignupRequest(BaseModel):
@@ -99,7 +116,7 @@ def _resolve_token(
 
 @router.post("/signup", response_model=AuthResponse)
 async def signup(request: SignupRequest, http_request: Request):
-    _enforce_auth_rate_limit(http_request.client.host or "unknown")
+    _enforce_auth_rate_limit(_resolve_client_key(http_request))
     user = create_user(request.name, request.email, request.password)
     access_token = create_access_token(user["id"])
     return AuthResponse(access_token=access_token, user=UserResponse(**user))
@@ -113,7 +130,7 @@ async def register(request: SignupRequest, http_request: Request):
 
 @router.post("/login", response_model=AuthResponse)
 async def login(request: LoginRequest, http_request: Request):
-    _enforce_auth_rate_limit(http_request.client.host or "unknown")
+    _enforce_auth_rate_limit(_resolve_client_key(http_request))
     user = authenticate_user(request.email, request.password)
     access_token = create_access_token(user["id"])
     return AuthResponse(access_token=access_token, user=UserResponse(**user))
@@ -132,8 +149,10 @@ async def logout(_: str = Depends(_resolve_token)):
 
 
 @router.post("/forgot-password", response_model=MessageResponse)
-async def forgot_password(_: ForgotPasswordRequest):
-    # Şimdilik stub. FAZ 3'te e-posta sağlayıcısı ile gerçek akış bağlanacak.
+async def forgot_password(_: ForgotPasswordRequest, http_request: Request):
+    # Rate limit: e-posta enumeration ve DoS saldırılarını sınırla.
+    _enforce_auth_rate_limit(_resolve_client_key(http_request))
+    # Şimdiki zaman: stub. FAZ 3'te e-posta sağlayıcısıyla gerçek akış bağlanacak.
     return MessageResponse(message="Şifre sıfırlama bağlantısı gönderildi.")
 
 

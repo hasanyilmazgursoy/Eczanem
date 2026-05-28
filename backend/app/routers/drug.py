@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from pydantic import BaseModel, Field
+from typing import Annotated
 
 from app.services.drug_search_guard import query_drug_info_with_guard
 from app.services.gemini_service import (
@@ -21,7 +22,7 @@ class DrugSearchRequest(BaseModel):
 
 
 class DrugInteractionRequest(BaseModel):
-    drugs: list[str] = Field(min_length=2, max_length=20)
+    drugs: list[Annotated[str, Field(min_length=1, max_length=200)]] = Field(min_length=2, max_length=20)
 
 
 class NaturalAlternativesRequest(BaseModel):
@@ -123,12 +124,26 @@ class NaturalAlternativesResponse(BaseModel):
     uyari: str
 
 
+_MAX_IMAGE_BYTES = 10 * 1024 * 1024  # 10 MB
+
+
 def _validate_image_upload(file: UploadFile) -> None:
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(
             status_code=400,
             detail="Yalnızca görsel dosyaları analiz edilebilir.",
         )
+
+
+async def _read_upload_with_size_check(file: UploadFile) -> bytes:
+    """Görsel dosyasını okur; 10 MB sınırını aşarsa 413 fırlatır."""
+    data = await file.read()
+    if len(data) > _MAX_IMAGE_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail="Görsel boyutu 10 MB'tan büyük olamaz.",
+        )
+    return data
 
 
 def _resolve_client_key(request: Request) -> str:
@@ -157,7 +172,7 @@ async def analyze_drug_image(file: UploadFile = File(...)):
     """İlaç fotoğrafını Gemini ile analiz ederek muhtemel ilaç bilgisini döndürür."""
     _validate_image_upload(file)
 
-    image_bytes = await file.read()
+    image_bytes = await _read_upload_with_size_check(file)
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Yüklenen görsel boş olamaz.")
 
@@ -173,7 +188,7 @@ async def summarize_prospectus_image(file: UploadFile = File(...)):
     """Prospektüs veya kutu görselinden kısa özet çıkarır."""
     _validate_image_upload(file)
 
-    image_bytes = await file.read()
+    image_bytes = await _read_upload_with_size_check(file)
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Yüklenen görsel boş olamaz.")
 

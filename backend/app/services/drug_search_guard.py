@@ -150,6 +150,15 @@ def _enforce_rate_limit(client_key: str) -> None:
 
         bucket.append(now)
 
+        # Uzun süredir istek gelmeyen IP girişlerini ara sıra temizle.
+        if len(_rate_limit_buckets) > 5_000:
+            stale = [
+                k for k, v in _rate_limit_buckets.items()
+                if not v or v[-1] <= window_start
+            ]
+            for k in stale:
+                _rate_limit_buckets.pop(k, None)
+
 
 async def query_drug_info_with_guard(drug_name: str, client_key: str) -> dict:
     """Cache hit varsa onu döndürür, yoksa rate limit sonrası Gemini'ye gider."""

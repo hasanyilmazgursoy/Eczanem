@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from threading import Lock, RLock
+from threading import RLock
 from uuid import uuid4
 
 from fastapi import HTTPException, status
@@ -17,7 +17,6 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 from app.core.config import get_settings
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # RLock, change_password gibi iç çağrı zincirinde re-entrant kullanımı destekler
@@ -91,23 +90,27 @@ def create_user(name: str, email: str, password: str) -> dict:
             detail="Şifre en az 6 karakter olmalıdır.",
         )
 
-    users = _load_users()
-    if any(user["email"] == normalized_email for user in users):
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Bu e-posta adresiyle kayıtlı bir hesap zaten var.",
-        )
-
-    user = {
+    new_user = {
         "id": uuid4().hex,
         "name": name,
         "email": normalized_email,
         "password_hash": pwd_context.hash(password),
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
-    users.append(user)
-    _save_users(users)
-    return _public_user(user)
+
+    # Lock tüm oku-kontrol-yaz döngüsünü kapsar; aynı e-postayla eş zamanlı
+    # iki signup isteği arasında TOCTOU yarışını önler.
+    with _store_lock:
+        users = _load_users()
+        if any(user["email"] == normalized_email for user in users):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Bu e-posta adresiyle kayıtlı bir hesap zaten var.",
+            )
+        users.append(new_user)
+        _save_users(users)
+
+    return _public_user(new_user)
 
 
 def authenticate_user(email: str, password: str) -> dict:
