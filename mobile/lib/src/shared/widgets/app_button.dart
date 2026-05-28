@@ -74,7 +74,9 @@ class AppButton extends StatelessWidget {
     final (bg, fg, border) = switch (variant) {
       ButtonVariant.primary => (
           color ?? cs.primary,
-          color ?? cs.onPrimary,
+          // Özel renk verildiğinde fg = cs.onPrimary yerine beyaz kullan,
+          // aksi hâlde bg ile aynı renk olup metin görünmez.
+          color != null ? Colors.white : cs.onPrimary,
           null
         ),
       ButtonVariant.secondary => (

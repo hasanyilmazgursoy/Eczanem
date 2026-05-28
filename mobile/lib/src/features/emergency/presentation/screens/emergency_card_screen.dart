@@ -5,6 +5,14 @@ import '../../../../imports/imports.dart';
 import '../../data/emergency_card_repository.dart';
 import '../../data/models/emergency_card.dart';
 
+/// Dropdown için standart kan grubu seçenekleri (Türkiye notasyonu).
+const _kBloodTypes = [
+  'A Rh+', 'A Rh-',
+  'B Rh+', 'B Rh-',
+  'AB Rh+', 'AB Rh-',
+  '0 Rh+', '0 Rh-',
+];
+
 /// FAZ 7 — Acil Durum Kartı Ekranı.
 ///
 /// İki mod arasında toggle yapar:
@@ -23,7 +31,8 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
   AppStatus _saveStatus = AppStatus.initial;
 
   // --- Form kontrolleri ---
-  final _bloodTypeCtrl = TextEditingController();
+  // Kan grubu dropdown seçimi (_kBloodTypes listesinden)
+  String? _selectedBloodType;
   final _contactNameCtrl = TextEditingController();
   final _contactPhoneCtrl = TextEditingController();
   final _doctorNameCtrl = TextEditingController();
@@ -44,7 +53,6 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
 
   @override
   void dispose() {
-    _bloodTypeCtrl.dispose();
     _contactNameCtrl.dispose();
     _contactPhoneCtrl.dispose();
     _doctorNameCtrl.dispose();
@@ -66,7 +74,12 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
 
   /// Form kontrollerini mevcut kart verileriyle doldurur.
   void _populateControllers(EmergencyCard card) {
-    _bloodTypeCtrl.text = card.bloodType;
+    // Boşluk ve büyük/küçük harf farkı gözetmeden dropdown seçeneğiyle eşleştir
+    _selectedBloodType = _kBloodTypes.where(
+      (bt) =>
+          bt.toLowerCase().replaceAll(' ', '') ==
+          card.bloodType.toLowerCase().replaceAll(' ', ''),
+    ).firstOrNull;
     _contactNameCtrl.text = card.emergencyContactName;
     _contactPhoneCtrl.text = card.emergencyContactPhone;
     _doctorNameCtrl.text = card.doctorName;
@@ -88,7 +101,7 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
 
     final now = _card?.updatedAt ?? DateTime.now();
     final card = EmergencyCard(
-      bloodType: _bloodTypeCtrl.text.trim(),
+      bloodType: _selectedBloodType ?? '',
       allergies: List.of(_allergies),
       chronicConditions: List.of(_chronicConditions),
       currentMedications: List.of(_currentMedications),
@@ -187,13 +200,15 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
               data: qrData,
               version: QrVersions.auto,
               size: 220,
+              // Koyu temada siyah modüller görünmez — beyaz arka plan şart
+              backgroundColor: Colors.white,
               eyeStyle: const QrEyeStyle(
                 eyeShape: QrEyeShape.square,
                 color: Color(0xFFB71C1C),
               ),
               dataModuleStyle: const QrDataModuleStyle(
                 dataModuleShape: QrDataModuleShape.square,
-                color: Colors.black87,
+                color: Colors.black,
               ),
             ),
           ],
@@ -303,23 +318,26 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
               tooltip: 'emergency_card.share'.tr(),
             ),
           ],
-          // Düzenleme / İptal toggle
-          TextButton.icon(
-            onPressed: _toggleEdit,
-            icon: Icon(
-              _isEditing ? Icons.close_rounded : Icons.edit_rounded,
-              color: Colors.white,
-            ),
-            label: Text(
-              _isEditing
-                  ? 'emergency_card.cancel'.tr()
-                  : 'emergency_card.edit'.tr(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+          // Düzenleme modunda metin "İptal", görüntüleme modunda yalnızca ikon
+          // (görüntülemede QR+Paylaş+Düzenle çok yer aldığından metin kaldırıldı)
+          if (_isEditing)
+            TextButton.icon(
+              onPressed: _toggleEdit,
+              icon: const Icon(Icons.close_rounded, color: Colors.white),
+              label: Text(
+                'emergency_card.cancel'.tr(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+            )
+          else
+            IconButton(
+              onPressed: _toggleEdit,
+              icon: const Icon(Icons.edit_rounded, color: Colors.white),
+              tooltip: 'emergency_card.edit'.tr(),
             ),
-          ),
         ],
       ),
       body: _isEditing ? _buildEditForm() : _buildViewCard(),
@@ -442,7 +460,6 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
   // ────────────────────────── DÜZENLEME FORMU ────────────────────────────
 
   Widget _buildEditForm() {
-    final colorScheme = context.colors;
     final textTheme = context.textTheme;
 
     return SingleChildScrollView(
@@ -450,12 +467,24 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Kan grubu
-          AppTextField(
-            controller: _bloodTypeCtrl,
-            label: 'emergency_card.blood_type'.tr(),
-            hint: 'emergency_card.blood_type_hint'.tr(),
-            prefixIcon: const Icon(Icons.water_drop_rounded),
+          // Kan grubu — dropdown, serbest metin yerine standart seçenekler
+          DropdownButtonFormField<String>(
+            value: _selectedBloodType,
+            isExpanded: true,
+            decoration: InputDecoration(
+              labelText: 'emergency_card.blood_type'.tr(),
+              prefixIcon: const Icon(Icons.water_drop_rounded),
+            ),
+            hint: Text('emergency_card.blood_type_hint'.tr()),
+            items: _kBloodTypes
+                .map(
+                  (bt) => DropdownMenuItem(
+                    value: bt,
+                    child: Text(bt),
+                  ),
+                )
+                .toList(),
+            onChanged: (val) => setState(() => _selectedBloodType = val),
           ),
           SizedBox(height: AppSpacing.xl),
           // Alerjiler
@@ -557,7 +586,6 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
             onPressed: _saveStatus.isLoading ? null : _save,
             isLoading: _saveStatus.isLoading,
             label: 'emergency_card.save'.tr(),
-            color: colorScheme.primary,
             isFullWidth: true,
           ),
           SizedBox(height: AppSpacing.xl),
