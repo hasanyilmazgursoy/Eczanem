@@ -1,16 +1,17 @@
 ﻿"""İlaç sorgulama endpoint'leri."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from pydantic import BaseModel, Field
-from typing import Annotated
 
 from app.services.drug_search_guard import query_drug_info_with_guard
 from app.services.gemini_service import (
+    query_drug_info_from_image,
     query_drug_interactions,
     query_natural_alternatives,
-    query_drug_info_from_image,
-    query_prospectus_summary_from_image,
     query_pharmacist_chat,
+    query_prospectus_summary_from_image,
     query_symptom_analysis,
 )
 
@@ -22,7 +23,9 @@ class DrugSearchRequest(BaseModel):
 
 
 class DrugInteractionRequest(BaseModel):
-    drugs: list[Annotated[str, Field(min_length=1, max_length=200)]] = Field(min_length=2, max_length=20)
+    drugs: list[Annotated[str, Field(min_length=1, max_length=200)]] = Field(
+        min_length=2, max_length=20
+    )
 
 
 class NaturalAlternativesRequest(BaseModel):

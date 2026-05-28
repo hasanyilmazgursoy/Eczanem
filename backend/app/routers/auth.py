@@ -10,10 +10,12 @@ from pydantic import BaseModel, Field
 
 from app.services.auth_service import (
     authenticate_user,
-    change_password as change_password_service,
     create_access_token,
     create_user,
     get_current_user,
+)
+from app.services.auth_service import (
+    change_password as change_password_service,
 )
 
 router = APIRouter()
@@ -59,7 +61,8 @@ def _enforce_auth_rate_limit(client_key: str) -> None:
         # Uzun süre hiç istek gelmeyen IP girişlerini ara sıra temizle (bellek sızıntısı önleme).
         if len(_auth_rate_limit_buckets) > 5_000:
             stale = [
-                k for k, v in _auth_rate_limit_buckets.items()
+                k
+                for k, v in _auth_rate_limit_buckets.items()
                 if not v or v[-1] <= window_start
             ]
             for k in stale:

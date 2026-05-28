@@ -6,10 +6,10 @@ bellek içi cache'e otomatik düşülür.
 
 from __future__ import annotations
 
+import json
 from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
-import json
 from threading import Lock
 from time import time
 
@@ -153,7 +153,8 @@ def _enforce_rate_limit(client_key: str) -> None:
         # Uzun süredir istek gelmeyen IP girişlerini ara sıra temizle.
         if len(_rate_limit_buckets) > 5_000:
             stale = [
-                k for k, v in _rate_limit_buckets.items()
+                k
+                for k, v in _rate_limit_buckets.items()
                 if not v or v[-1] <= window_start
             ]
             for k in stale:

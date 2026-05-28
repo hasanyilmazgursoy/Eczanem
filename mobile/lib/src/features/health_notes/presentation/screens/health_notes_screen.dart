@@ -361,7 +361,8 @@ class _NoteCard extends StatelessWidget {
                       ),
                     if (note.glucoseValue != null)
                       _MeasurementBadge(
-                        label: '🩸 ${note.glucoseValue!.toStringAsFixed(0)} mg/dL',
+                        label:
+                            '🩸 ${note.glucoseValue!.toStringAsFixed(0)} mg/dL',
                         backgroundColor: Colors.orange.shade100,
                         foregroundColor: Colors.orange.shade800,
                       ),
@@ -378,12 +379,12 @@ class _NoteCard extends StatelessWidget {
                         foregroundColor: Colors.green.shade800,
                       ),
                     ...note.symptoms.take(3).map(
-                      (s) => _MeasurementBadge(
-                        label: s,
-                        backgroundColor: Colors.blue.shade50,
-                        foregroundColor: Colors.blue.shade700,
-                      ),
-                    ),
+                          (s) => _MeasurementBadge(
+                            label: s,
+                            backgroundColor: Colors.blue.shade50,
+                            foregroundColor: Colors.blue.shade700,
+                          ),
+                        ),
                     if (note.symptoms.length > 3)
                       _MeasurementBadge(
                         label: '+${note.symptoms.length - 3}',
@@ -427,8 +428,16 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
 
   /// Yaygın semptom seçenekleri — hızlı seçim için.
   static const _kCommonSymptoms = [
-    'Baş ağrısı', 'Halsizlik', 'Bulantı', 'Ateş', 'Öksürük',
-    'Nefes darlığı', 'Baş dönmesi', 'Uykusuzluk', 'İştahsızlık', 'Eklem ağrısı',
+    'Baş ağrısı',
+    'Halsizlik',
+    'Bulantı',
+    'Ateş',
+    'Öksürük',
+    'Nefes darlığı',
+    'Baş dönmesi',
+    'Uykusuzluk',
+    'İştahsızlık',
+    'Eklem ağrısı',
   ];
 
   @override
@@ -751,8 +760,7 @@ class _NoteEditorSheetState extends State<_NoteEditorSheet> {
               SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
                 title: Text('health_notes.medication_taken'.tr()),
-                subtitle:
-                    Text('health_notes.medication_taken_subtitle'.tr()),
+                subtitle: Text('health_notes.medication_taken_subtitle'.tr()),
                 value: _medicationTaken,
                 onChanged: (v) => setState(() => _medicationTaken = v),
                 activeThumbColor: const Color(0xFF1565C0),
@@ -1092,17 +1100,11 @@ class _DoctorViewSheet extends StatelessWidget {
     final colorScheme = context.colors;
     final textTheme = context.textTheme;
 
-    final bpNotes = notes
-        .where((n) => n.bloodPressureDisplay != null)
-        .toList()
+    final bpNotes = notes.where((n) => n.bloodPressureDisplay != null).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
-    final glucoseNotes = notes
-        .where((n) => n.glucoseValue != null)
-        .toList()
+    final glucoseNotes = notes.where((n) => n.glucoseValue != null).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
-    final painNotes = notes
-        .where((n) => n.painLevel != null)
-        .toList()
+    final painNotes = notes.where((n) => n.painLevel != null).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
 
     // Semptom sıklığı haritası
@@ -1184,8 +1186,7 @@ class _DoctorViewSheet extends StatelessWidget {
                       ),
                     // Vital bulgular
                     if (bpNotes.isNotEmpty || glucoseNotes.isNotEmpty) ...[
-                      _SectionHeader(
-                          title: 'health_notes.vital_findings'.tr()),
+                      _SectionHeader(title: 'health_notes.vital_findings'.tr()),
                       const SizedBox(height: 8),
                       if (bpNotes.isNotEmpty)
                         _DoctorDataRow(
@@ -1208,8 +1209,7 @@ class _DoctorViewSheet extends StatelessWidget {
                     ],
                     // Ağrı takibi
                     if (painNotes.isNotEmpty) ...[
-                      _SectionHeader(
-                          title: 'health_notes.pain_tracking'.tr()),
+                      _SectionHeader(title: 'health_notes.pain_tracking'.tr()),
                       const SizedBox(height: 8),
                       ...painNotes.take(5).map(
                             (n) => _DoctorDataRow(
@@ -1231,8 +1231,7 @@ class _DoctorViewSheet extends StatelessWidget {
                       const SizedBox(height: 8),
                       ...sortedSymptoms.take(8).map(
                             (e) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4),
+                              padding: const EdgeInsets.symmetric(vertical: 4),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -1251,8 +1250,7 @@ class _DoctorViewSheet extends StatelessWidget {
                                             child: LinearProgressIndicator(
                                               value: e.value /
                                                   sortedSymptoms.first.value,
-                                              color:
-                                                  const Color(0xFF1565C0),
+                                              color: const Color(0xFF1565C0),
                                               backgroundColor:
                                                   Colors.grey.shade200,
                                               minHeight: 6,
@@ -1262,8 +1260,7 @@ class _DoctorViewSheet extends StatelessWidget {
                                         const SizedBox(width: 8),
                                         Text(
                                           '${e.value}x',
-                                          style:
-                                              textTheme.bodySmall?.copyWith(
+                                          style: textTheme.bodySmall?.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -1293,13 +1290,9 @@ class _DoctorViewSheet extends StatelessWidget {
     final dateStr =
         '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}';
 
-    final bpNotes = notes
-        .where((n) => n.bloodPressureDisplay != null)
-        .toList()
+    final bpNotes = notes.where((n) => n.bloodPressureDisplay != null).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
-    final glucoseNotes = notes
-        .where((n) => n.glucoseValue != null)
-        .toList()
+    final glucoseNotes = notes.where((n) => n.glucoseValue != null).toList()
       ..sort((a, b) => b.date.compareTo(a.date));
 
     final sb = StringBuffer()
@@ -1482,10 +1475,10 @@ class _TrendChart extends StatelessWidget {
               ),
             ),
           ),
-          topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false)),
+          topTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         borderData: FlBorderData(show: false),
       ),

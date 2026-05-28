@@ -14,7 +14,6 @@ from uuid import uuid4
 
 from fastapi import HTTPException, status
 
-
 # RLock, CRUD fonksiyonlarının lock içinden _load_all/_save_all çağırabilmesi için gerekli
 _store_lock = RLock()
 _profiles_file = (
