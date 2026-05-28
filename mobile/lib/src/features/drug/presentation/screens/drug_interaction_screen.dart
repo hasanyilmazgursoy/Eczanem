@@ -21,6 +21,7 @@ class _DrugInteractionScreenState extends State<DrugInteractionScreen> {
   bool _isLoading = false;
   String? _error;
   Map<String, dynamic>? _result;
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _DrugInteractionScreenState extends State<DrugInteractionScreen> {
   @override
   void dispose() {
     _drugController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -98,6 +100,17 @@ class _DrugInteractionScreenState extends State<DrugInteractionScreen> {
           _isLoading = false;
           _result = data;
         });
+        // Analiz biter bitmez sonuç bölümüne otomatik kaydır
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
       },
     );
   }
@@ -107,6 +120,7 @@ class _DrugInteractionScreenState extends State<DrugInteractionScreen> {
     return Scaffold(
       appBar: AppTopBar(title: 'drug_interaction.title'.tr()),
       body: ListView(
+        controller: _scrollController,
         padding: EdgeInsets.all(AppSpacing.lg),
         children: [
           _HeroCard(selectedCount: _selectedDrugs.length),
@@ -151,6 +165,30 @@ class _DrugInteractionScreenState extends State<DrugInteractionScreen> {
                         )
                         .toList(),
                   ),
+                // Geçmişten hızlı seçim — seçili ilaçların hemen altında
+                if (_suggestedDrugs.isNotEmpty) ...[
+                  SizedBox(height: AppSpacing.sm),
+                  Text(
+                    'drug_interaction.suggestions_title'.tr(),
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.xs),
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
+                    children: _suggestedDrugs
+                        .map(
+                          (drug) => ActionChip(
+                            label: Text(drug),
+                            avatar: const Icon(Icons.history, size: 18),
+                            onPressed: () => _addDrug(drug),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
                 SizedBox(height: AppSpacing.md),
                 AppButton(
                   label: _isLoading
@@ -172,32 +210,6 @@ class _DrugInteractionScreenState extends State<DrugInteractionScreen> {
                 ],
               ],
             ),
-          ),
-          SizedBox(height: AppSpacing.lg),
-          AppCard(
-            showShadow: true,
-            title: 'drug_interaction.suggestions_title'.tr(),
-            subtitle: 'drug_interaction.suggestions_subtitle'.tr(),
-            child: _suggestedDrugs.isEmpty
-                ? Text(
-                    'drug_interaction.suggestions_empty'.tr(),
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: context.colors.onSurfaceVariant,
-                    ),
-                  )
-                : Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.sm,
-                    children: _suggestedDrugs
-                        .map(
-                          (drug) => ActionChip(
-                            label: Text(drug),
-                            avatar: const Icon(Icons.history, size: 18),
-                            onPressed: () => _addDrug(drug),
-                          ),
-                        )
-                        .toList(),
-                  ),
           ),
           if (_result != null) ...[
             SizedBox(height: AppSpacing.lg),
@@ -259,7 +271,9 @@ class _HeroCard extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.xs),
           Text(
-            'drug_interaction.hero_subtitle'
+            (selectedCount >= 2
+                    ? 'drug_interaction.hero_subtitle_ready'
+                    : 'drug_interaction.hero_subtitle')
                 .tr(args: [selectedCount.toString()]),
             style: context.textTheme.bodyLarge?.copyWith(
               color: Colors.white.withValues(alpha: 0.88),

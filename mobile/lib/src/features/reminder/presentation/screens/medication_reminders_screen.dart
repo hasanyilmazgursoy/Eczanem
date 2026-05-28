@@ -895,12 +895,6 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
             SizedBox(height: AppSpacing.lg),
 
             // ── Zamanlama ─────────────────────────────────────────────────
-            _sectionLabel(
-              context,
-              Icons.schedule_rounded,
-              'medication_reminder.time_label'.tr(),
-            ),
-            SizedBox(height: AppSpacing.xs),
             _PickerTile(
               title: 'medication_reminder.time_label'.tr(),
               value: MaterialLocalizations.of(context).formatTimeOfDay(_time),
@@ -968,12 +962,6 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
             SizedBox(height: AppSpacing.lg),
 
             // ── Doz & Stok ────────────────────────────────────────────────
-            _sectionLabel(
-              context,
-              Icons.medication_liquid_outlined,
-              'medication_reminder.units_per_dose_label'.tr(),
-            ),
-            SizedBox(height: AppSpacing.xs),
             Row(
               children: [
                 Expanded(
@@ -1024,7 +1012,7 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
             _sectionLabel(
               context,
               Icons.tune_rounded,
-              'medication_reminder.status_switch'.tr(),
+              'medication_reminder.settings_section'.tr(),
             ),
             SizedBox(height: AppSpacing.xs),
             SwitchListTile.adaptive(

@@ -245,7 +245,8 @@
         "risk_high": "🔴 Yüksek risk",
         "precautions_title": "Dikkat edilmesi gerekenler",
         "no_summary": "Genel özet oluşturulamadı.",
-        "no_interaction_items": "Belirgin bir etkileşim bulunamadı; yine de birlikte kullanım için doktorunuza veya eczacınıza danışın."
+        "no_interaction_items": "Belirgin bir etkileşim bulunamadı; yine de birlikte kullanım için doktorunuza veya eczacınıza danışın.",
+        "hero_subtitle_ready": "Hazırsınız! {} ilaç seçili — aşağıdaki butona basarak etkileşimi kontrol edin."
     },
     "drug_natural_alternatives": {
         "title": "Doğal Alternatifler",
@@ -281,6 +282,7 @@
         "stock_label": "Mevcut tablet sayısı",
         "status_switch": "Hatırlatıcı aktif olsun",
         "status_switch_subtitle": "Kapatsanız kayıt kalır ama takip pasife alınır.",
+        "settings_section": "Ayarlar",
         "schedule_preview": "Oluşacak hatırlatma saatleri: {}",
         "notes_label": "Kısa not",
         "notes_hint": "Örn: Tok karnına, sabah kahvaltıdan sonra",

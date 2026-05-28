@@ -245,7 +245,8 @@
     "risk_high": "\ud83d\udd34 High risk",
     "precautions_title": "Precautions",
     "no_summary": "General summary could not be generated.",
-    "no_interaction_items": "No significant interaction found; still consult your doctor or pharmacist before combined use."
+    "no_interaction_items": "No significant interaction found; still consult your doctor or pharmacist before combined use.",
+    "hero_subtitle_ready": "Ready! {} drugs selected — tap the button below to check interactions."
   },
   "drug_natural_alternatives": {
     "title": "Natural Alternatives",
@@ -281,6 +282,7 @@
     "stock_label": "Current tablet count",
     "status_switch": "Reminder should be active",
     "status_switch_subtitle": "If turned off, the record remains but tracking is paused.",
+    "settings_section": "Settings",
     "schedule_preview": "Reminder times to be created: {}",
     "notes_label": "Short note",
     "notes_hint": "e.g. With food, after morning breakfast",
