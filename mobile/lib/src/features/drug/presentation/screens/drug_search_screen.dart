@@ -205,6 +205,12 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
     _searchDrug();
   }
 
+  Future<void> _clearRecentSearches() async {
+    await DrugHistoryRepository.instance.clearSearches();
+    if (!mounted) return;
+    setState(() => _recentSearches = const []);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -320,11 +326,20 @@ class _DrugSearchContentState extends ConsumerState<DrugSearchContent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'drug_search.recent_title'.tr(),
-          style: context.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'drug_search.recent_title'.tr(),
+              style: context.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            TextButton(
+              onPressed: _clearRecentSearches,
+              child: Text('drug_search.clear_recent'.tr()),
+            ),
+          ],
         ),
         SizedBox(height: AppSpacing.sm),
         Wrap(

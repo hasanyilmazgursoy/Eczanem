@@ -66,7 +66,8 @@ class _AiChatScreenState extends State<AiChatScreen> {
           _isLoading = false;
           _messages.add({'role': 'model', 'content': reply});
         });
-        // Yanıt gelince otomatik scroll yok — kullanıcı isterse kendi iner.
+        // Yanıt gelince listeyi en alta kaydır.
+        _scrollToBottom();
       },
     );
   }

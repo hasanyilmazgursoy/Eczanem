@@ -181,7 +181,8 @@
     "voice_search": "Voice search",
     "voice_listening": "Listening... Speak now",
     "voice_stop": "Stop listening",
-    "voice_unavailable": "Voice search is not available on this device."
+    "voice_unavailable": "Voice search is not available on this device.",
+    "clear_recent": "Clear"
   },
   "drug_detail": {
     "title": "Medicine Info",
@@ -303,6 +304,8 @@
     "edit_button": "Edit",
     "take_now_button": "Taken",
     "delete_tooltip": "Delete reminder",
+    "delete_confirm_title": "Delete Reminder",
+    "delete_confirm_body": "{} reminder will be deleted. This action cannot be undone.",
     "active_count": "{} active reminders"
   },
   "family": {

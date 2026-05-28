@@ -182,6 +182,32 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
   }
 
   Future<void> _deleteReminder(MedicationReminder reminder) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('medication_reminder.delete_confirm_title'.tr()),
+        content: Text(
+          'medication_reminder.delete_confirm_body'
+              .tr(args: [reminder.drugName]),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('shared.cancel'.tr()),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+              foregroundColor: Theme.of(ctx).colorScheme.onError,
+            ),
+            child: Text('medication_reminder.delete_tooltip'.tr()),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
     final result =
         await MedicationReminderRepository.instance.removeReminder(reminder.id);
 

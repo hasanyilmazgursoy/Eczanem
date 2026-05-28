@@ -181,7 +181,8 @@
         "voice_search": "Sesli ara",
         "voice_listening": "Dinleniyor... Konuşun",
         "voice_stop": "Dinlemeyi durdur",
-        "voice_unavailable": "Sesli arama bu cihazda kullanılamıyor."
+        "voice_unavailable": "Sesli arama bu cihazda kullanılamıyor.",
+        "clear_recent": "Temizle"
     },
     "drug_detail": {
         "title": "İlaç Bilgisi",
@@ -303,6 +304,8 @@
         "edit_button": "Düzenle",
         "take_now_button": "Aldım",
         "delete_tooltip": "Hatırlatıcıyı sil",
+        "delete_confirm_title": "Hatırlatıcıyı Sil",
+        "delete_confirm_body": "{} adlı hatırlatıcı silinecek. Bu işlem geri alınamaz.",
         "active_count": "{} aktif hatırlatıcı"
     },
     "family": {

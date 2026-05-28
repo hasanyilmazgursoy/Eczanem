@@ -66,6 +66,7 @@ class _DrugInteractionScreenState extends State<DrugInteractionScreen> {
   }
 
   Future<void> _analyzeInteractions() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (_selectedDrugs.length < 2) {
       setState(() {
         _error = 'drug_interaction.min_two_drugs'.tr();
