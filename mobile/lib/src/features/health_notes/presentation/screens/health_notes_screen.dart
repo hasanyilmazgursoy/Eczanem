@@ -877,20 +877,24 @@ class _EmptyNotesState extends StatelessWidget {
 /// Ağrı seviyesine göre badge arka plan rengi.
 Color _painBadgeColor(
     int level, AppColorsExtension appColors, ColorScheme colorScheme) {
-  if (level <= 3)
+  if (level <= 3) {
     return appColors.successContainer ?? colorScheme.primaryContainer;
-  if (level <= 6)
+  }
+  if (level <= 6) {
     return appColors.warningContainer ?? colorScheme.tertiaryContainer;
+  }
   return colorScheme.errorContainer;
 }
 
 /// Ağrı seviyesine göre badge yazı rengi.
 Color _painBadgeTextColor(
     int level, AppColorsExtension appColors, ColorScheme colorScheme) {
-  if (level <= 3)
+  if (level <= 3) {
     return appColors.onSuccessContainer ?? colorScheme.onPrimaryContainer;
-  if (level <= 6)
+  }
+  if (level <= 6) {
     return appColors.onWarningContainer ?? colorScheme.onTertiaryContainer;
+  }
   return colorScheme.onErrorContainer;
 }
 

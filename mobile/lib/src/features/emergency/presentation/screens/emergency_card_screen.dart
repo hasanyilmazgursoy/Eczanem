@@ -475,7 +475,7 @@ class _EmergencyCardScreenState extends State<EmergencyCardScreen> {
         children: [
           // Kan grubu — dropdown, serbest metin yerine standart seçenekler
           DropdownButtonFormField<String>(
-            value: _selectedBloodType,
+            initialValue: _selectedBloodType,
             isExpanded: true,
             decoration: InputDecoration(
               labelText: 'emergency_card.blood_type'.tr(),
