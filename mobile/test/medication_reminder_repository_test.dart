@@ -85,7 +85,8 @@ void main() {
       );
 
       expect(reminder.reminderTimes, hasLength(1));
-      expect(reminder.reminderTimes.first, const TimeOfDay(hour: 21, minute: 0));
+      expect(
+          reminder.reminderTimes.first, const TimeOfDay(hour: 21, minute: 0));
     });
 
     test('stockCount 0 ile oluşturulan hatırlatıcıda stok takibi olmaz', () {
@@ -163,7 +164,8 @@ void main() {
       expect(MedicationReminder.tryParse(raw), isNull);
     });
 
-    test('tryParse geçersiz hour/minute değerlerini geçerli aralığa sıkıştırır', () {
+    test('tryParse geçersiz hour/minute değerlerini geçerli aralığa sıkıştırır',
+        () {
       final raw = jsonEncode({
         'id': '1',
         'drug_name': 'Test',

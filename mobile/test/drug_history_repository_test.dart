@@ -36,7 +36,9 @@ void main() {
       expect(restored.hasCandidates, isFalse);
     });
 
-    test('fromPayload ilac_adi boşsa medicine için bilinmeyen ilaç fallback kullanır', () {
+    test(
+        'fromPayload ilac_adi boşsa medicine için bilinmeyen ilaç fallback kullanır',
+        () {
       final entry = DrugScanHistoryEntry.fromPayload(
         mode: DrugScanHistoryMode.medicine,
         payload: {'etken_madde': 'bilinmiyor'},
@@ -46,7 +48,9 @@ void main() {
       expect(entry.subtitle, 'bilinmiyor');
     });
 
-    test('fromPayload ilac_adi boşsa prospektüs için varsayılan başlık kullanır', () {
+    test(
+        'fromPayload ilac_adi boşsa prospektüs için varsayılan başlık kullanır',
+        () {
       final entry = DrugScanHistoryEntry.fromPayload(
         mode: DrugScanHistoryMode.prospectus,
         payload: {'prospektus_turu': 'Kullanma talimatı'},
@@ -57,7 +61,9 @@ void main() {
     });
 
     // Adaylar birincil ilaçla aynıysa (case-insensitive) hasCandidates false olmalı
-    test('hasCandidates adaylar yalnızca birincil ilaçla eşleşiyorsa false döner', () {
+    test(
+        'hasCandidates adaylar yalnızca birincil ilaçla eşleşiyorsa false döner',
+        () {
       final entry = DrugScanHistoryEntry.fromPayload(
         mode: DrugScanHistoryMode.medicine,
         payload: {
