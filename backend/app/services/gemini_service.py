@@ -197,7 +197,9 @@ async def _post_gemini_request(payload: dict) -> httpx.Response:
     settings = get_settings()
 
     if not settings.gemini_api_key:
-        raise HTTPException(status_code=500, detail="Gemini API key yapılandırılmamış.")
+        raise HTTPException(
+            status_code=500, detail="Yapay zeka servisi yapılandırılmamış."
+        )
 
     last_status = 0
     # Gemini API geçici 5xx hatalarında üssel geri çekilme ile 3 kez dene (1s, 2s, 4s).
@@ -229,7 +231,7 @@ async def _post_gemini_request(payload: dict) -> httpx.Response:
 
     raise HTTPException(
         status_code=502,
-        detail=f"Gemini API yanıt vermedi: {last_status}",
+        detail=f"Yapay zeka servisi yanıt vermedi: {last_status}",
     )
 
 

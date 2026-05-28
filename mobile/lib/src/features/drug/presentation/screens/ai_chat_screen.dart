@@ -297,8 +297,8 @@ class _ChatBubble extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(
         bottom: AppSpacing.md,
-        left: isUser ? AppSpacing.xxl : 0,
-        right: isUser ? 0 : AppSpacing.xxl,
+        left: isUser ? AppSpacing.xl : 0,
+        right: isUser ? 0 : AppSpacing.lg,
       ),
       child: Row(
         mainAxisAlignment:
@@ -329,8 +329,16 @@ class _ChatBubble extends StatelessWidget {
                 vertical: AppSpacing.md,
               ),
               decoration: BoxDecoration(
-                color:
-                    isUser ? accentColor : colorScheme.surfaceContainerHighest,
+                color: isUser ? accentColor : colorScheme.surfaceContainerHighest,
+                // AI baloncuğuna sol aksent çizgisi — kullanıcı vs. AI ayrımını güçlendirir
+                border: isUser
+                    ? null
+                    : Border(
+                        left: BorderSide(
+                          color: accentColor.withValues(alpha: 0.6),
+                          width: 3,
+                        ),
+                      ),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(20),
                   topRight: const Radius.circular(20),
@@ -350,15 +358,15 @@ class _ChatBubble extends StatelessWidget {
                   : MarkdownBody(
                       data: message,
                       styleSheet: MarkdownStyleSheet(
-                        p: textTheme.bodyMedium?.copyWith(
+                        p: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurface,
                           height: 1.6,
                         ),
-                        strong: textTheme.bodyMedium?.copyWith(
+                        strong: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
-                        em: textTheme.bodyMedium?.copyWith(
+                        em: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurface,
                           fontStyle: FontStyle.italic,
                         ),
@@ -377,17 +385,17 @@ class _ChatBubble extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                           height: 1.4,
                         ),
-                        listBullet: textTheme.bodyMedium?.copyWith(
+                        listBullet: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurface,
                           height: 1.6,
                         ),
                         // Satır içi kod
-                        code: textTheme.bodySmall?.copyWith(
+                        code: textTheme.bodyMedium?.copyWith(
                           fontFamily: 'monospace',
                           color: accentColor,
                           backgroundColor: accentColor.withValues(alpha: 0.08),
                         ),
-                        blockSpacing: 10,
+                        blockSpacing: 8,
                         listIndent: 20,
                         blockquotePadding: const EdgeInsets.symmetric(
                           horizontal: 12,
