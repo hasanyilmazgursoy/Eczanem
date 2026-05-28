@@ -63,7 +63,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     size: 44,
                     color: cs.primary,
                   ),
-                ).animate().scale(duration: const Duration(milliseconds: 400), curve: Curves.easeOut),
+                ).animate().scale(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeOut),
                 SizedBox(height: AppSpacing.md.h),
                 Text(
                   'Eczanem',
