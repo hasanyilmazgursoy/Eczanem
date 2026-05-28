@@ -299,7 +299,7 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: AppSpacing.xxl),
+              SizedBox(height: AppSpacing.md),
 
               if (_selectedImage != null) ...[
                 Expanded(
@@ -350,16 +350,16 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                     children: [
                       Icon(
                         Icons.document_scanner_rounded,
-                        size: 80,
-                        color: colorScheme.primary.withValues(alpha: 0.3),
+                        size: 72,
+                        color: colorScheme.primary.withValues(alpha: 0.5),
                       ),
-                      SizedBox(height: AppSpacing.xl),
+                      SizedBox(height: AppSpacing.lg),
                       Text(
                         isProspectusMode
                             ? 'drug_search.prospectus_mode_subtitle'.tr()
                             : 'drug_search.image_empty_subtitle'.tr(),
                         textAlign: TextAlign.center,
-                        style: textTheme.titleMedium?.copyWith(
+                        style: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
                       ),
@@ -367,33 +367,24 @@ class _DrugPhotoScanScreenState extends ConsumerState<DrugPhotoScanScreen> {
                   ),
                 ),
 
-                // Dev Butonlar
-                OutlinedButton.icon(
+                // Fotoğraf seçimi
+                AppButton(
+                  label: 'drug_search.pick_from_gallery'.tr(),
                   onPressed: _isImageLoading
                       ? null
                       : () => _pickImage(ImageSource.gallery),
-                  icon: const Icon(Icons.photo_library_rounded, size: 28),
-                  label: Text('drug_search.pick_from_gallery'.tr(),
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 64),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                  ),
+                  variant: ButtonVariant.outline,
+                  isFullWidth: true,
+                  height: ButtonSize.large,
+                  prefixIcon: const Icon(Icons.photo_library_rounded),
                 ),
-                SizedBox(height: AppSpacing.lg),
-                FilledButton.icon(
+                SizedBox(height: AppSpacing.md),
+                AppButton(
+                  label: 'drug_search.take_photo'.tr(),
                   onPressed: _isImageLoading ? null : _openCameraCapture,
-                  icon: const Icon(Icons.camera_alt_rounded, size: 28),
-                  label: Text('drug_search.take_photo'.tr(),
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 64),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                  ),
+                  isFullWidth: true,
+                  height: ButtonSize.large,
+                  prefixIcon: const Icon(Icons.camera_alt_rounded),
                 ),
               ],
             ],
