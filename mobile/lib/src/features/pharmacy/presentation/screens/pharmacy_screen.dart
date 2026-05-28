@@ -307,7 +307,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
               children: [
                 // İl dropdown’u
                 DropdownButtonFormField<String>(
-                  value: _selectedIl,
+                  key: ValueKey(_selectedIl),
+                  initialValue: _selectedIl,
                   isExpanded: true,
                   decoration: InputDecoration(
                     labelText: 'pharmacy.il_label'.tr(),
@@ -336,7 +337,8 @@ class _PharmacyScreenState extends State<PharmacyScreen> {
                 SizedBox(height: AppSpacing.sm),
                 // İlçe dropdown’u (il seçildikten sonra aktif olur)
                 DropdownButtonFormField<String>(
-                  value: _selectedIlce,
+                  key: ValueKey(_selectedIlce),
+                  initialValue: _selectedIlce,
                   isExpanded: true,
                   decoration: InputDecoration(
                     labelText: 'pharmacy.ilce_label'.tr(),
