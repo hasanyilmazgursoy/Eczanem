@@ -298,7 +298,7 @@ class _ChatBubble extends StatelessWidget {
       padding: EdgeInsets.only(
         bottom: AppSpacing.md,
         left: isUser ? AppSpacing.xl : 0,
-        right: isUser ? 0 : AppSpacing.lg,
+        right: isUser ? 0 : AppSpacing.xs,
       ),
       child: Row(
         mainAxisAlignment:
@@ -325,11 +325,12 @@ class _ChatBubble extends StatelessWidget {
           Flexible(
             child: Container(
               padding: EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
+                horizontal: AppSpacing.md,
                 vertical: AppSpacing.md,
               ),
               decoration: BoxDecoration(
-                color: isUser ? accentColor : colorScheme.surfaceContainerHighest,
+                color:
+                    isUser ? accentColor : colorScheme.surfaceContainerHighest,
                 // AI baloncuğuna sol aksent çizgisi — kullanıcı vs. AI ayrımını güçlendirir
                 border: isUser
                     ? null
@@ -358,15 +359,15 @@ class _ChatBubble extends StatelessWidget {
                   : MarkdownBody(
                       data: message,
                       styleSheet: MarkdownStyleSheet(
-                        p: textTheme.bodyLarge?.copyWith(
+                        p: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,
                           height: 1.6,
                         ),
-                        strong: textTheme.bodyLarge?.copyWith(
+                        strong: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
-                        em: textTheme.bodyLarge?.copyWith(
+                        em: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,
                           fontStyle: FontStyle.italic,
                         ),
@@ -385,7 +386,7 @@ class _ChatBubble extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                           height: 1.4,
                         ),
-                        listBullet: textTheme.bodyLarge?.copyWith(
+                        listBullet: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,
                           height: 1.6,
                         ),

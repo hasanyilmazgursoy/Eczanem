@@ -528,7 +528,7 @@
     "passwords_mismatch": "Passwords do not match."
   },
   "ai_chat": {
-    "title": "AI Pharmacist Assistant",
+    "title": "Pharmacist Assistant",
     "powered_by": "AI Powered · For general information only",
     "input_hint": "Type your question...",
     "send": "Send",

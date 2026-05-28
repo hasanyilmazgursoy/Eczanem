@@ -528,7 +528,7 @@
         "passwords_mismatch": "Şifreler eşleşmiyor."
     },
     "ai_chat": {
-        "title": "AI Eczacı Asistanı",
+        "title": "Eczacı Asistanı",
         "powered_by": "Yapay Zeka Destekli · Genel bilgilendirme amaçlıdır",
         "input_hint": "Sorunuzu yazın...",
         "send": "Gönder",
@@ -543,7 +543,7 @@
     "symptom_analysis": {
         "title": "Semptom Analizi",
         "input_title": "Semptomlarınızı Anlatın",
-        "input_subtitle": "Yaşadığınız belirtileri açıklayın; AI olası nedenleri ve tavsiyeleri değerlendirsin.",
+        "input_subtitle": "Yaşadığınız belirtileri açıklayın; yapay zeka olası nedenleri ve tavsiyeleri değerlendirsin.",
         "input_hint": "Örn: Baş ağrısı, ateş ve boğaz ağrısı var, iki gündür devam ediyor...",
         "button": "Analiz Et",
         "loading": "Semptomlar analiz ediliyor...",
