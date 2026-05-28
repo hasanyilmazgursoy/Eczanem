@@ -1029,10 +1029,8 @@ class _ReminderEditorSheetState extends State<_ReminderEditorSheet> {
                 Icons.alarm_rounded,
                 color: _useAlarm ? Colors.orange : null,
               ),
-              title: const Text('Alarm olarak çalsın'),
-              subtitle: const Text(
-                'Telefon sessizde olsa bile çalar ve ekrana bildirim gelir',
-              ),
+              title: Text('medication_reminder.alarm_switch'.tr()),
+              subtitle: Text('medication_reminder.alarm_switch_subtitle'.tr()),
               onChanged: (value) => setState(() => _useAlarm = value),
             ),
             SizedBox(height: AppSpacing.sm),

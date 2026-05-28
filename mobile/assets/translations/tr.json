@@ -308,7 +308,9 @@
         "delete_tooltip": "Hatırlatıcıyı sil",
         "delete_confirm_title": "Hatırlatıcıyı Sil",
         "delete_confirm_body": "{} adlı hatırlatıcı silinecek. Bu işlem geri alınamaz.",
-        "active_count": "{} aktif hatırlatıcı"
+        "active_count": "{} aktif hatırlatıcı",
+        "alarm_switch": "Alarm olarak çalsın",
+        "alarm_switch_subtitle": "Telefon sessizde olsa bile çalar ve ekrana bildirim gelir"
     },
     "family": {
         "title": "Aile Profili",

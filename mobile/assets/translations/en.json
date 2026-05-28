@@ -308,7 +308,9 @@
     "delete_tooltip": "Delete reminder",
     "delete_confirm_title": "Delete Reminder",
     "delete_confirm_body": "{} reminder will be deleted. This action cannot be undone.",
-    "active_count": "{} active reminders"
+    "active_count": "{} active reminders",
+    "alarm_switch": "Ring as alarm",
+    "alarm_switch_subtitle": "Rings even when the phone is on silent and shows a screen notification"
   },
   "family": {
     "title": "Family Profile",
