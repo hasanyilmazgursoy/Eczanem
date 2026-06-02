@@ -2,7 +2,7 @@
 
 **Proje:** Kişisel İlaç Asistanı Mobil Uygulaması
 **Başlangıç Tarihi:** 9 Nisan 2026
-**Teknolojiler:** Flutter (Dart) + FastAPI (Python) + OpenRouter (Gemini)
+**Teknolojiler:** Flutter (Dart) + FastAPI (Python) + Google Gemini API (gemini-2.5-flash)
 **Durum:** 🟢 FAZ 0, 1, 2, Ara Faz, 4, 5, 6, 7, 8 tamamlandı · 🟡 FAZ 3 büyük ölçüde hazır (local-first yeterli)
 
 ---
@@ -21,26 +21,29 @@ asistanı uygulaması.
 ┌──────────────────────────────────────────┐
 │         Flutter Mobil Uygulama            │
 │  ┌──────────────────────────────────┐    │
-│  │  📷 Kamera  │ 🔍 Arama │ 📊 Barkod│   │
+│  │  📷 Kamera  │ 🔍 Arama │ 🧠 Semptom│  │
 │  ├──────────────────────────────────┤    │
 │  │  💊 İlaç Bilgi  │ ⚠️ Etkileşim   │    │
 │  │  ⏰ Hatırlayıcı  │ 👨‍👩‍👧 Aile Profil│    │
 │  │  🏥 Nöbetçi Eczane│ 🆘 Acil Kart  │    │
 │  │  🎤 Sesli Sorgu   │ 📝 Sağlık Notu│    │
 │  └──────────────────────────────────┘    │
-│  Local: SQLite + Hive (offline veri)     │
+│  Local: Hive (offline veri)              │
 └──────────────────┌──────────────────────┘
                    │ HTTPS
                    ↓
 ┌──────────────────────────────────────────┐
 │         FastAPI Backend (Python)          │
-│  /api/drug/analyze-image   → OpenRouter  │
-│  /api/drug/search          → OpenRouter  │
-│  /api/drug/interaction     → OpenRouter  │
-│  /api/drug/barcode/{code}  → İlaç DB     │
+│  /api/drug/analyze-image   → Gemini      │
+│  /api/drug/prospectus      → Gemini      │
+│  /api/drug/search          → Gemini      │
+│  /api/drug/interaction     → Gemini      │
+│  /api/drug/natural-alternatives → Gemini │
+│  /api/drug/chat            → Gemini      │
+│  /api/drug/symptom-check   → Gemini      │
 │  /api/pharmacy/nearby      → Scraping    │
 │  /api/pharmacy/districts   → Scraping    │
-│  /api/auth/ (opsiyonel)    → JWT         │
+│  /auth/                    → JWT         │
 │  /api/profile/             → Aile yönetim│
 │  PostgreSQL + Redis (cache)              │
 └──────────────────────────────────────────┘
@@ -160,8 +163,8 @@ Kullanıcı hem metin aramalarını hem de görsel analiz geçmişini profile se
 **Durum:** 🟡 Büyük ölçüde hazır
 
 ### Backend
-- [x] `POST /api/auth/register` — E-posta + şifre ile kayıt
-- [x] `POST /api/auth/login` — JWT token döndür
+- [x] `POST /auth/register` — E-posta + şifre ile kayıt (alias: `/auth/signup`)
+- [x] `POST /auth/login` — JWT token döndür
 - [x] `CRUD /api/profile/family/` — Aile bireyi yönetimi
 - [x] `CRUD /api/profile/family/{id}/drugs/` — Aile bireyinin ilaç listesi
 
@@ -255,7 +258,7 @@ Yerel çalışan ilaç hatırlayıcı, stok takibi ve offline bildirim akışı 
 
 ### Flutter Paketleri
 - `geolocator` — konum alma
-- `google_maps_flutter` veya `flutter_map` — harita
+- `flutter_map` — OSM tabanlı harita (google_maps_flutter kullanılmadı)
 - `url_launcher` — telefon arama, yol tarifi
 - `speech_to_text` — Türkçe ses tanıma
 

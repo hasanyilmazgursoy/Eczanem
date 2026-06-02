@@ -13,6 +13,7 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - İlaç etkileşim kontrolü
 - İlaç bazlı doğal alternatif önerileri
 - AI eczacı sohbet asistanı (Gemini tabanlı, markdown yanıtlar)
+- Semptom analizi ve acil durum yönlendirmesi
 - Offline ilaç hatırlatıcıları ve stok takibi
 - Nöbetçi eczane — il/ilçe dropdown seçimi, OSM harita, konum desteği
 - Acil durum kartı + QR kod ile hızlı paylaşım
@@ -69,6 +70,7 @@ Kişisel ilaç asistanı odaklı, Flutter istemci + FastAPI backend mimarisiyle 
 - Nöbetçi eczane OSM tabanlı harita görünümü (flutter_map, kullanıcı konumu, pin'ler)
 - Nöbetçi eczane ilçe fallback: ilçede nöbet yoksa il geneline düşme + bildirim banner'ı
 - AI eczacı sohbet ekranı (Gemini tabanlı, markdown+emoji formatıyla yapılandırılmış yanıtlar)
+- Semptom analizi ekranı (olası nedenler, acil durum tespiti, tavsiyeler)
 - Acil durum kartı oluşturma / düzenleme
 - Acil durum kartı QR kod ile paylaşma
 - Sağlık notları ekleme, filtreleme, düzenleme; semptom chip'leri ve ilaç alındı takibi
@@ -109,6 +111,7 @@ FastAPI Backend
  ├─ /api/drug/interaction
  ├─ /api/drug/natural-alternatives
  ├─ /api/drug/chat
+ ├─ /api/drug/symptom-check
  ├─ /api/pharmacy/nearby
  ├─ /api/pharmacy/districts
  └─ /api/profile/*
@@ -256,6 +259,7 @@ API_BASE_URL=http://192.168.1.139:8000
 - `GET /auth/me`
 - `POST /auth/logout`
 - `POST /auth/forgot-password`
+- `PUT /auth/change-password`
 
 ### Drug
 
@@ -265,6 +269,7 @@ API_BASE_URL=http://192.168.1.139:8000
 - `POST /api/drug/interaction`
 - `POST /api/drug/natural-alternatives`
 - `POST /api/drug/chat`
+- `POST /api/drug/symptom-check`
 
 ### Profile
 

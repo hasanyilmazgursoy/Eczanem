@@ -13,7 +13,7 @@ Bu liste, `Eczanem` projesini demo, jüri sunumu veya mağaza yayını öncesind
 
 - [x] `flutter analyze --no-pub` → 0 hata
 - [ ] Kritik testler çalıştı
-- [ ] `flutter test`
+- [x] `flutter test`
 - [x] Boş durumlar, hata durumları ve loading durumları temel ekranlarda kontrol edildi
 - [ ] Dark mode görünümü kritik ekranlarda kontrol edildi
 - [x] `tr.json` ve `en.json` anahtarları kodla uyumlu
